@@ -30,7 +30,7 @@
 
 package org.cogaen.state;
 
-public class TwinState extends BasicState {
+public class TwinState implements State {
 
 	private State state1;
 	private State state2;

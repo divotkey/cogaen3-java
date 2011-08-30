@@ -35,7 +35,7 @@ import java.util.List;
 
 import org.cogaen.action.Action;
 
-public class ActionState extends BasicState {
+public class ActionState implements State {
 
 	private List<Action> enterActions = new ArrayList<Action>();
 	private List<Action> exitActions = new ArrayList<Action>();
@@ -66,7 +66,6 @@ public class ActionState extends BasicState {
 	
 	@Override
 	public void onEnter() {
-		super.onEnter();
 		for (Action action : this.enterActions) {
 			action.execute();
 		}
@@ -77,7 +76,6 @@ public class ActionState extends BasicState {
 		for (Action action : this.exitActions) {
 			action.execute();
 		}
-		super.onExit();
 	}
 
 }

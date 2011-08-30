@@ -33,7 +33,7 @@ package org.cogaen.state;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MultiState extends BasicState {
+public class MultiState implements State {
 
 	private List<State> states = new ArrayList<State>();
 	
@@ -43,7 +43,6 @@ public class MultiState extends BasicState {
 	
 	@Override
 	public void onEnter() {
-		super.onEnter();
 		for (State state : this.states) {
 			state.onEnter();
 		}
@@ -54,7 +53,6 @@ public class MultiState extends BasicState {
 		for (State state : this.states) {
 			state.onExit();
 		}
-		super.onExit();
 	}
 	
 	

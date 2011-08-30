@@ -32,7 +32,7 @@ package org.cogaen.state;
 
 import org.cogaen.core.Engageable;
 
-public class EngagingState extends BasicState {
+public class EngagingState implements State {
 
 	private Engageable engageable;
 	
@@ -42,14 +42,12 @@ public class EngagingState extends BasicState {
 
 	@Override
 	public void onEnter() {
-		super.onEnter();
 		this.engageable.engage();
 	}
 
 	@Override
 	public void onExit() {
 		this.engageable.disengage();
-		super.onExit();
 	}
 	
 	

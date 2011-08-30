@@ -32,6 +32,7 @@ package org.cogaen.event;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +55,7 @@ public class EventService extends AbstractService implements Updateable {
 	private List<Event> events1 = new ArrayList<Event>();
 	private List<Event> events2 = new ArrayList<Event>();
 	private List<Event> currentEvents = events1;
+	private List<TimedEvent> timedEvents = new ArrayList<TimedEvent>();
 	private boolean fastEventDispatch = DEFAULT_FAST_EVENT_DISPATCH;
 	private LoggingService logger;
 	
@@ -115,6 +117,9 @@ public class EventService extends AbstractService implements Updateable {
 
 	@Override
 	public void update() {
+		
+		fireTimedEvents();
+		
 		do {
 			List<Event> events = this.currentEvents;
 			swapEventList();
@@ -126,33 +131,62 @@ public class EventService extends AbstractService implements Updateable {
 		} while (this.fastEventDispatch && !this.currentEvents.isEmpty());
 	}
 	
+	private void fireTimedEvents() {
+		for (Iterator<TimedEvent> it = this.timedEvents.iterator(); it.hasNext();) {
+			TimedEvent timedEvent = it.next();
+			if (timedEvent.getTime() <= getCore().getTime()) {
+				dispatchEvent(timedEvent.getEvent());
+				it.remove();
+			}
+		}
+	}
+
 	public void dispatchEvent(Event event) {
 		this.currentEvents.add(event);
 	}
+	
+	public void dispatchEvent(Event event, double delay) {
+		if (delay <= 0) {
+			throw new IllegalArgumentException("delay must be greater than zero");
+		}
+
+		addTimedEvent(new TimedEvent(event, getCore().getTime() + delay));
+	}
 		
-	public void addListener(EventListener listener, CogaenId eventId) {
-		Bag<EventListener> listeners = this.listenerMap.get(eventId);
+	private void addTimedEvent(TimedEvent timedEvent) {
+		int size = this.timedEvents.size();
+		for (int i = 0; i < size; ++i) {
+			if (this.timedEvents.get(i).getTime() > timedEvent.getTime()) {
+				this.timedEvents.add(i, timedEvent);
+				return;
+			}
+		}		
+		this.timedEvents.add(timedEvent);
+	}
+
+	public void addListener(EventListener listener, CogaenId typeId) {
+		Bag<EventListener> listeners = this.listenerMap.get(typeId);
 		
 		if (listeners == null) {
 			listeners = new Bag<EventListener>();
-			this.listenerMap.put(eventId, listeners);
+			this.listenerMap.put(typeId, listeners);
 			listeners.add(listener);
 		} else if (!listeners.contains(listener)) {
 			listeners.add(listener);
 		} else {
 			this.logger.logWarning(LOGGING_SOURCE, 
 					"attempt to add listener for event type " 
-					+ eventId + " twice (" + listener.getClass().getName() + ")");
+					+ typeId + " twice (" + listener.getClass().getName() + ")");
 		}
 	}
 	
-	public void removeListener(EventListener listener, CogaenId eventId) {
-		Bag<EventListener> listeners = this.listenerMap.get(eventId);
+	public void removeListener(EventListener listener, CogaenId typeId) {
+		Bag<EventListener> listeners = this.listenerMap.get(typeId);
 		
 		if (listeners == null || !listeners.remove(listener) ) {
 			this.logger.logWarning(LOGGING_SOURCE, 
 					"attempt to remove unregistered listener for event type " 
-					+ eventId + " (" + listener.getClass().getName() + ")");
+					+ typeId + " (" + listener.getClass().getName() + ")");
 		}
 	}
 	
@@ -162,8 +196,8 @@ public class EventService extends AbstractService implements Updateable {
 		}
 	}
 	
-	public boolean hasListener(EventListener listener, CogaenId eventId) {
-		Bag<EventListener> listeners = this.listenerMap.get(eventId);
+	public boolean hasListener(EventListener listener, CogaenId typeId) {
+		Bag<EventListener> listeners = this.listenerMap.get(typeId);
 		return listeners != null ? listeners.contains(listener) : false;
 	}
 	
@@ -193,6 +227,25 @@ public class EventService extends AbstractService implements Updateable {
 		
 		for (listeners.reset(); listeners.hasNext();) {
 			listeners.next().handleEvent(event);
+		}
+	}
+	
+	private static class TimedEvent {
+		
+		private Event event;
+		private double time;
+		
+		public TimedEvent(Event event, double time) {
+			this.event = event;
+			this.time = time;
+		}
+
+		public Event getEvent() {
+			return event;
+		}
+
+		public double getTime() {
+			return time;
 		}
 	}
 	

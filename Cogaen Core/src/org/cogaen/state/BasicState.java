@@ -30,8 +30,20 @@
 
 package org.cogaen.state;
 
+import org.cogaen.core.Core;
+
 public class BasicState implements State {
 
+	private Core core;
+	
+	public BasicState(Core core) {
+		this.core = core;
+	}
+	
+	public Core getCore() {
+		return this.core;
+	}
+	
 	@Override
 	public void onEnter() {
 		// intentionally left empty

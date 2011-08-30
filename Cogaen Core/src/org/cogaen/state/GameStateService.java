@@ -122,8 +122,8 @@ public class GameStateService extends AbstractService {
 
 	private State createLoggingState(CogaenId stateId) {
 		ActionState loggingState = new ActionState();
-		loggingState.addEnterAction(new LoggingAction(getCore(), Priority.INFO, LOGGING_SOURCE, "entering game state " + stateId));
-		loggingState.addExitAction(new LoggingAction(getCore(), Priority.INFO, LOGGING_SOURCE, "exiting game state " + stateId));		
+		loggingState.addEnterAction(new LoggingAction(getCore(), Priority.NOTICE, LOGGING_SOURCE, "entering game state " + stateId));
+		loggingState.addExitAction(new LoggingAction(getCore(), Priority.NOTICE, LOGGING_SOURCE, "exiting game state " + stateId));		
 		
 		return loggingState;
 	}
