@@ -1,4 +1,37 @@
+/* 
+ -----------------------------------------------------------------------------
+                    Cogaen - Component-based Game Engine V3
+ -----------------------------------------------------------------------------
+ This software is developed by the Cogaen Development Team. Please have a 
+ look at our project home page for further details: http://www.cogaen.org
+    
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ Copyright (c) 2010-2011 Roman Divotkey
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+ */
+
 package org.cogaen.lwjgl.scene;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
@@ -7,12 +40,10 @@ import org.cogaen.event.EventService;
 import org.cogaen.event.SimpleEvent;
 import org.cogaen.name.CogaenId;
 import org.cogaen.property.PropertyService;
-import org.cogaen.resource.ResourceService;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
-import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.util.Log;
 
 public class SceneService extends AbstractService {
@@ -30,6 +61,8 @@ public class SceneService extends AbstractService {
 	private int height;
 	private boolean fullscreen;
 	private boolean useProperties;
+	private SceneNode root;
+	private List<Camera> cameras = new ArrayList<Camera>();
 	
 	public static SceneService getInstance(Core core) {
 		return (SceneService) core.getService(ID);
@@ -45,6 +78,8 @@ public class SceneService extends AbstractService {
 		this.width = width;
 		this.height = height;
 		this.fullscreen = fs;
+		
+		this.root = new SceneNode();
 
 		// turn off verbose logging of slick library
 		Log.setVerbose(false);
@@ -79,7 +114,7 @@ public class SceneService extends AbstractService {
 			throw new ServiceException(e);
 		}		
 		
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
+//		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
 
 	@Override
@@ -90,34 +125,46 @@ public class SceneService extends AbstractService {
 	}
 	
 	public void renderScene() {
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		GL11.glOrtho(0, 800, 600, 0, 1, -1);
-		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
-		
+
 	    // Clear the screen and depth buffer
 	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);	
 		
-	    Texture texture = (Texture) ResourceService.getInstance(getCore()).getResource(new CogaenId("test"));
-	    texture.bind();
+		for (Camera camera : cameras) {
+			if (!camera.isActive()) {
+				continue;
+			}
+			
+			camera.applyTransform();
+		    this.root.render();
+		}
+		
+//		GL11.glMatrixMode(GL11.GL_PROJECTION);
+//		GL11.glLoadIdentity();
+//		GL11.glOrtho(0, 800, 600, 0, 1, -1);
+//		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
+		
+		
+//	    Texture texture = (Texture) ResourceService.getInstance(getCore()).getResource(new CogaenId("test"));
+//	    texture.bind();
+	    
 	    
 	    // set the color of the quad (R,G,B,A)
 //	    GL11.glColor3f(0.5f,0.5f,1.0f);
 	    	
 	    // draw quad
-	    GL11.glBegin(GL11.GL_QUADS);
-	    GL11.glTexCoord2f(0,0);
-        GL11.glVertex2f(100,100);
-
-        GL11.glTexCoord2f(1,0);
-        GL11.glVertex2f(100+200,100);
-	
-        GL11.glTexCoord2f(1,1);
-        GL11.glVertex2f(100+200,100+200);
-        
-        GL11.glTexCoord2f(0,1);
-		GL11.glVertex2f(100,100+200);
-	    GL11.glEnd();
+//	    GL11.glBegin(GL11.GL_QUADS);
+//	    GL11.glTexCoord2f(0,0);
+//        GL11.glVertex2f(100,100);
+//
+//        GL11.glTexCoord2f(1,0);
+//        GL11.glVertex2f(100+200,100);
+//	
+//        GL11.glTexCoord2f(1,1);
+//        GL11.glVertex2f(100+200,100+200);
+//        
+//        GL11.glTexCoord2f(0,1);
+//		GL11.glVertex2f(100,100+200);
+//	    GL11.glEnd();
  
 	    Display.update();		
 	
@@ -191,5 +238,37 @@ public class SceneService extends AbstractService {
 			throw new ServiceException("unable to setup display mode", e);
 	    }
 	}	
+	
+	public SceneNode getRootNode() {
+		return this.root;
+	}
+	
+	public SceneNode createNode() {
+		SceneNode node = new SceneNode();
+		
+		return node;
+	}
+	
+	public void destroyNode(SceneNode node) {
+		if (node == this.root) {
+			throw new IllegalArgumentException("root scenen node must not be destroyed");
+		}
+		node.getParent().removeNode(node);
+	}
+	
+	public Camera createCamera() {
+		DisplayMode mode = Display.getDisplayMode();
+		Camera camera = new Camera(mode.getWidth(), mode.getHeight());
+		this.cameras.add(camera);
+		
+		return camera;
+	}
 
+	public int getScreenWidth() {
+		return Display.getDisplayMode().getWidth();
+	}
+
+	public int getScreenHeight() {
+		return Display.getDisplayMode().getHeight();
+	}
 }
