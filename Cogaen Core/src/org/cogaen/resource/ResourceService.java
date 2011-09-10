@@ -30,23 +30,36 @@
 
 package org.cogaen.resource;
 
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.cogaen.core.AbstractService;
+import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
+import org.cogaen.logging.LoggingService;
 import org.cogaen.name.CogaenId;
 
 public class ResourceService extends AbstractService {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.resource.ResourceService");
 	public static final String NAME = "Cogaen Resource Service";
+	private static final String LOGGING_SOURCE = "RSRC";
 	
 	private Map<CogaenId, List<ResourceHandle>> groups = new HashMap<CogaenId, List<ResourceHandle>>();
 	private Map<CogaenId, ResourceHandle> resources = new HashMap<CogaenId, ResourceHandle>();
+	private LoggingService logger;
 	
+	public static ResourceService getInstance(Core core) {
+		return (ResourceService) core.getService(ID);
+	}
+	
+	public ResourceService() {
+		addDependency(LoggingService.ID);
+	}
 	
 	@Override
 	public CogaenId getId() {
@@ -60,14 +73,34 @@ public class ResourceService extends AbstractService {
 
 	@Override
 	protected void doStart() throws ServiceException {
-		// TODO Auto-generated method stub
 		super.doStart();
+		this.logger = LoggingService.getInstance(getCore());
 	}
 
 	@Override
 	protected void doStop() {
-		// TODO Auto-generated method stub
+		unloadAll();
+		this.logger = null;
 		super.doStop();
+	}
+	
+	public URL getUrl(String name) {
+		URL url = getClass().getResource(name);
+		if (url == null) {
+			url = getClass().getResource("/" + name);
+		}
+		
+		return url;
+	}
+	
+	public InputStream getStream(String name) {
+		InputStream is = getClass().getResourceAsStream(name);
+		
+		if (is == null) {
+			is = getClass().getResourceAsStream("/" + name);
+		}
+		
+		return is;
 	}
 	
 	public boolean hasGroup(CogaenId groupId) {
@@ -83,27 +116,73 @@ public class ResourceService extends AbstractService {
 	}
 	
 	public void declareResource(CogaenId resourceId, CogaenId groupId, ResourceHandle handle) {
+		ResourceHandle old = this.resources.put(resourceId, handle);
+		if (old != null) {
+			this.resources.put(resourceId, old);
+			throw new RuntimeException("ambiguous resource id " + groupId);
+		}
+		
 		List<ResourceHandle> group = this.groups.get(groupId);
 		if (group == null) {
-			throw new RuntimeException("resource does not exist " + groupId);
+			this.resources.remove(resourceId);
+			throw new RuntimeException("resource group does not exist " + groupId);
 		}
 		
 		group.add(handle);
-	}
-	
-	public void loadGroup(CogaenId groupId) {
-		
-	}
-
-	public void unloadGroup(CogaenId groupId) {
-		
 	}
 	
 	public boolean isDeclared(CogaenId resourceId) {
 		return this.resources.containsKey(resourceId);
 	}
 	
+	public void loadGroup(CogaenId groupId) {
+		List<ResourceHandle> group = this.groups.get(groupId);
+		if (group == null) {
+			throw new RuntimeException("unonkown resource group " + groupId);
+		}
+		
+		this.logger.logInfo(LOGGING_SOURCE, "preloading resource group " + groupId);
+		for (ResourceHandle handle : group) {
+			if (!handle.isLoaded()) {
+				handle.load();
+			}
+		}
+	}
+
+	public void unloadGroup(CogaenId groupId) {
+		List<ResourceHandle> group = this.groups.get(groupId);
+		if (group == null) {
+			throw new RuntimeException("unonkown resource group " + groupId);
+		}
+		
+		this.logger.logInfo(LOGGING_SOURCE, "unloading resource group " + groupId);
+		for (ResourceHandle handle : group) {
+			if (handle.isLoaded()) {
+				handle.unload();
+			}
+		}
+	}
+		
+	public void unloadAll() {
+		this.logger.logInfo(LOGGING_SOURCE, "unloading resources");
+		for (ResourceHandle handle : this.resources.values()) {
+			if (handle.isLoaded()) {
+				handle.unload();
+			}
+		}
+	}
+	
 	public Object getResource(CogaenId resourceId) {
-		return null;
+		ResourceHandle handle = this.resources.get(resourceId);
+		if (handle == null) {
+			throw new RuntimeException("unknown resource " + resourceId);
+		}
+		
+		if (!handle.isLoaded()) {
+			this.logger.logWarning(LOGGING_SOURCE, "accessing uncached resource " + resourceId);
+			handle.load();
+		}
+		
+		return handle.getResource();
 	}
 }
