@@ -38,6 +38,7 @@ import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
 import org.cogaen.event.EventService;
 import org.cogaen.event.SimpleEvent;
+import org.cogaen.logging.LoggingService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.property.PropertyService;
 import org.lwjgl.LWJGLException;
@@ -63,6 +64,7 @@ public class SceneService extends AbstractService {
 	private boolean useProperties;
 	private SceneNode root;
 	private List<Camera> cameras = new ArrayList<Camera>();
+	private LoggingService logger;
 	
 	public static SceneService getInstance(Core core) {
 		return (SceneService) core.getService(ID);
@@ -73,6 +75,7 @@ public class SceneService extends AbstractService {
 			addDependency(PropertyService.ID);
 		}
 		addDependency(EventService.ID);
+		addDependency(LoggingService.ID);
 		
 		this.useProperties = true;
 		this.width = width;
@@ -253,7 +256,13 @@ public class SceneService extends AbstractService {
 		if (node == this.root) {
 			throw new IllegalArgumentException("root scenen node must not be destroyed");
 		}
-		node.getParent().removeNode(node);
+		if (!node.getParent().removeNode(node)) {
+			this.logger.logWarning(LOGGING_SOURCE, "attempt to destroy non-existing scene node");
+		}
+	}
+	
+	public void destroyAllSceneNodes() {
+		this.root.removeAllNodes();
 	}
 	
 	public Camera createCamera() {
@@ -264,11 +273,27 @@ public class SceneService extends AbstractService {
 		return camera;
 	}
 
+	public void destroyCamera(Camera camera) {
+		if (this.cameras.remove(camera)) {
+			this.logger.logWarning(LOGGING_SOURCE, "attempt to destroy non-existing camera");			
+		}
+	}
+
+	public void destroyAllCameras() {
+		this.cameras.clear();
+	}
+	
 	public int getScreenWidth() {
 		return Display.getDisplayMode().getWidth();
 	}
 
 	public int getScreenHeight() {
 		return Display.getDisplayMode().getHeight();
+	}
+
+	
+	public void destroyAll() {
+		destroyAllCameras();
+		destroyAllSceneNodes();
 	}
 }

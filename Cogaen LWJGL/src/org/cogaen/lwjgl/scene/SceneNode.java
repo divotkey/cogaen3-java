@@ -37,8 +37,19 @@ public class SceneNode {
 		node.parent = this;
 	}
 	
-	public void removeNode(SceneNode node) {
-		node.parent = null;
+	public boolean removeNode(SceneNode node) {
+		if (this.nodes.remove(node)) {
+			node.parent = null;
+			return true;
+		}
+		
+		for (SceneNode child : this.nodes) {
+			if (child.removeNode(node)) {
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	
 	public void render() {
@@ -56,5 +67,9 @@ public class SceneNode {
 		}
 		
 		GL11.glPopMatrix();
+	}
+
+	public void removeAllNodes() {
+		this.nodes.clear();
 	}
 }
