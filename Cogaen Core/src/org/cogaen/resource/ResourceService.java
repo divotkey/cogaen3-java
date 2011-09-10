@@ -141,10 +141,14 @@ public class ResourceService extends AbstractService {
 			throw new RuntimeException("unonkown resource group " + groupId);
 		}
 		
-		this.logger.logInfo(LOGGING_SOURCE, "preloading resource group " + groupId);
+		this.logger.logNotice(LOGGING_SOURCE, "preloading resource group " + groupId);
 		for (ResourceHandle handle : group) {
 			if (!handle.isLoaded()) {
-				handle.load();
+				try {
+					handle.load(getCore());
+				} catch (ResourceException e) {
+					this.logger.logWarning(LOGGING_SOURCE, "unable to load resource: " + e.getMessage());
+				}
 			}
 		}
 	}
@@ -155,7 +159,7 @@ public class ResourceService extends AbstractService {
 			throw new RuntimeException("unonkown resource group " + groupId);
 		}
 		
-		this.logger.logInfo(LOGGING_SOURCE, "unloading resource group " + groupId);
+		this.logger.logNotice(LOGGING_SOURCE, "unloading resource group " + groupId);
 		for (ResourceHandle handle : group) {
 			if (handle.isLoaded()) {
 				handle.unload();
@@ -180,7 +184,11 @@ public class ResourceService extends AbstractService {
 		
 		if (!handle.isLoaded()) {
 			this.logger.logWarning(LOGGING_SOURCE, "accessing uncached resource " + resourceId);
-			handle.load();
+			try {
+				handle.load(getCore());
+			} catch (ResourceException e) {
+				this.logger.logWarning(LOGGING_SOURCE, "unable to load resource: " + e.getMessage());
+			}
 		}
 		
 		return handle.getResource();

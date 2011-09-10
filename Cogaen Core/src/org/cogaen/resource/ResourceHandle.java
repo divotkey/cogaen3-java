@@ -30,11 +30,13 @@
 
 package org.cogaen.resource;
 
+import org.cogaen.core.Core;
+
 public abstract class ResourceHandle {
 	
 	public abstract boolean isLoaded();
 	
-	public abstract void load();
+	public abstract void load(Core core) throws ResourceException;
 	
 	public abstract void unload();
 	
