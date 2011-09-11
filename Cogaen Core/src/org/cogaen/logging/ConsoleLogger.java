@@ -47,9 +47,20 @@ public class ConsoleLogger extends LoggingService {
 		this(new StandardFormatter());
 	}
 	
+	public ConsoleLogger(LogFilter filter) {
+		this(new StandardFormatter(), filter);
+	}
+	
 	public ConsoleLogger(LogFormatter formatter) {
+		this(formatter, null);
+	}
+
+	public ConsoleLogger(LogFormatter formatter, LogFilter filter) {
 		this.formatter = formatter;
 		this.ps = System.err;
+		if (filter != null) {
+			addFilter(filter);
+		}
 	}
 	
 	@Override

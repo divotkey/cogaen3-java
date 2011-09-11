@@ -56,7 +56,7 @@ public abstract class LoggingService extends AbstractService {
 	public static LoggingService getInstance(Core core) {
 		return (LoggingService) core.getService(ID);
 	}
-	
+		
 	@Override
 	public final CogaenId getId() {
 		return ID;
