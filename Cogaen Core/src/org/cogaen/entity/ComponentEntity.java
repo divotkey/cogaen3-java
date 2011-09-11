@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cogaen.core.Core;
 import org.cogaen.name.CogaenId;
 
 public class ComponentEntity extends Entity {
@@ -12,8 +13,8 @@ public class ComponentEntity extends Entity {
 	private List<Component> components = new ArrayList<Component>();
 	private Map<CogaenId, Attribute> attributes = new HashMap<CogaenId, Attribute>();
 	
-	public ComponentEntity(CogaenId id) {
-		super(id);
+	public ComponentEntity(Core core, CogaenId id) {
+		super(core, id);
 	}
 
 	public final void addComponent(Component component) {

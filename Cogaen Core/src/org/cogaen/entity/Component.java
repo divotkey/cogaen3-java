@@ -1,33 +1,38 @@
 package org.cogaen.entity;
 
+import org.cogaen.core.Core;
 import org.cogaen.core.Engageable;
 
 public class Component implements Engageable {
 
-	private Entity parent;
+	private ComponentEntity parent;
+	private boolean engaged = false;
 	
 	@Override
 	public void engage() {
-		// intentionally left empty
+		this.engaged = true;
 	}
 
 	@Override
 	public void disengage() {
-		// intentionally left empty
+		this.engaged = false;
 	}
 
 	@Override
-	public boolean isEngaged() {
-		// TODO Auto-generated method stub
-		return false;
+	public final boolean isEngaged() {
+		return this.engaged;
 	}
 	
-	void setParent(Entity parent) {
+	final void setParent(ComponentEntity parent) {
 		this.parent = parent;
 	}
 	
-	public Entity getParent() {
+	public final ComponentEntity getParent() {
 		return this.parent;
+	}
+	
+	public final Core getCore() {
+		return this.parent.getCore();
 	}
 
 }

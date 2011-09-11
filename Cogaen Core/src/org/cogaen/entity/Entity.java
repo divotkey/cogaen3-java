@@ -31,6 +31,7 @@
 
 package org.cogaen.entity;
 
+import org.cogaen.core.Core;
 import org.cogaen.core.Engageable;
 import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
@@ -38,10 +39,12 @@ import org.cogaen.name.CogaenId;
 
 public class Entity implements Engageable, EventListener {
 
+	private Core core;
 	private CogaenId id;
 	private boolean engaged = false;
 	
-	public Entity(CogaenId id) {
+	public Entity(Core core, CogaenId id) {
+		this.core = core;
 		this.id = id;
 	}
 	
@@ -69,4 +72,7 @@ public class Entity implements Engageable, EventListener {
 		// intentionally left empty
 	}
 		
+	public final Core getCore() {
+		return this.core;
+	}
 }
