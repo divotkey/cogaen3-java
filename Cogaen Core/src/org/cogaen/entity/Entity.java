@@ -32,25 +32,41 @@
 package org.cogaen.entity;
 
 import org.cogaen.core.Engageable;
+import org.cogaen.event.Event;
+import org.cogaen.event.EventListener;
+import org.cogaen.name.CogaenId;
 
-public class Entity implements Engageable {
+public class Entity implements Engageable, EventListener {
 
+	private CogaenId id;
+	private boolean engaged = false;
+	
+	public Entity(CogaenId id) {
+		this.id = id;
+	}
+	
 	@Override
 	public void engage() {
-		// TODO Auto-generated method stub
-		
+		this.engaged = true;
 	}
 
 	@Override
 	public void disengage() {
-		// TODO Auto-generated method stub
-		
+		this.engaged = false;
 	}
 
 	@Override
-	public boolean isEngaged() {
-		// TODO Auto-generated method stub
-		return false;
+	public final boolean isEngaged() {
+		return this.engaged;
+	}
+	
+	public final CogaenId getId() {
+		return this.id;
 	}
 
+	@Override
+	public void handleEvent(Event event) {
+		// intentionally left empty
+	}
+		
 }
