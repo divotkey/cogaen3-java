@@ -115,6 +115,7 @@ public class TimeService extends AbstractService implements Updateable {
 
 	@Override
 	protected void doStart() {
+		createTimer(DEFAULT_TIMER_ID);
 		getCore().addUpdateable(this);
 	}
 
@@ -123,6 +124,7 @@ public class TimeService extends AbstractService implements Updateable {
 		if (getStatus() != Status.PAUSED) {
 			getCore().removeUpdateable(this);
 		}
+		this.timers.clear();
 	}
 
 }

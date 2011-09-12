@@ -157,7 +157,7 @@ public class Core {
 	}
 	
 	public void removeUpdateable(Updateable updateable) {
-		this.updateables.add(updateable);
+		this.updateables.remove(updateable);
 	}
 
 	public double getDeltaTime() {

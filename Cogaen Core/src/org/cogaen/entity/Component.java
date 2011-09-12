@@ -7,6 +7,10 @@ public class Component implements Engageable {
 
 	private ComponentEntity parent;
 	private boolean engaged = false;
+
+	public void initialize(ComponentEntity parent) {
+		this.parent = parent;
+	}
 	
 	@Override
 	public void engage() {
@@ -22,11 +26,7 @@ public class Component implements Engageable {
 	public final boolean isEngaged() {
 		return this.engaged;
 	}
-	
-	final void setParent(ComponentEntity parent) {
-		this.parent = parent;
-	}
-	
+		
 	public final ComponentEntity getParent() {
 		return this.parent;
 	}
