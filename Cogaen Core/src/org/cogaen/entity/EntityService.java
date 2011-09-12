@@ -18,6 +18,7 @@ public class EntityService extends AbstractService implements Updateable{
 	
 	private Map<CogaenId, Entity> entities = new HashMap<CogaenId, Entity>();
 	private List<Entity> entitiesToRemove = new ArrayList<Entity>();
+	private List<Updateable> updateables = new ArrayList<Updateable>();
 	
 	public static EntityService getInstance(Core core) {
 		return (EntityService) core.getService(ID);
@@ -44,6 +45,10 @@ public class EntityService extends AbstractService implements Updateable{
 			entity.disengage();
 		}
 		this.entitiesToRemove.clear();
+		
+		for (Updateable updateable : this.updateables) {
+			updateable.update();
+		}
 	}
 	
 	@Override
@@ -99,5 +104,12 @@ public class EntityService extends AbstractService implements Updateable{
 		
 		return entity;
 	}
+
+	public void addUpdateable(Updateable updateable) {
+		this.updateables.add(updateable);
+	}
 	
+	public void removeUpdateable(Updateable updateable) {
+		this.updateables.remove(updateable);
+	}
 }

@@ -1,5 +1,5 @@
 package org.cogaen.entity;
 
-public class Attribute {
+public interface Attribute {
 
 }
