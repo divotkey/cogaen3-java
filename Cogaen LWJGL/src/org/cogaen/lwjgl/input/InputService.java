@@ -103,6 +103,8 @@ public class InputService extends AbstractService implements Updateable {
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
 				this.evtSrv.dispatchEvent(new KeyPressedEvent(Keyboard.getEventKey()));
+			} else {
+				this.evtSrv.dispatchEvent(new KeyReleasedEvent(Keyboard.getEventKey()));				
 			}
 		}
 	}
