@@ -296,4 +296,9 @@ public class SceneService extends AbstractService {
 		destroyAllCameras();
 		destroyAllSceneNodes();
 	}
+
+	public double getAspectRatio() {
+		DisplayMode mode = Display.getDesktopDisplayMode();
+		return (double) mode.getWidth() / (double) mode.getHeight();
+	}
 }
