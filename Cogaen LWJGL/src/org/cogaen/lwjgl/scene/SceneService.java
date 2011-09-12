@@ -116,7 +116,7 @@ public class SceneService extends AbstractService {
 		} catch (LWJGLException e) {
 			throw new ServiceException(e);
 		}		
-		
+		Display.setVSyncEnabled(true);
 //		GL11.glEnable(GL11.GL_TEXTURE_2D);
 	}
 

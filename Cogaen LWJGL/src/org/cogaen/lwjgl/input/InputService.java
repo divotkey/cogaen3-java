@@ -33,7 +33,6 @@ package org.cogaen.lwjgl.input;
 import org.cogaen.core.AbstractService;
 import org.cogaen.core.ServiceException;
 import org.cogaen.core.Updateable;
-import org.cogaen.core.Service.Status;
 import org.cogaen.event.EventService;
 import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
