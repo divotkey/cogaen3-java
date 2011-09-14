@@ -28,17 +28,15 @@
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
  */
 
-package org.cogaen.resource;
+package org.cogaen.logging;
 
-import org.cogaen.core.Core;
+import org.cogaen.logging.LoggingService.Priority;
 
-public abstract class ResourceHandle {
-	
-	public abstract boolean isLoaded();
-	
-	public abstract void load(Core core) throws ResourceException;
-	
-	public abstract void unload(Core core);
-	
-	public abstract Object getResource();
+public class PassThroughFilter implements LogFilter {
+
+	@Override
+	public boolean accept(Priority priority, String src, String msg) {
+		return true;
+	}
+
 }

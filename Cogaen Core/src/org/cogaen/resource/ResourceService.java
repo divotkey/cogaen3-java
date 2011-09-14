@@ -47,7 +47,7 @@ public class ResourceService extends AbstractService {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.resource.ResourceService");
 	public static final String NAME = "Cogaen Resource Service";
-	private static final String LOGGING_SOURCE = "RSRC";
+	public static final String LOGGING_SOURCE = "RSRC";
 	
 	private Map<CogaenId, List<ResourceHandle>> groups = new HashMap<CogaenId, List<ResourceHandle>>();
 	private Map<CogaenId, ResourceHandle> resources = new HashMap<CogaenId, ResourceHandle>();
@@ -162,16 +162,16 @@ public class ResourceService extends AbstractService {
 		this.logger.logNotice(LOGGING_SOURCE, "unloading resource group " + groupId);
 		for (ResourceHandle handle : group) {
 			if (handle.isLoaded()) {
-				handle.unload();
+				handle.unload(getCore());
 			}
 		}
 	}
 		
 	public void unloadAll() {
-		this.logger.logInfo(LOGGING_SOURCE, "unloading resources");
+		this.logger.logNotice(LOGGING_SOURCE, "unloading resources");
 		for (ResourceHandle handle : this.resources.values()) {
 			if (handle.isLoaded()) {
-				handle.unload();
+				handle.unload(getCore());
 			}
 		}
 	}
@@ -183,7 +183,6 @@ public class ResourceService extends AbstractService {
 		}
 		
 		if (!handle.isLoaded()) {
-			this.logger.logWarning(LOGGING_SOURCE, "accessing uncached resource " + resourceId);
 			try {
 				handle.load(getCore());
 			} catch (ResourceException e) {
