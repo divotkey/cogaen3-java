@@ -72,4 +72,8 @@ public class SceneNode {
 	public void removeAllNodes() {
 		this.nodes.clear();
 	}
+
+	public void removeAllVisuals() {
+		this.visuals.clear();
+	}
 }

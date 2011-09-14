@@ -9,6 +9,8 @@ public class Color {
 	public static final Color GREEN = new Color(0, 1, 0);
 	public static final Color BLUE = new Color(0, 0, 1);
 	public static final Color YELLOW = new Color(1, 1, 0);
+	public static final Color WHITE = new Color(1, 1, 1);
+	public static final Color BLACK = new Color(0, 0, 0);
 	
 	private double red;
 	private double green;
@@ -16,7 +18,7 @@ public class Color {
 	private double alpha;
 	
 	public Color(double red, double green, double blue) {
-		this(red, green, blue, 0.0);
+		this(red, green, blue, 1.0);
 	}
 
 	public Color(double red, double green, double blue, double alpha) {

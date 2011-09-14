@@ -41,6 +41,7 @@ import org.cogaen.event.SimpleEvent;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.property.PropertyService;
+import org.cogaen.resource.ResourceService;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
@@ -76,6 +77,7 @@ public class SceneService extends AbstractService {
 		}
 		addDependency(EventService.ID);
 		addDependency(LoggingService.ID);
+		addDependency(ResourceService.ID);
 		
 		this.useProperties = true;
 		this.width = width;
@@ -85,6 +87,7 @@ public class SceneService extends AbstractService {
 		this.root = new SceneNode();
 
 		// turn off verbose logging of slick library
+		System.setProperty("org.newdawn.slick.pngloader", "true");
 		Log.setVerbose(false);
 	}
 	
@@ -97,7 +100,7 @@ public class SceneService extends AbstractService {
 	public String getName() {
 		return NAME;
 	}
-
+	
 	@Override
 	protected void doStart() throws ServiceException {
 		super.doStart();
@@ -116,8 +119,12 @@ public class SceneService extends AbstractService {
 		} catch (LWJGLException e) {
 			throw new ServiceException(e);
 		}		
+		
 		Display.setVSyncEnabled(true);
+		
 //		GL11.glEnable(GL11.GL_TEXTURE_2D);
+//    	GL11.glEnable(GL11.GL_BLEND);
+//		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	@Override
@@ -128,7 +135,6 @@ public class SceneService extends AbstractService {
 	}
 	
 	public void renderScene() {
-
 	    // Clear the screen and depth buffer
 	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);	
 		
@@ -174,6 +180,7 @@ public class SceneService extends AbstractService {
 		if (Display.isCloseRequested()) {
 			this.evtSrv.dispatchEvent(new SimpleEvent(WINDOW_CLOSE_REQUEST));
 		}
+//		Display.sync(60);
 	}
 
 	public void setTitle(String windowTitle) {
@@ -235,8 +242,7 @@ public class SceneService extends AbstractService {
 	        }
 
 	        Display.setDisplayMode(targetDisplayMode);
-	        Display.setFullscreen(fullscreen);
-				
+	        Display.setFullscreen(fullscreen);				
 	    } catch (LWJGLException e) {
 			throw new ServiceException("unable to setup display mode", e);
 	    }
@@ -295,6 +301,7 @@ public class SceneService extends AbstractService {
 	public void destroyAll() {
 		destroyAllCameras();
 		destroyAllSceneNodes();
+		this.root.removeAllVisuals();
 	}
 
 	public double getAspectRatio() {

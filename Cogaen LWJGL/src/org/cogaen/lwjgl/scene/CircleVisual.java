@@ -13,6 +13,8 @@ public class CircleVisual extends ColorVisual {
 	
 	@Override
 	public void render() {
+    	GL11.glDisable(GL11.GL_BLEND);
+		
 		getColor().apply();
 		
 		GL11.glBegin(GL11.GL_LINE_LOOP);

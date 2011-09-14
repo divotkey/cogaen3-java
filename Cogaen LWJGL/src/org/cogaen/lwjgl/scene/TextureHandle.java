@@ -4,9 +4,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.cogaen.core.Core;
+import org.cogaen.logging.LoggingService;
 import org.cogaen.resource.ResourceException;
 import org.cogaen.resource.ResourceHandle;
 import org.cogaen.resource.ResourceService;
+import org.lwjgl.opengl.Display;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
 
@@ -34,14 +36,20 @@ public class TextureHandle extends ResourceHandle {
 		}
 		try {
 			this.texture = TextureLoader.getTexture(this.format, in);
+			in.close();
 		} catch (IOException e) {
 			throw new ResourceException("unable to load texture", e);
 		}
+		LoggingService.getInstance(core).logInfo(ResourceService.LOGGING_SOURCE, "texture loaded " + this.filename);
 	}
 
 	@Override
-	public void unload() {
-		this.texture = null;
+	public void unload(Core core) {
+		if (Display.isCreated()) {
+			this.texture.release();
+			this.texture = null;
+			LoggingService.getInstance(core).logInfo(ResourceService.LOGGING_SOURCE, "texture unloaded " + this.filename);
+		}
 	}
 
 	@Override
