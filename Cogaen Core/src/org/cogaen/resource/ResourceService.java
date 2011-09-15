@@ -50,7 +50,8 @@ public class ResourceService extends AbstractService {
 	public static final String LOGGING_SOURCE = "RSRC";
 	
 	private Map<CogaenId, List<ResourceHandle>> groups = new HashMap<CogaenId, List<ResourceHandle>>();
-	private Map<CogaenId, ResourceHandle> resources = new HashMap<CogaenId, ResourceHandle>();
+	private Map<CogaenId, ResourceHandle> resourceMap = new HashMap<CogaenId, ResourceHandle>();
+	private Map<ResourceHandle, CogaenId> invResourceMap = new HashMap<ResourceHandle, CogaenId>();
 	private LoggingService logger;
 	
 	public static ResourceService getInstance(Core core) {
@@ -116,15 +117,17 @@ public class ResourceService extends AbstractService {
 	}
 	
 	public void declareResource(CogaenId resourceId, CogaenId groupId, ResourceHandle handle) {
-		ResourceHandle old = this.resources.put(resourceId, handle);
+		ResourceHandle old = this.resourceMap.put(resourceId, handle);
 		if (old != null) {
-			this.resources.put(resourceId, old);
+			this.resourceMap.put(resourceId, old);
 			throw new RuntimeException("ambiguous resource id " + groupId);
 		}
+		assert(!this.invResourceMap.containsKey(handle));
+		this.invResourceMap.put(handle, resourceId);
 		
 		List<ResourceHandle> group = this.groups.get(groupId);
 		if (group == null) {
-			this.resources.remove(resourceId);
+			this.resourceMap.remove(resourceId);
 			throw new RuntimeException("resource group does not exist " + groupId);
 		}
 		
@@ -132,7 +135,7 @@ public class ResourceService extends AbstractService {
 	}
 	
 	public boolean isDeclared(CogaenId resourceId) {
-		return this.resources.containsKey(resourceId);
+		return this.resourceMap.containsKey(resourceId);
 	}
 	
 	public void loadGroup(CogaenId groupId) {
@@ -146,6 +149,7 @@ public class ResourceService extends AbstractService {
 			if (!handle.isLoaded()) {
 				try {
 					handle.load(getCore());
+					this.logger.logInfo(LOGGING_SOURCE, "loaded resource " + this.invResourceMap.get(handle));
 				} catch (ResourceException e) {
 					this.logger.logWarning(LOGGING_SOURCE, "unable to load resource: " + e.getMessage());
 				}
@@ -169,7 +173,7 @@ public class ResourceService extends AbstractService {
 		
 	public void unloadAll() {
 		this.logger.logNotice(LOGGING_SOURCE, "unloading resources");
-		for (ResourceHandle handle : this.resources.values()) {
+		for (ResourceHandle handle : this.resourceMap.values()) {
 			if (handle.isLoaded()) {
 				handle.unload(getCore());
 			}
@@ -177,7 +181,7 @@ public class ResourceService extends AbstractService {
 	}
 	
 	public Object getResource(CogaenId resourceId) {
-		ResourceHandle handle = this.resources.get(resourceId);
+		ResourceHandle handle = this.resourceMap.get(resourceId);
 		if (handle == null) {
 			throw new RuntimeException("unknown resource " + resourceId);
 		}
