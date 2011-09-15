@@ -3,22 +3,29 @@ package org.cogaen.lwjgl.scene;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 
-public class SpriteVisual extends Visual {
+public class SpriteVisual extends ColorVisual {
 
 	private Texture texture;
 	private double halfWidth;
 	private double halfHeight;
-	private Color color = Color.WHITE;
 	
 	public SpriteVisual(Texture texture, double width, double height) {
+		super(Color.WHITE);
 		this.texture = texture;
 		this.halfWidth = width / 2;
 		this.halfHeight = height / 2;
 	}
 	
+	public void setAlpha(double alpha) {
+		getColor().setAlpha(alpha);
+	}
+	
 	@Override
 	public void render() {
-    	this.color.apply();
+		getColor().apply();
+		
+//		GL11.glColor4d(this.color., 1, 1, this.alpha);		
+//    	this.color.apply();
     	
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
     	GL11.glEnable(GL11.GL_BLEND);

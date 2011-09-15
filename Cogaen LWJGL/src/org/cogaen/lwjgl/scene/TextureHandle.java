@@ -40,7 +40,6 @@ public class TextureHandle extends ResourceHandle {
 		} catch (IOException e) {
 			throw new ResourceException("unable to load texture", e);
 		}
-		LoggingService.getInstance(core).logInfo(ResourceService.LOGGING_SOURCE, "texture loaded " + this.filename);
 	}
 
 	@Override
@@ -48,7 +47,6 @@ public class TextureHandle extends ResourceHandle {
 		if (Display.isCreated()) {
 			this.texture.release();
 			this.texture = null;
-			LoggingService.getInstance(core).logInfo(ResourceService.LOGGING_SOURCE, "texture unloaded " + this.filename);
 		}
 	}
 

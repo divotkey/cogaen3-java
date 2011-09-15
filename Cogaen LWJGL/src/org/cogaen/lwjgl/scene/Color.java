@@ -2,34 +2,71 @@ package org.cogaen.lwjgl.scene;
 
 import org.lwjgl.opengl.GL11;
 
-public class Color {
+public class Color implements ReadableColor {
 
-	public static final Color CYAN = new Color(0, 1, 1);
-	public static final Color RED = new Color(1, 0, 0);
-	public static final Color GREEN = new Color(0, 1, 0);
-	public static final Color BLUE = new Color(0, 0, 1);
-	public static final Color YELLOW = new Color(1, 1, 0);
-	public static final Color WHITE = new Color(1, 1, 1);
-	public static final Color BLACK = new Color(0, 0, 0);
+	public static final ReadableColor WHITE = new Color(1, 1, 1, 1);
+	public static final ReadableColor BLACK = new Color(0, 0, 0, 1);
+	public static final ReadableColor CYAN = new Color(0, 1, 1, 1);
+	public static final ReadableColor RED = new Color(1, 0, 0, 1);
+	public static final ReadableColor BLUE = new Color(0, 0, 1, 1);
+	public static final ReadableColor GREEN = new Color(0, 1, 0, 1);
 	
 	private double red;
 	private double green;
 	private double blue;
 	private double alpha;
 	
+	public Color(ReadableColor color) {
+		this(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+	}
+	
 	public Color(double red, double green, double blue) {
 		this(red, green, blue, 1.0);
 	}
-
+	
 	public Color(double red, double green, double blue, double alpha) {
-		this.red = red;
+		this.red = red; 
 		this.green = green;
 		this.blue = blue;
 		this.alpha = alpha;
 	}
 	
-	void apply() {
-		GL11.glColor4d(this.red, this.green, this.blue, this.alpha);		
+	public double getRed() {
+		return red;
+	}
+
+	public void setRed(double red) {
+		this.red = red;
+	}
+
+	public double getGreen() {
+		return green;
+	}
+
+	public void setGreen(double green) {
+		this.green = green;
+	}
+
+	public double getBlue() {
+		return blue;
+	}
+
+	public void setBlue(double blue) {
+		this.blue = blue;
+	}
+
+	public double getAlpha() {
+		return alpha;
+	}
+
+
+	public void setAlpha(double alpha) {
+		this.alpha = alpha;
+	}
+
+
+	public void apply() {
+		GL11.glColor4d(this.red, this.green, this.blue, this.alpha);
 	}
 	
 }

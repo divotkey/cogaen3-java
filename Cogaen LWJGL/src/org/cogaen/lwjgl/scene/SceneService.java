@@ -107,24 +107,26 @@ public class SceneService extends AbstractService {
 		
 		if (this.useProperties) {
 			PropertyService prpSrv = PropertyService.getInstance(getCore());
-			setDisplayMode(prpSrv.getIntProperty(WIDTH_PROP, this.width),
-					prpSrv.getIntProperty(HEIGHT_PROP, this.height),
-					prpSrv.getBoolProperty(FS_PROP, this.fullscreen));
-		} else {
-			setDisplayMode(this.width, this.height, this.fullscreen);
+			
+			this.fullscreen = prpSrv.getBoolProperty(FS_PROP,  this.fullscreen);
+			this.width = prpSrv.getIntProperty(WIDTH_PROP, this.width);
+			this.height = prpSrv.getIntProperty(HEIGHT_PROP, this.height);
 		}
+		setDisplayMode(this.width, this.height, true);
+		
 		try {
 			Display.create();
+			if (this.fullscreen) {
+				Display.setFullscreen(true);
+		        System.out.println("DM3: " + Display.getDisplayMode());
+
+			}
 			this.evtSrv = EventService.getInstance(getCore());
 		} catch (LWJGLException e) {
 			throw new ServiceException(e);
 		}		
 		
 		Display.setVSyncEnabled(true);
-		
-//		GL11.glEnable(GL11.GL_TEXTURE_2D);
-//    	GL11.glEnable(GL11.GL_BLEND);
-//		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
 	@Override
@@ -242,7 +244,7 @@ public class SceneService extends AbstractService {
 	        }
 
 	        Display.setDisplayMode(targetDisplayMode);
-	        Display.setFullscreen(fullscreen);				
+//	        Display.setFullscreen(fullscreen);				
 	    } catch (LWJGLException e) {
 			throw new ServiceException("unable to setup display mode", e);
 	    }
@@ -272,8 +274,7 @@ public class SceneService extends AbstractService {
 	}
 	
 	public Camera createCamera() {
-		DisplayMode mode = Display.getDisplayMode();
-		Camera camera = new Camera(mode.getWidth(), mode.getHeight());
+		Camera camera = new Camera(getScreenWidth(),getScreenHeight());
 		this.cameras.add(camera);
 		
 		return camera;
@@ -290,13 +291,16 @@ public class SceneService extends AbstractService {
 	}
 	
 	public int getScreenWidth() {
-		return Display.getDisplayMode().getWidth();
+		return this.width;
 	}
 
 	public int getScreenHeight() {
-		return Display.getDisplayMode().getHeight();
+		return this.height;
 	}
 
+	public double getAspectRatio() {
+		return (double) this.width / (double) this.height;
+	}
 	
 	public void destroyAll() {
 		destroyAllCameras();
@@ -304,8 +308,4 @@ public class SceneService extends AbstractService {
 		this.root.removeAllVisuals();
 	}
 
-	public double getAspectRatio() {
-		DisplayMode mode = Display.getDesktopDisplayMode();
-		return (double) mode.getWidth() / (double) mode.getHeight();
-	}
 }
