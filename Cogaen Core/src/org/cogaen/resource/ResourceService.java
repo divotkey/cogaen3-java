@@ -50,8 +50,8 @@ public class ResourceService extends AbstractService {
 	public static final String LOGGING_SOURCE = "RSRC";
 	
 	private Map<CogaenId, List<ResourceHandle>> groups = new HashMap<CogaenId, List<ResourceHandle>>();
-	private Map<CogaenId, ResourceHandle> resourceMap = new HashMap<CogaenId, ResourceHandle>();
-	private Map<ResourceHandle, CogaenId> invResourceMap = new HashMap<ResourceHandle, CogaenId>();
+	private Map<String, ResourceHandle> resourceMap = new HashMap<String, ResourceHandle>();
+	private Map<ResourceHandle, String> invResourceMap = new HashMap<ResourceHandle, String>();
 	private LoggingService logger;
 	
 	public static ResourceService getInstance(Core core) {
@@ -116,18 +116,18 @@ public class ResourceService extends AbstractService {
 		this.groups.put(groupId, new ArrayList<ResourceHandle>());
 	}
 	
-	public void declareResource(CogaenId resourceId, CogaenId groupId, ResourceHandle handle) {
-		ResourceHandle old = this.resourceMap.put(resourceId, handle);
+	public void declareResource(String name, CogaenId groupId, ResourceHandle handle) {
+		ResourceHandle old = this.resourceMap.put(name, handle);
 		if (old != null) {
-			this.resourceMap.put(resourceId, old);
+			this.resourceMap.put(name, old);
 			throw new RuntimeException("ambiguous resource id " + groupId);
 		}
 		assert(!this.invResourceMap.containsKey(handle));
-		this.invResourceMap.put(handle, resourceId);
+		this.invResourceMap.put(handle, name);
 		
 		List<ResourceHandle> group = this.groups.get(groupId);
 		if (group == null) {
-			this.resourceMap.remove(resourceId);
+			this.resourceMap.remove(name);
 			throw new RuntimeException("resource group does not exist " + groupId);
 		}
 		
@@ -180,10 +180,10 @@ public class ResourceService extends AbstractService {
 		}
 	}
 	
-	public Object getResource(CogaenId resourceId) {
-		ResourceHandle handle = this.resourceMap.get(resourceId);
+	public Object getResource(String name) {
+		ResourceHandle handle = this.resourceMap.get(name);
 		if (handle == null) {
-			throw new RuntimeException("unknown resource " + resourceId);
+			throw new RuntimeException("unknown resource " + name);
 		}
 		
 		if (!handle.isLoaded()) {
