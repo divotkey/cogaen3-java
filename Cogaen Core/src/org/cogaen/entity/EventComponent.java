@@ -20,7 +20,6 @@ public class EventComponent extends Component {
 		addDisengageEvent(disengageEvent);
 	}
 	
-	
 	@Override
 	public void engage() {
 		super.engage();
@@ -51,4 +50,6 @@ public class EventComponent extends Component {
 			this.disengageEvents.add(event);
 		}
 	}
+	
+	
 }

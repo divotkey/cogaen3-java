@@ -37,7 +37,7 @@ import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
 import org.cogaen.name.CogaenId;
 
-public class Entity implements Engageable, EventListener {
+public abstract class Entity implements Engageable, EventListener {
 
 	private Core core;
 	private CogaenId id;
@@ -75,4 +75,6 @@ public class Entity implements Engageable, EventListener {
 	public final Core getCore() {
 		return this.core;
 	}
+	
+	public abstract CogaenId getType();
 }

@@ -2,8 +2,10 @@ package org.cogaen.entity;
 
 import org.cogaen.core.Core;
 import org.cogaen.core.Engageable;
+import org.cogaen.event.Event;
+import org.cogaen.event.EventListener;
 
-public class Component implements Engageable {
+public class Component implements Engageable, EventListener {
 
 	private ComponentEntity parent;
 	private boolean engaged = false;
@@ -33,6 +35,11 @@ public class Component implements Engageable {
 	
 	public final Core getCore() {
 		return this.parent.getCore();
+	}
+
+	@Override
+	public void handleEvent(Event event) {
+		// intentionally left empty
 	}
 
 }

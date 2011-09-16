@@ -6,15 +6,18 @@ import java.util.List;
 import java.util.Map;
 
 import org.cogaen.core.Core;
+import org.cogaen.event.Event;
 import org.cogaen.name.CogaenId;
 
 public class ComponentEntity extends Entity {
 
 	private List<Component> components = new ArrayList<Component>();
 	private Map<CogaenId, Object> attributes = new HashMap<CogaenId, Object>();
+	private CogaenId type;
 	
-	public ComponentEntity(Core core, CogaenId id) {
+	public ComponentEntity(Core core, CogaenId id, CogaenId typeId) {
 		super(core, id);
+		this.type = typeId;
 	}
 
 	public final void addComponent(Component component) {
@@ -56,6 +59,19 @@ public class ComponentEntity extends Entity {
 			component.disengage();
 		}
 		super.disengage();
+	}
+
+	@Override
+	public CogaenId getType() {
+		return this.type;
+	}
+
+	@Override
+	public void handleEvent(Event event) {
+		super.handleEvent(event);
+		for (Component component : this.components) {
+			component.handleEvent(event);
+		}
 	}
 	
 }

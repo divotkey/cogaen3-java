@@ -95,6 +95,13 @@ public class EntityService extends AbstractService implements Updateable{
 		return this.entities.containsKey(entityId);
 	}
 	
+	public void removeAllEntities() {
+		for (Entity entity : this.entities.values()) {
+			entity.disengage();
+		}
+		this.entities.clear();
+	}
+	
 	public Entity getEntity(CogaenId entityId) {
 		Entity entity = this.entities.get(entityId);
 		
