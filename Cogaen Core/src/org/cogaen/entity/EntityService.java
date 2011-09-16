@@ -10,6 +10,7 @@ import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
 import org.cogaen.core.Updateable;
 import org.cogaen.name.CogaenId;
+import org.cogaen.util.Bag;
 
 public class EntityService extends AbstractService implements Updateable{
 
@@ -18,8 +19,9 @@ public class EntityService extends AbstractService implements Updateable{
 	
 	private Map<CogaenId, Entity> entities = new HashMap<CogaenId, Entity>();
 	private List<Entity> entitiesToRemove = new ArrayList<Entity>();
-	private List<Updateable> updateables = new ArrayList<Updateable>();
-	
+	private Bag<Updateable> updateables = new Bag<Updateable>();
+//	private List<Updateable> updateables = new ArrayList<Updateable>();
+//	private List<Entity> entititesToAdd = new ArrayList<Entity>();
 	public static EntityService getInstance(Core core) {
 		return (EntityService) core.getService(ID);
 	}
@@ -46,8 +48,8 @@ public class EntityService extends AbstractService implements Updateable{
 		}
 		this.entitiesToRemove.clear();
 		
-		for (Updateable updateable : this.updateables) {
-			updateable.update();
+		for (updateables.reset(); updateables.hasNext();) {
+			updateables.next().update();
 		}
 	}
 	
@@ -76,7 +78,7 @@ public class EntityService extends AbstractService implements Updateable{
 		}
 		super.doStop();
 	}
-
+	
 	public void addEntity(Entity entity) {
 		CogaenId id = entity.getId();
 		Entity old = this.entities.put(id, entity);
@@ -118,5 +120,5 @@ public class EntityService extends AbstractService implements Updateable{
 	
 	public void removeUpdateable(Updateable updateable) {
 		this.updateables.remove(updateable);
-	}
+	}	
 }
