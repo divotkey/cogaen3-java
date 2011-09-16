@@ -64,6 +64,12 @@ public class Color implements ReadableColor {
 		this.alpha = alpha;
 	}
 
+	public void setColor(ReadableColor color) {
+		this.red = color.getRed();
+		this.green = color.getGreen();
+		this.blue = color.getBlue();
+		this.alpha = color.getAlpha();
+	}
 
 	public void apply() {
 		GL11.glColor4d(this.red, this.green, this.blue, this.alpha);

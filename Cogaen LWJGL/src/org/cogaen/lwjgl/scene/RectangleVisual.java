@@ -14,9 +14,10 @@ public class RectangleVisual extends ColorVisual {
 	
 	@Override
 	public void render() {
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
     	GL11.glDisable(GL11.GL_BLEND);
-    	
 		getColor().apply();
+		
 	    GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex2d(-this.halfWidth, -this.halfHeight);
         GL11.glVertex2d(this.halfWidth, -this.halfHeight);

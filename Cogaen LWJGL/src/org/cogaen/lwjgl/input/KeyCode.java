@@ -9,4 +9,8 @@ public class KeyCode {
 	public static final int KEY_MINUS = 12;
 	public static final int KEY_ADD = 78;
 	public static final int KEY_SUBTRACT = 74;
+	public static final int KEY_A = 30;
+	public static final int KEY_W = 17;
+	public static final int KEY_S = 31;
+	public static final int KEY_D = 32;
 }

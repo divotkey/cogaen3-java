@@ -8,6 +8,7 @@ import org.cogaen.core.Engageable;
 import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
 import org.cogaen.event.EventService;
+import org.cogaen.name.CogaenId;
 
 public class KeyboardController implements Engageable, EventListener {
 
@@ -16,8 +17,10 @@ public class KeyboardController implements Engageable, EventListener {
 	private int vAxis[] = new int[2];
 	private List<Integer> buttons = new ArrayList<Integer>();
 	private boolean engaged;
+	private CogaenId entityId;
 	
-	public KeyboardController(Core core) {
+	public KeyboardController(Core core, CogaenId entityId) {
+		this.entityId = entityId;
 		this.evtSrv = EventService.getInstance(core);
 		
 		// initialize with default keys
@@ -69,17 +72,17 @@ public class KeyboardController implements Engageable, EventListener {
 
 	private void handleKey(int keyCode, boolean pressed) {
 		if (keyCode == hAxis[0]) {
-			this.evtSrv.dispatchEvent(new ControllerComponent.HorizontalUpdateEvent(pressed ? -1.0 : 0.0));
+			this.evtSrv.dispatchEvent(new ControllerComponent.HorizontalUpdateEvent(this.entityId, pressed ? -1.0 : 0.0));
 		} else if (keyCode == hAxis[1]) {
-			this.evtSrv.dispatchEvent(new ControllerComponent.HorizontalUpdateEvent(pressed ? 1.0 : 0.0));
+			this.evtSrv.dispatchEvent(new ControllerComponent.HorizontalUpdateEvent(this.entityId, pressed ? 1.0 : 0.0));
 		} else if (keyCode == vAxis[0]) {
-			this.evtSrv.dispatchEvent(new ControllerComponent.VerticalUpdateEvent(pressed ? 1.0 : 0.0));
+			this.evtSrv.dispatchEvent(new ControllerComponent.VerticalUpdateEvent(this.entityId, pressed ? 1.0 : 0.0));
 		}  else if (keyCode == vAxis[1]) {
-			this.evtSrv.dispatchEvent(new ControllerComponent.VerticalUpdateEvent(pressed ? -1.0 : 0.0));
+			this.evtSrv.dispatchEvent(new ControllerComponent.VerticalUpdateEvent(this.entityId, pressed ? -1.0 : 0.0));
 		} else {
 			int idx = this.buttons.indexOf(keyCode);
 			if (idx >= 0) {
-				this.evtSrv.dispatchEvent(new ControllerComponent.ButtonlUpdateEvent(pressed, idx));
+				this.evtSrv.dispatchEvent(new ControllerComponent.ButtonlUpdateEvent(this.entityId, pressed, idx));
 			}
 		}
 	}

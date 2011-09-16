@@ -46,7 +46,9 @@ public class ControllerComponent extends Component implements ControllerState, E
 		}
 		
 		UpdateEvent update = (UpdateEvent) event;
-		update.updateController(this);
+		if (update.getEntityId().equals(getParent().getId())) {
+			update.updateController(this);
+		}
 	}
 	
 	public double getVerticalPosition() {
@@ -64,10 +66,19 @@ public class ControllerComponent extends Component implements ControllerState, E
 	public static abstract class UpdateEvent extends Event {
 
 		public static final CogaenId TYPE_ID = new CogaenId("ControllerComponentUpdate");
+		private CogaenId entityId;
+		
+		public UpdateEvent(CogaenId entityId) {
+			this.entityId = entityId;
+		}
 		
 		@Override
 		public CogaenId getTypeId() {
 			return TYPE_ID;
+		}
+		
+		public CogaenId getEntityId() {
+			return this.entityId;
 		}
 		
 		public abstract void updateController(ControllerComponent comp);
@@ -77,7 +88,8 @@ public class ControllerComponent extends Component implements ControllerState, E
 		
 		private double vPos;
 		
-		public VerticalUpdateEvent(double vPos) {
+		public VerticalUpdateEvent(CogaenId entityId, double vPos) {
+			super(entityId);
 			this.vPos = vPos;
 		}
 
@@ -92,7 +104,8 @@ public class ControllerComponent extends Component implements ControllerState, E
 		
 		private double hPos;
 		
-		public HorizontalUpdateEvent(double hPos) {
+		public HorizontalUpdateEvent(CogaenId entityId, double hPos) {
+			super(entityId);
 			this.hPos = hPos;
 		}
 
@@ -108,8 +121,8 @@ public class ControllerComponent extends Component implements ControllerState, E
 		private boolean buttonState;
 		private int idx;
 		
-		
-		public ButtonlUpdateEvent(boolean buttonState, int idx) {
+		public ButtonlUpdateEvent(CogaenId entityId, boolean buttonState, int idx) {
+			super(entityId);
 			this.buttonState = buttonState;
 			this.idx = idx;
 		}
