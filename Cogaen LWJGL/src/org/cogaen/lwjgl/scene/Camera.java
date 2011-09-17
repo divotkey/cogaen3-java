@@ -34,6 +34,9 @@ import org.lwjgl.opengl.GL11;
 
 public class Camera {
 
+	private static final double DEG2RAD = Math.PI / 180.0;
+	private static final double RAD2DEG = 180.0 / Math.PI;
+	
 	private double posX;
 	private double posY;
 	private double angle;
@@ -59,12 +62,12 @@ public class Camera {
 		this.posY = y;
 	}
 	
-	public void setAngle(double a) {
-		this.angle = a;
+	public void setAngle(double angle) {
+		this.angle = angle * RAD2DEG;
 	}
 	
 	public double getAngle() {
-		return this.angle;
+		return this.angle * DEG2RAD;
 	}
 	
 	public double getZoom() {

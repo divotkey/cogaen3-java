@@ -3,9 +3,6 @@ package org.cogaen.lwjgl.scene;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cogaen.core.Core;
-import org.cogaen.time.TimeService;
-import org.cogaen.time.Timer;
 import org.lwjgl.opengl.GL11;
 
 public class ParticleSystem extends Visual {
@@ -19,7 +16,7 @@ public class ParticleSystem extends Visual {
 	
 	public ParticleSystem() {
 		PointEmitter pe = new PointEmitter();
-		pe.setRadius(15);
+		pe.setRadius(Math.PI / 8);
 		this.emitter = pe;
 	}
 	

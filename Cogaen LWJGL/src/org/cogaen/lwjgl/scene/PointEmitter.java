@@ -11,17 +11,16 @@ public class PointEmitter extends Emitter {
 	
 	@Override
 	public void emit(Particle particle) {
-		double r = this.radius * 2 * this.random.nextDouble();
-		double phi = this.angle + -r / 2 + r * this.random.nextDouble();
+		double phi = this.angle -this.radius / 2 + this.radius * this.random.nextDouble();
 		double speed = this.minLinearSpeed + this.maxLinearSpeed * this.random.nextDouble();
-		double radPhi = phi * Math.PI / 180;
-		double vx = -speed * Math.sin(radPhi);
-		double vy = speed * Math.cos(radPhi);
+		double vx = -speed * Math.sin(phi);
+		double vy = speed * Math.cos(phi);
 		
 		particle.setPosition(this.posX, this.posY, 0);
 		particle.setVelocity(vx, vy, 0);
+//		particle.setAcceleration(0, -9.81, 0);
 		particle.setAcceleration(0, 0, 0);
-		particle.setTimeToLive(0.2 + 1.8 * this.random.nextDouble());
+		particle.setTimeToLive(2.0);
 		particle.activate();
 	}
 

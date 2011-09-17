@@ -6,6 +6,9 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 
 public class SceneNode {
+	
+	private static final double DEG2RAD = Math.PI / 180.0;
+	private static final double RAD2DEG = 180.0 / Math.PI;
 
 	private List<Visual> visuals = new ArrayList<Visual>();
 	private List<SceneNode> nodes = new ArrayList<SceneNode>();
@@ -17,9 +20,20 @@ public class SceneNode {
 	public void setPose(double x, double y, double angle) {
 		this.posX = x;
 		this.posY = y;
-		this.angle = angle;
+		this.angle = angle * RAD2DEG;
 	}
 	
+	public double getPosX() {
+		return this.posX;
+	}
+	
+	public double getPosY() {
+		return this.posY;
+	}
+	
+	public double getAngle() {
+		return this.angle * DEG2RAD;
+	}
 	public SceneNode getParent() {
 		return this.parent;
 	}
