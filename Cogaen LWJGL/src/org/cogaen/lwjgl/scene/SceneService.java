@@ -42,10 +42,13 @@ import org.cogaen.logging.LoggingService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.property.PropertyService;
 import org.cogaen.resource.ResourceService;
+import org.cogaen.time.Clock;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.newdawn.slick.Font;
+import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.util.Log;
 
 public class SceneService extends AbstractService {
@@ -65,7 +68,15 @@ public class SceneService extends AbstractService {
 	private boolean useProperties;
 	private SceneNode root;
 	private List<Camera> cameras = new ArrayList<Camera>();
+	private List<RenderSubsystem> subSystems = new ArrayList<RenderSubsystem>();
+	private int frequency;
 	private LoggingService logger;
+	private Font font;
+	private Clock clock = new Clock();
+	private double fpsSum;
+	private int fpsAvg = 25;
+	private int fpsCnt = 0;
+	private String fps = new String("FPS:");
 	
 	public static SceneService getInstance(Core core) {
 		return (SceneService) core.getService(ID);
@@ -116,19 +127,19 @@ public class SceneService extends AbstractService {
 		
 		try {
 			Display.create();
-			if (this.fullscreen) {
-				Display.setFullscreen(true);
-		        System.out.println("DM3: " + Display.getDisplayMode());
-
-			}
+			this.frequency = Display.getDisplayMode().getFrequency();
+			setFullscreen(this.fullscreen);
 			this.evtSrv = EventService.getInstance(getCore());
 		} catch (LWJGLException e) {
 			throw new ServiceException(e);
 		}		
-		
 		Display.setVSyncEnabled(true);
+		
+		// font test
+		java.awt.Font awtFont = new java.awt.Font("Arial", java.awt.Font.PLAIN, 24);
+		this.font = new TrueTypeFont(awtFont, true);
 	}
-
+	
 	@Override
 	protected void doStop() {
 		this.evtSrv = null;
@@ -136,7 +147,22 @@ public class SceneService extends AbstractService {
 		super.doStop();
 	}
 	
+	public void addSubsystem(RenderSubsystem rs) {
+		this.subSystems.add(rs);
+	}
+	
+	public void removeSubsystem(RenderSubsystem rs) {
+		this.subSystems.remove(rs);
+	}
+	
 	public void renderScene() {
+		this.clock.tick();
+		this.fpsSum += this.clock.getDelta();
+		if (++this.fpsCnt >= this.fpsAvg) {
+			this.fpsCnt = 0;
+			this.fps = String.format("FPS: %2.2f", (1.0 / (this.fpsSum / this.fpsAvg)));
+			this.fpsSum = 0.0;
+		}
 	    // Clear the screen and depth buffer
 	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);	
 		
@@ -148,41 +174,32 @@ public class SceneService extends AbstractService {
 			camera.applyTransform();
 		    this.root.render();
 		}
+
+		for (RenderSubsystem rs : this.subSystems) {
+			rs.render();
+		}
 		
-//		GL11.glMatrixMode(GL11.GL_PROJECTION);
-//		GL11.glLoadIdentity();
-//		GL11.glOrtho(0, 800, 600, 0, 1, -1);
-//		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
+		// font test
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, this.width, this.height, 0, 1, -1);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);	
 		
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+//		GL11.glDisable(GL11.GL_TEXTURE_2D);
+    	GL11.glEnable(GL11.GL_BLEND);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glColor4d(1, 1, 1, 1);		
+//		font.drawString(5, 30, "THE LIGHTWEIGHT JAVA GAMES LIBRARY");		
+		font.drawString(10, 10, this.fps);		
 		
-//	    Texture texture = (Texture) ResourceService.getInstance(getCore()).getResource(new CogaenId("test"));
-//	    texture.bind();
-	    
-	    
-	    // set the color of the quad (R,G,B,A)
-//	    GL11.glColor3f(0.5f,0.5f,1.0f);
-	    	
-	    // draw quad
-//	    GL11.glBegin(GL11.GL_QUADS);
-//	    GL11.glTexCoord2f(0,0);
-//        GL11.glVertex2f(100,100);
-//
-//        GL11.glTexCoord2f(1,0);
-//        GL11.glVertex2f(100+200,100);
-//	
-//        GL11.glTexCoord2f(1,1);
-//        GL11.glVertex2f(100+200,100+200);
-//        
-//        GL11.glTexCoord2f(0,1);
-//		GL11.glVertex2f(100,100+200);
-//	    GL11.glEnd();
- 
 	    Display.update();		
 	
 		if (Display.isCloseRequested()) {
 			this.evtSrv.dispatchEvent(new SimpleEvent(WINDOW_CLOSE_REQUEST));
 		}
-//		Display.sync(60);
+		
+		Display.sync(this.frequency);
 	}
 
 	public void setTitle(String windowTitle) {
@@ -190,8 +207,12 @@ public class SceneService extends AbstractService {
 	}
 
 	public void setFullscreen(boolean fullscreen) throws ServiceException {
+		if (Display.isFullscreen() == fullscreen) {
+			return;
+		}
 		try {
 			Display.setFullscreen(fullscreen);
+			this.frequency = Display.getDisplayMode().getFrequency();
 		} catch (LWJGLException e) {
 			throw new ServiceException("unable to switch to fullscreen mode", e);
 		}

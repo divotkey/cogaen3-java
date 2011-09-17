@@ -13,4 +13,5 @@ public class KeyCode {
 	public static final int KEY_W = 17;
 	public static final int KEY_S = 31;
 	public static final int KEY_D = 32;
+	public static final int KEY_SPACE = 57;
 }
