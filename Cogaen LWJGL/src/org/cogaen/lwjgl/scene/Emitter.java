@@ -7,6 +7,8 @@ public abstract class Emitter {
 	protected double posY;
 	protected double angle;
 	
+	protected abstract Emitter newInstance();	
+	
 	public void setPose(double x, double y, double angle) {
 		this.posX = x;
 		this.posY = y;
@@ -23,4 +25,10 @@ public abstract class Emitter {
 	}
 	
 	public abstract void emit(Particle particle);
+
+	protected void copyFields(PointEmitter newInstance) {
+		newInstance.posX = this.posX;
+		newInstance.posY = this.posY;
+		newInstance.angle = this.angle;
+	}
 }

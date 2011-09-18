@@ -1,7 +1,9 @@
 package org.cogaen.lwjgl.scene;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
@@ -17,6 +19,7 @@ public class ParticleSystemService extends AbstractService implements Updateable
 	public static final String NAME = "Cogaen LWJGL Particle System Service";
 	
 	private List<ParticleSystem> particleSystems = new ArrayList<ParticleSystem>();
+	private Map<CogaenId, Pool> pools = new HashMap<CogaenId, Pool>();
 	private Timer timer;
 	
 	public static final ParticleSystemService getInstance(Core core) {
@@ -74,18 +77,111 @@ public class ParticleSystemService extends AbstractService implements Updateable
 		}
 	}
 	
-	public void addParticleSystem(ParticleSystem ps) {
-		this.particleSystems.add(ps);
+	public void createPool(CogaenId poolId) {
+		Pool old = this.pools.put(poolId, new Pool());
+		
+		if (old != null) {
+			this.pools.put(poolId, old);
+			throw new RuntimeException("particle system pool already exits id " + poolId);
+		}
 	}
 	
-	public void removeParticleSystem(ParticleSystem ps) {
-		this.particleSystems.remove(ps);
+	public void destroyPool(CogaenId poolId) {
+		Pool pool = this.pools.remove(poolId);
+		
+		if (pool == null) {
+			throw new RuntimeException("unkonwnn particle system pool  " + poolId);
+		}
+		
+		for (ParticleSystem ps : pool.systems) {
+			this.particleSystems.remove(ps);
+		}
 	}
-
+	
+	public void addToPool(CogaenId poolId, ParticleSystem ps, int n) {
+		addToPool(poolId, ps);
+		for (int i = 0; i < n - 1; ++i) {
+			addToPool(poolId, createParticleSystem(ps));
+		}
+	}
+	
+	public void addToPool(CogaenId poolId, ParticleSystem ps) {
+		Pool pool = this.pools.get(poolId);
+		if (pool == null) {
+			throw new RuntimeException("unkonwnn particle system pool  " + poolId);
+		}
+		pool.addParticleSystem(ps);
+	}
+	
+	public ParticleSystem getFromPool(CogaenId poolId) {
+		Pool pool = this.pools.get(poolId);
+		if (pool == null) {
+			throw new RuntimeException("unkonwnn particle system pool  " + poolId);
+		}
+		
+		return pool.getParticleSystem();
+	}
+	
+	public ParticleSystem createParticleSystem() {
+		ParticleSystem ps = new ParticleSystem();
+		
+		this.particleSystems.add(ps);
+		return ps;
+	}
+	
+	public ParticleSystem createParticleSystem(ParticleSystem ps) {
+		ParticleSystem newInstance = ps.newInstance();
+		
+		this.particleSystems.add(newInstance);
+		return newInstance;
+	}
+	
+	public void destroyParticleSystem(ParticleSystem ps) {
+		this.particleSystems.remove(ps);
+		for (Pool pool : this.pools.values()) {
+			pool.removeParticleSystem(ps);
+		}
+	}
+	
+	public void destroyAll() {
+		this.particleSystems.clear();
+		this.pools.clear();
+	}
+	
 	@Override
 	public void render() {
 		for (ParticleSystem ps : this.particleSystems) {
 			ps.render();
+		}
+	}
+	
+	private static class Pool {
+		
+		private List<ParticleSystem> systems = new ArrayList<ParticleSystem>();
+		private int idx = 0;
+		
+		public void addParticleSystem(ParticleSystem ps) {
+			this.systems.add(ps);
+		}
+		
+		public void removeParticleSystem(ParticleSystem ps) {
+			this.systems.remove(ps);
+			if (idx >= this.systems.size()) {
+				idx = 0;
+			}
+		}
+
+		public ParticleSystem getParticleSystem() {
+			if (systems.isEmpty()) {
+				return null;
+			}
+			
+			ParticleSystem ps = this.systems.get(idx++);
+			if (idx >= this.systems.size()) {
+				idx = 0;
+			}
+			
+			return ps;
 		}
 	}
 }

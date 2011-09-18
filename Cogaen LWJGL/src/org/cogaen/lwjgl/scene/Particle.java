@@ -59,6 +59,10 @@ public class Particle {
 		return this.position[1];
 	}
 
+	public double getAngle() {
+		return this.position[2];
+	}
+	
 	public double getLifeTime() {
 		return this.lifeTime;
 	}

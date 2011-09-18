@@ -199,7 +199,7 @@ public class SceneService extends AbstractService {
 			this.evtSrv.dispatchEvent(new SimpleEvent(WINDOW_CLOSE_REQUEST));
 		}
 		
-		Display.sync(this.frequency);
+//		Display.sync(this.frequency);
 	}
 
 	public void setTitle(String windowTitle) {

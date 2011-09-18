@@ -3,8 +3,6 @@ package org.cogaen.lwjgl.scene;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
 public class ParticleSystem extends Visual {
 
 	private List<Particle> particles = new ArrayList<Particle>();
@@ -13,11 +11,22 @@ public class ParticleSystem extends Visual {
 	private boolean active = false;
 	private double particlesToEmit;
 	private Emitter emitter;
+	private ParticleVisual particleVisual;
+	private double activationTime = 0;
+	private boolean autoOff = false;
 	
-	public ParticleSystem() {
-		PointEmitter pe = new PointEmitter();
-		pe.setRadius(Math.PI / 8);
-		this.emitter = pe;
+	ParticleSystem() {
+		// intentionally left empty
+	}
+	
+	ParticleSystem newInstance() {
+		ParticleSystem newInstance = new ParticleSystem();
+		
+		newInstance.particlesPerSecond = this.particlesPerSecond;
+		newInstance.emitter = this.emitter.newInstance();
+		newInstance.particleVisual = this.particleVisual.newIntance();
+		
+		return newInstance;
 	}
 	
 	public void setParticlesPerSecond(double pps) {
@@ -43,11 +52,18 @@ public class ParticleSystem extends Visual {
 	}
 	
 	void update(double dt) {
-		if (!this.active) {
-			return;
+		
+		if (this.autoOff) {
+			this.activationTime -= dt;
+			if (this.activationTime <= 0) {
+				setActive(false);
+				this.autoOff = false;
+			}
 		}
-
-		emit(dt);
+		
+		if (this.active) {
+			emit(dt);
+		}
 		
 		for (Particle particle : this.particles) {
 			if (!particle.isDead()) {
@@ -57,36 +73,15 @@ public class ParticleSystem extends Visual {
 	}
 	
 	public void render() {
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-    	GL11.glEnable(GL11.GL_BLEND);
-    	
-    	GL11.glBegin(GL11.GL_POINTS);
-//    	GL11.glPointSize(10);
+		this.particleVisual.applyProlog();
+		
 		for (Particle particle : this.particles) {
 			if (!particle.isDead()) {
-				GL11.glColor4d(1, 1, 1, particle.getLifeTime() /  particle.getTimeToLive());
-				GL11.glVertex2d(particle.getPosX(), particle.getPosY());
+				this.particleVisual.render(particle);
 			}
 		}
-		GL11.glEnd();
 		
-		
-//		double halfWidth = 0.02;
-//		double halfHeight = 0.02;
-//		for (Particle particle : this.particles) {
-//			if (!particle.isDead()) {
-//				GL11.glColor4d(1, 1, 1, particle.getLifeTime() /  particle.getTimeToLive());
-//				GL11.glPushMatrix();
-//				GL11.glTranslated(particle.getPosX(), particle.getPosY(), 0);
-//			    GL11.glBegin(GL11.GL_QUADS);
-//		        GL11.glVertex2d(-halfWidth, -halfHeight);
-//		        GL11.glVertex2d(halfWidth, -halfHeight);
-//		        GL11.glVertex2d(halfWidth,halfHeight);
-//				GL11.glVertex2d(-halfWidth, halfHeight);
-//			    GL11.glEnd();
-//				GL11.glPopMatrix();
-//			}
-//		}
+		this.particleVisual.applyEpilog();
 	}
 	
 	private void emit(double dt) {
@@ -124,5 +119,23 @@ public class ParticleSystem extends Visual {
 
 	public Emitter getEmitter() {
 		return this.emitter;
+	}
+	
+	public void setEmitter(Emitter emitter) {
+		this.emitter = emitter;
+	}
+
+	public ParticleVisual getParticleVisual() {
+		return this.particleVisual;
+	}
+	
+	public void setParticleVisual(ParticleVisual particleVisual) {
+		this.particleVisual = particleVisual;
+	}
+	
+	public void setActive(double t) {
+		setActive(true);
+		this.activationTime  = t;
+		this.autoOff  = true;
 	}
 }
