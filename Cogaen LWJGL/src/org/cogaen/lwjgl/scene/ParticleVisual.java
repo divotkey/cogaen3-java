@@ -4,8 +4,6 @@ public abstract class ParticleVisual {
 
 	private Color color = new Color(Color.WHITE);
 	
-	
-	
 	public final void setColor(ReadableColor color) {
 		this.color.setColor(color);
 	}

@@ -12,11 +12,14 @@ public class TextureParticleVisual extends ParticleVisual {
 	private double halfHeight;
 	private double startSize = 1;
 	private double endSize = 1;
+	private int displayList;
 	
 	public TextureParticleVisual(Texture texture, double width, double height) {
 		this.texture = texture;
 		this.halfWidth = width / 2;
 		this.halfHeight = height / 2;
+		
+		this.displayList = createDisplayList();
 	}
 	
 	TextureParticleVisual() {
@@ -32,10 +35,11 @@ public class TextureParticleVisual extends ParticleVisual {
 		instance.halfHeight = this.halfHeight;
 		instance.startSize = this.startSize;
 		instance.endSize = this.endSize;
+		instance.displayList = this.displayList;
 		
 		return instance;
 	}
-
+	
 	@Override
 	public void applyProlog() {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -43,11 +47,12 @@ public class TextureParticleVisual extends ParticleVisual {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 //		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
     	texture.bind();	
+//		GL11.glPushMatrix();
 	}
 
 	@Override
 	public void applyEpilog() {
-		
+//	    GL11.glPopMatrix();		
 	}
 
 	@Override
@@ -55,6 +60,7 @@ public class TextureParticleVisual extends ParticleVisual {
 		double p = particle.getLifeTime() /  particle.getTimeToLive();
 		double size = this.startSize * p + this.endSize * (1 - p);
 
+//		GL11.glLoadIdentity();
 		GL11.glPushMatrix();
 		GL11.glTranslated(particle.getPosX(), particle.getPosY(), 0);
 		GL11.glRotatef((float) (particle.getAngle() * RAD2DEG), 0, 0, 1);
@@ -62,22 +68,47 @@ public class TextureParticleVisual extends ParticleVisual {
 		
 		getColor().setAlpha(p);
 		getColor().apply();
-	    GL11.glBegin(GL11.GL_QUADS);
-	    GL11.glTexCoord2f(0.0f, this.texture.getHeight());
-	    GL11.glVertex2d(-this.halfWidth, -this.halfHeight);
-	    
-	    GL11.glTexCoord2f(this.texture.getWidth(), this.texture.getHeight());
-        GL11.glVertex2d(this.halfWidth, -this.halfHeight);
-        
-	    GL11.glTexCoord2f(this.texture.getWidth(), 0);
-        GL11.glVertex2d(this.halfWidth, this.halfHeight);
-        
-	    GL11.glTexCoord2f(0.0f, 0.0f);
-		GL11.glVertex2d(-this.halfWidth, this.halfHeight);
-	    GL11.glEnd();
-	    GL11.glPopMatrix();
+		
+		GL11.glCallList(this.displayList);
+		
+//	    GL11.glBegin(GL11.GL_QUADS);
+//	    GL11.glTexCoord2f(0.0f, this.texture.getHeight());
+//	    GL11.glVertex2d(-this.halfWidth, -this.halfHeight);
+//	    
+//	    GL11.glTexCoord2f(this.texture.getWidth(), this.texture.getHeight());
+//        GL11.glVertex2d(this.halfWidth, -this.halfHeight);
+//        
+//	    GL11.glTexCoord2f(this.texture.getWidth(), 0);
+//        GL11.glVertex2d(this.halfWidth, this.halfHeight);
+//        
+//	    GL11.glTexCoord2f(0.0f, 0.0f);
+//		GL11.glVertex2d(-this.halfWidth, this.halfHeight);
+//	    GL11.glEnd();
+		
+	    GL11.glPopMatrix();		
 	}
 
+	private int createDisplayList() {
+		int idx = GL11.glGenLists(1);
+		
+		GL11.glNewList(idx, GL11.GL_COMPILE);
+		    GL11.glBegin(GL11.GL_QUADS);
+		    GL11.glTexCoord2f(0.0f, this.texture.getHeight());
+		    GL11.glVertex2d(-this.halfWidth, -this.halfHeight);
+		    
+		    GL11.glTexCoord2f(this.texture.getWidth(), this.texture.getHeight());
+	        GL11.glVertex2d(this.halfWidth, -this.halfHeight);
+	        
+		    GL11.glTexCoord2f(this.texture.getWidth(), 0);
+	        GL11.glVertex2d(this.halfWidth, this.halfHeight);
+	        
+		    GL11.glTexCoord2f(0.0f, 0.0f);
+			GL11.glVertex2d(-this.halfWidth, this.halfHeight);
+		    GL11.glEnd();		
+		GL11.glEndList();
+		return idx;
+	}
+	
 	public double getStartSize() {
 		return startSize;
 	}

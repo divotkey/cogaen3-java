@@ -74,7 +74,7 @@ public class SceneService extends AbstractService {
 	private Font font;
 	private Clock clock = new Clock();
 	private double fpsSum;
-	private int fpsAvg = 25;
+	private int fpsAvg = 300;
 	private int fpsCnt = 0;
 	private String fps = new String("FPS:");
 	
@@ -138,6 +138,8 @@ public class SceneService extends AbstractService {
 		// font test
 		java.awt.Font awtFont = new java.awt.Font("Arial", java.awt.Font.PLAIN, 24);
 		this.font = new TrueTypeFont(awtFont, true);
+		
+		GL11.glDisable(GL11.GL_DEPTH);
 	}
 	
 	@Override
@@ -164,7 +166,8 @@ public class SceneService extends AbstractService {
 			this.fpsSum = 0.0;
 		}
 	    // Clear the screen and depth buffer
-	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);	
+//	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);	
+	    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);	
 		
 		for (Camera camera : cameras) {
 			if (!camera.isActive()) {
