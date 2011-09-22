@@ -67,6 +67,7 @@ public class SceneService extends AbstractService {
 	private boolean fullscreen;
 	private boolean useProperties;
 	private SceneNode root;
+	private SceneNode overlayRoot;
 	private List<Camera> cameras = new ArrayList<Camera>();
 	private List<RenderSubsystem> subSystems = new ArrayList<RenderSubsystem>();
 	private int frequency;
@@ -96,9 +97,12 @@ public class SceneService extends AbstractService {
 		this.fullscreen = fs;
 		
 		this.root = new SceneNode();
+		this.overlayRoot = new SceneNode();
 
-		// turn off verbose logging of slick library
+		// initialize texture loader
 		System.setProperty("org.newdawn.slick.pngloader", "true");
+		
+		// turn off verbose logging of slick library
 		Log.setVerbose(false);
 	}
 	
@@ -136,10 +140,11 @@ public class SceneService extends AbstractService {
 		Display.setVSyncEnabled(true);
 		
 		// font test
-		java.awt.Font awtFont = new java.awt.Font("Arial", java.awt.Font.PLAIN, 24);
+		java.awt.Font awtFont = new java.awt.Font("Arial", java.awt.Font.PLAIN, 16);
 		this.font = new TrueTypeFont(awtFont, true);
 		
 		GL11.glDisable(GL11.GL_DEPTH);
+		GL11.glDisable(GL11.GL_LIGHTING);		
 	}
 	
 	@Override
@@ -182,6 +187,14 @@ public class SceneService extends AbstractService {
 			rs.render();
 		}
 		
+		// draw overlays
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glLoadIdentity();
+		GL11.glOrtho(0, this.width, this.height, 0, 1, -1);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
+		
+		this.overlayRoot.render();
+		
 		// font test
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
@@ -192,9 +205,9 @@ public class SceneService extends AbstractService {
 //		GL11.glDisable(GL11.GL_TEXTURE_2D);
     	GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glColor4d(1, 1, 1, 1);		
+		GL11.glColor4d(1, 0, 1, 1);		
 //		font.drawString(5, 30, "THE LIGHTWEIGHT JAVA GAMES LIBRARY");		
-		font.drawString(10, 10, this.fps);		
+		font.drawString(10, this.height - 20, this.fps);		
 		
 	    Display.update();		
 	
@@ -285,9 +298,10 @@ public class SceneService extends AbstractService {
 	}
 	
 	public void destroyNode(SceneNode node) {
-		if (node == this.root) {
+		if (node == this.root || node == this.overlayRoot) {
 			throw new IllegalArgumentException("root scenen node must not be destroyed");
 		}
+		
 		if (!node.getParent().removeNode(node)) {
 			this.logger.logWarning(LOGGING_SOURCE, "attempt to destroy non-existing scene node");
 		}
@@ -295,6 +309,11 @@ public class SceneService extends AbstractService {
 	
 	public void destroyAllSceneNodes() {
 		this.root.removeAllNodes();
+		this.overlayRoot.removeAllNodes();
+	}
+	
+	public SceneNode getOverlayRoot() {
+		return this.overlayRoot;
 	}
 	
 	public Camera createCamera() {
