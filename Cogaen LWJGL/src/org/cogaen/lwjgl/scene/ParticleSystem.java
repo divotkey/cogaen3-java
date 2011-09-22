@@ -3,17 +3,23 @@ package org.cogaen.lwjgl.scene;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParticleSystem extends Visual {
+import org.lwjgl.opengl.GL11;
 
+public class ParticleSystem  {
+
+	private static final double RAD2DEG = 180.0 / Math.PI;
+	
 	private List<Particle> particles = new ArrayList<Particle>();
 	private int lastDead = 0;
 	private double particlesPerSecond;
 	private boolean active = false;
 	private double particlesToEmit;
 	private Emitter emitter;
-	private ParticleVisual particleVisual;
+	private Visual visual;
 	private double activationTime = 0;
 	private boolean autoOff = false;
+	private double startSize = 1.0;
+	private double endSize = 1.0;
 	
 	ParticleSystem() {
 		// intentionally left empty
@@ -24,7 +30,7 @@ public class ParticleSystem extends Visual {
 		
 		newInstance.particlesPerSecond = this.particlesPerSecond;
 		newInstance.emitter = this.emitter.newInstance();
-		newInstance.particleVisual = this.particleVisual.newIntance();
+		newInstance.visual = this.visual.newInstance();
 		
 		return newInstance;
 	}
@@ -73,17 +79,34 @@ public class ParticleSystem extends Visual {
 	}
 	
 	public void render() {
-		this.particleVisual.applyProlog();
+		this.visual.prolog();
 		
 		for (Particle particle : this.particles) {
 			if (!particle.isDead()) {
-				this.particleVisual.render(particle);
+				renderParticle(particle);
 			}
 		}
 		
-		this.particleVisual.applyEpilog();
+		this.visual.epilog();
 	}
 	
+	private void renderParticle(Particle particle) {
+		double p = particle.getLifeTime() /  particle.getTimeToLive();
+		double size = this.startSize * p + this.endSize * (1 - p);
+
+		GL11.glPushMatrix();
+		GL11.glTranslated(particle.getPosX(), particle.getPosY(), 0);
+		GL11.glRotatef((float) (particle.getAngle() * RAD2DEG), 0, 0, 1);
+		//GL11.glScaled(size, size, 1);
+		
+		this.visual.setScale(size);
+		this.visual.getColor().setAlpha(p);
+		this.visual.getColor().apply();
+		this.visual.render();
+		
+		GL11.glPopMatrix();
+	}
+
 	private void emit(double dt) {
 		this.particlesToEmit += this.particlesPerSecond * dt;
 		int n = (int) this.particlesToEmit;
@@ -125,17 +148,33 @@ public class ParticleSystem extends Visual {
 		this.emitter = emitter;
 	}
 
-	public ParticleVisual getParticleVisual() {
-		return this.particleVisual;
+	public Visual getVisual() {
+		return this.visual;
 	}
 	
-	public void setParticleVisual(ParticleVisual particleVisual) {
-		this.particleVisual = particleVisual;
+	public void setVisual(Visual visual) {
+		this.visual = visual;
 	}
 	
 	public void setActive(double t) {
 		setActive(true);
 		this.activationTime  = t;
 		this.autoOff  = true;
+	}
+
+	public void setStartSize(double size) {
+		this.startSize = size;
+	}
+	
+	public double getStartSize() {
+		return this.startSize;
+	}
+	
+	public void setEndSize(double size) {
+		this.endSize = size;
+	}
+	
+	public double getEndSize() {
+		return this.endSize;
 	}
 }

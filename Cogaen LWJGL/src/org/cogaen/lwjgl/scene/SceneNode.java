@@ -73,7 +73,9 @@ public class SceneNode {
 		GL11.glRotatef((float) this.angle, 0, 0, 1);
 		
 		for (Visual visual : this.visuals) {
+			visual.prolog();
 			visual.render();
+			visual.epilog();
 		}
 		
 		for (SceneNode node : this.nodes) {
