@@ -19,7 +19,7 @@ public class TextureParticleVisual extends ParticleVisual {
 		this.halfWidth = width / 2;
 		this.halfHeight = height / 2;
 		
-		this.displayList = createDisplayList();
+//		this.displayList = createDisplayList();
 	}
 	
 	TextureParticleVisual() {
@@ -45,14 +45,12 @@ public class TextureParticleVisual extends ParticleVisual {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
     	GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-//		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE);
     	texture.bind();	
-//		GL11.glPushMatrix();
 	}
 
 	@Override
 	public void applyEpilog() {
-//	    GL11.glPopMatrix();		
+		
 	}
 
 	@Override
@@ -60,7 +58,6 @@ public class TextureParticleVisual extends ParticleVisual {
 		double p = particle.getLifeTime() /  particle.getTimeToLive();
 		double size = this.startSize * p + this.endSize * (1 - p);
 
-//		GL11.glLoadIdentity();
 		GL11.glPushMatrix();
 		GL11.glTranslated(particle.getPosX(), particle.getPosY(), 0);
 		GL11.glRotatef((float) (particle.getAngle() * RAD2DEG), 0, 0, 1);
@@ -69,21 +66,21 @@ public class TextureParticleVisual extends ParticleVisual {
 		getColor().setAlpha(p);
 		getColor().apply();
 		
-		GL11.glCallList(this.displayList);
+//		GL11.glCallList(this.displayList);
 		
-//	    GL11.glBegin(GL11.GL_QUADS);
-//	    GL11.glTexCoord2f(0.0f, this.texture.getHeight());
-//	    GL11.glVertex2d(-this.halfWidth, -this.halfHeight);
-//	    
-//	    GL11.glTexCoord2f(this.texture.getWidth(), this.texture.getHeight());
-//        GL11.glVertex2d(this.halfWidth, -this.halfHeight);
-//        
-//	    GL11.glTexCoord2f(this.texture.getWidth(), 0);
-//        GL11.glVertex2d(this.halfWidth, this.halfHeight);
-//        
-//	    GL11.glTexCoord2f(0.0f, 0.0f);
-//		GL11.glVertex2d(-this.halfWidth, this.halfHeight);
-//	    GL11.glEnd();
+	    GL11.glBegin(GL11.GL_QUADS);
+	    GL11.glTexCoord2f(0.0f, this.texture.getHeight());
+	    GL11.glVertex2d(-this.halfWidth, -this.halfHeight);
+	    
+	    GL11.glTexCoord2f(this.texture.getWidth(), this.texture.getHeight());
+        GL11.glVertex2d(this.halfWidth, -this.halfHeight);
+        
+	    GL11.glTexCoord2f(this.texture.getWidth(), 0);
+        GL11.glVertex2d(this.halfWidth, this.halfHeight);
+        
+	    GL11.glTexCoord2f(0.0f, 0.0f);
+		GL11.glVertex2d(-this.halfWidth, this.halfHeight);
+	    GL11.glEnd();
 		
 	    GL11.glPopMatrix();		
 	}

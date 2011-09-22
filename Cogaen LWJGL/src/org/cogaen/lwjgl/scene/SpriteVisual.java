@@ -9,7 +9,7 @@ public class SpriteVisual extends ColorVisual {
 	private double halfWidth;
 	private double halfHeight;
 	
-	public SpriteVisual(Texture texture, double width, double height) {
+	SpriteVisual(Texture texture, double width, double height) {
 		super(Color.WHITE);
 		this.texture = texture;
 		this.halfWidth = width / 2;
@@ -23,10 +23,7 @@ public class SpriteVisual extends ColorVisual {
 	@Override
 	public void render() {
 		getColor().apply();
-		
-//		GL11.glColor4d(this.color., 1, 1, this.alpha);		
-//    	this.color.apply();
-    	
+		    	
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
     	GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
