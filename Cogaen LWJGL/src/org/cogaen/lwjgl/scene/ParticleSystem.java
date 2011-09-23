@@ -70,7 +70,7 @@ public class ParticleSystem  {
 		if (this.active) {
 			emit(dt);
 		}
-		
+
 		for (Particle particle : this.particles) {
 			if (!particle.isDead()) {
 				particle.update(dt);
@@ -80,7 +80,7 @@ public class ParticleSystem  {
 	
 	public void render() {
 		this.visual.prolog();
-		
+
 		for (Particle particle : this.particles) {
 			if (!particle.isDead()) {
 				renderParticle(particle);
