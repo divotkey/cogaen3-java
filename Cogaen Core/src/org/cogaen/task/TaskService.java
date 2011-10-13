@@ -81,5 +81,4 @@ public class TaskService extends AbstractService implements Updateable {
 			this.tasks.next().update();
 		}
 	}
-
 }

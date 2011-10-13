@@ -30,7 +30,9 @@
 
 package org.cogaen.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.cogaen.name.CogaenId;
@@ -40,7 +42,8 @@ public class Core {
 
 	private static final Version VERSION = new Version(3, 1, 0);
 	
-	private Map<CogaenId, Service> services = new HashMap<CogaenId, Service>();
+	private Map<CogaenId, Service> servicesMap = new HashMap<CogaenId, Service>();
+	private List<Service> services = new ArrayList<Service>();
 	private Bag<Updateable> updateables = new Bag<Updateable>();
 	private boolean running = false;
 	private double deltaTime;
@@ -51,11 +54,11 @@ public class Core {
 	}
 	
 	public boolean hasService(CogaenId serviceId) {
-		return this.services.containsKey(serviceId);
+		return this.servicesMap.containsKey(serviceId);
 	}
 	
 	public Service getService(CogaenId serviceId) {
-		Service srv = this.services.get(serviceId);
+		Service srv = this.servicesMap.get(serviceId);
 		if (srv == null) {
 			throw new RuntimeException("unknown service: " + serviceId);
 		}
@@ -68,22 +71,25 @@ public class Core {
 			throw new IllegalStateException();
 		}
 		
-		Service oldService = this.services.put(service.getId(), service);
+		Service oldService = this.servicesMap.put(service.getId(), service);
 		if (oldService != null) {
-			this.services.put(oldService.getId(), oldService);
+			this.servicesMap.put(oldService.getId(), oldService);
 			throw new RuntimeException("service with id " + oldService.getId() + " already added");
 		}
+		this.services.add(service);
 	}
 	
 	public void removeService(CogaenId serviceId) {
 		if (this.running) {
 			throw new IllegalStateException();
 		}		
-		this.services.remove(serviceId);
+		
+		Service service = this.servicesMap.remove(serviceId);
+		this.services.remove(service);
 	}
 	
 	public void startup() {
-		for (Service service : this.services.values()) {
+		for (Service service : this.servicesMap.values()) {
 			if (service.getStatus() != Service.Status.STARTED) {
 				startService(service);
 			}
@@ -93,7 +99,7 @@ public class Core {
 	
 	private void startService(Service service) {
 		for (int i = 0; i < service.numOfDependencies(); ++i) {
-			Service dependency = this.services.get(service.getDependency(i));
+			Service dependency = this.servicesMap.get(service.getDependency(i));
 			if (dependency == null) {
 				throw new RuntimeException("unresolved dependency: " + service.getDependency(i));
 			}
@@ -110,7 +116,7 @@ public class Core {
 	}
 	
 	private void stopService(Service service) {
-		for (Service srv : this.services.values()) {
+		for (Service srv : this.servicesMap.values()) {
 			if (srv != service) {
 				if (isDependent(srv, service.getId()) && srv.getStatus() != Service.Status.STOPPED) {
 					stopService(srv);
@@ -131,7 +137,7 @@ public class Core {
 	}
 
 	public void shutdown() {
-		for (Service service : this.services.values()) {
+		for (Service service : this.servicesMap.values()) {
 			if (service.getStatus() != Service.Status.STOPPED) {
 				stopService(service);
 			}
@@ -172,4 +178,11 @@ public class Core {
 		return VERSION;
 	}
 	
+	public int numServices() {
+		return this.servicesMap.size();
+	}
+	
+	public Service getService(int idx) {
+		return this.services.get(idx);
+	}
 }
