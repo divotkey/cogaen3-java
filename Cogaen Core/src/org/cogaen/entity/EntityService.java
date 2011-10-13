@@ -121,4 +121,8 @@ public class EntityService extends AbstractService implements Updateable{
 	public void removeUpdateable(Updateable updateable) {
 		this.updateables.remove(updateable);
 	}	
+	
+	public int numEntities() {
+		return this.entities.size();
+	}
 }

@@ -36,5 +36,4 @@ public abstract class AbstractTask implements Task {
 
 	@Override
 	public abstract void destroy();
-	
 }

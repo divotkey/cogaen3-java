@@ -50,6 +50,7 @@ public abstract class LoggingService extends AbstractService {
 	public static LogFilter EMERGENCY_LEVEL_FILTER = new LevelFilter(Priority.EMERGENCY);
 	
 	public List<LogFilter> filters = new ArrayList<LogFilter>();
+	public List<LogListener> listeners = new ArrayList<LogListener>();
 	
 	protected abstract void doLog(Priority priority, String source, String message);
 
@@ -60,6 +61,14 @@ public abstract class LoggingService extends AbstractService {
 	@Override
 	public final CogaenId getId() {
 		return ID;
+	}
+	
+	public final void addListener(LogListener listener) {
+		this.listeners.add(listener);
+	}
+	
+	public final void removeListener(LogListener listener) {
+		this.listeners.remove(listener);
 	}
 	
 	public final void addFilter(LogFilter filter) {
@@ -82,6 +91,9 @@ public abstract class LoggingService extends AbstractService {
 		}
 		
 		doLog(priority, source, message);
+		for (LogListener listener : this.listeners) {
+			listener.handleLogMessage(priority, source, message);
+		}
 	}
 
 	/**
@@ -92,7 +104,7 @@ public abstract class LoggingService extends AbstractService {
 	 * @param message message text to be logged.
 	 */
 	public final void log(Priority priority, String source, String message) {
-		filterLog(priority, source, message);		
+		filterLog(priority, source, message);			
 	}
 	
 	/** 
