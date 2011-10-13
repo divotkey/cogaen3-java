@@ -6,10 +6,12 @@ public class RectangleVisual extends Visual {
 
 	private double halfWidth;
 	private double halfHeight;
+	private int glMode;
 	
 	public RectangleVisual(double width, double height) {
 		this.halfWidth = width * 0.5;
 		this.halfHeight = height * 0.5;
+		this.glMode = GL11.GL_QUADS;
 	}
 	
 	private RectangleVisual() {
@@ -20,7 +22,7 @@ public class RectangleVisual extends Visual {
 	public void render() {
 		getColor().apply();
 		
-	    GL11.glBegin(GL11.GL_QUADS);
+	    GL11.glBegin(this.glMode);
         GL11.glVertex2d(-this.halfWidth * getScale(), -this.halfHeight * getScale());
         GL11.glVertex2d(this.halfWidth * getScale(), -this.halfHeight * getScale());
         GL11.glVertex2d(this.halfWidth * getScale(), this.halfHeight * getScale());
@@ -31,7 +33,7 @@ public class RectangleVisual extends Visual {
 	@Override
 	public void prolog() {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
-    	GL11.glDisable(GL11.GL_BLEND);
+    	GL11.glEnable(GL11.GL_BLEND);
 	}
 
 	@Override
@@ -45,8 +47,16 @@ public class RectangleVisual extends Visual {
 		super.copyFields(instance);
 		instance.halfWidth = this.halfWidth;
 		instance.halfHeight = this.halfHeight;
+		instance.glMode = this.glMode;
 		
 		return instance;
 	}
 
+	public void setFilled(boolean filled) {
+		this.glMode = filled ? GL11.GL_QUADS : GL11.GL_LINE_LOOP;
+	}
+	
+	public boolean isFilled() {
+		return this.glMode == GL11.GL_QUADS;
+	}
 }
