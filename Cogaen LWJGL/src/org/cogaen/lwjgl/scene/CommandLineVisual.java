@@ -2,6 +2,8 @@ package org.cogaen.lwjgl.scene;
 
 import org.cogaen.core.Core;
 import org.cogaen.resource.ResourceService;
+import org.cogaen.time.TimeService;
+import org.cogaen.time.Timer;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.TrueTypeFont;
 
@@ -10,12 +12,16 @@ public class CommandLineVisual extends Visual {
 
 	private static final double DEFAULT_WIDTH = 500;
 	private static final double LINE_SPACE = 1.0;
+	private static final double BLINK_TIME = 0.5;
 
 	private TrueTypeFont ttf;
 	private StringBuffer lines[];
 	private int curLine;
 	private double width = DEFAULT_WIDTH;
 	private double height;
+	private Timer timer;
+	private double timeStamp;
+	private boolean cursorOn;
 	
 	public CommandLineVisual(Core core, String fontRes, int numOfLines) {
 		this.ttf = (TrueTypeFont) ResourceService.getInstance(core).getResource(fontRes);
@@ -25,6 +31,9 @@ public class CommandLineVisual extends Visual {
 			this.lines[i] = new StringBuffer("");
 		}
 		this.height = this.ttf.getHeight() * this.lines.length * LINE_SPACE;
+		this.timer = TimeService.getInstance(core).getTimer();
+		this.timeStamp = this.timer.getTime() + BLINK_TIME;
+		this.cursorOn = true;
 	}
 	
 	CommandLineVisual() {
@@ -42,8 +51,18 @@ public class CommandLineVisual extends Visual {
 	public void render() {
 		GL11.glScaled(getScale(), getScale(), 1);
 		getColor().apply();
+		
+		if (this.timeStamp < this.timer.getTime()) {
+			this.timeStamp = this.timer.getTime() + BLINK_TIME;
+			this.cursorOn = !this.cursorOn;
+		}
+		
 		for (int i = 0; i < this.lines.length; ++i) {
-			this.ttf.drawString((float) (-this.width / 2), (float) (-this.height / 2 + i * ttf.getHeight() * LINE_SPACE), this.lines[i].toString());		
+			if (i == this.curLine && this.cursorOn) {
+				this.ttf.drawString((float) (-this.width / 2), (float) (-this.height / 2 + i * ttf.getHeight() * LINE_SPACE), this.lines[i].toString() + "_");		
+			} else {
+				this.ttf.drawString((float) (-this.width / 2), (float) (-this.height / 2 + i * ttf.getHeight() * LINE_SPACE), this.lines[i].toString());						
+			}
 		}
 	}
 
@@ -101,9 +120,13 @@ public class CommandLineVisual extends Visual {
 	}
 	
 	public void deleteLastChar() {
-		if (this.lines[this.curLine].length() >0) {
+		if (this.lines[this.curLine].length() > 0) {
 			this.lines[this.curLine].deleteCharAt(this.lines[this.curLine].length() - 1);
 		}
+	}
+	
+	public void clearLine() {
+		this.lines[this.curLine].setLength(0);
 	}
 	
 	public int curLineLengh() {
