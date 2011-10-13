@@ -5,9 +5,9 @@ import org.cogaen.resource.ResourceService;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.TrueTypeFont;
 
+@SuppressWarnings("deprecation")
 public class CommandLineVisual extends Visual {
 
-	private static final int DEFAULT_NUM_OF_LINES = 8;
 	private static final double DEFAULT_WIDTH = 500;
 	private static final double LINE_SPACE = 1.0;
 
