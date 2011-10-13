@@ -1,18 +1,25 @@
 package org.cogaen.lwjgl.scene;
 
+import org.cogaen.core.Core;
+import org.cogaen.resource.ResourceService;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.TrueTypeFont;
 
+@SuppressWarnings("deprecation")
 public class TextVisual extends Visual {
 
 	private TrueTypeFont ttf;
 	private String text;
+
+	public TextVisual(Core core, String fontRes) {
+		this(core, fontRes, "");
+	}
 	
-	public TextVisual(TrueTypeFont ttf, String text) {
-		this.ttf = ttf;
+	public TextVisual(Core core, String fontRes, String text) {
+		this.ttf = (TrueTypeFont) ResourceService.getInstance(core).getResource(fontRes);
 		this.text = text;
 	}
-
+	
 	TextVisual() {
 		// intentionally left empty
 	}
