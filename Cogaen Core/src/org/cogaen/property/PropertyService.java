@@ -161,6 +161,25 @@ public class PropertyService extends AbstractService {
 			return defaultValue;
 		}
 	}
+
+	public double getDoubleProperty(String key, double defaultValue) {
+		String value = getProperty(key);
+		if (value == null) {
+			setDoubleProperty(key, defaultValue);
+			return defaultValue;
+		}
+		
+		try {
+			return Double.parseDouble(value);
+		} catch (NumberFormatException e) {
+			this.logger.logError(LOGGING_SOURCE, "unable to read property value " + key + " as integer");
+			return defaultValue;
+		}
+	}
+
+	private void setDoubleProperty(String key, double value) {
+		setProperty(key, Double.toString(value));
+	}
 	
 	public double getDoubleProperty(String key, double defaultValue) {
 		String value = getProperty(key);
