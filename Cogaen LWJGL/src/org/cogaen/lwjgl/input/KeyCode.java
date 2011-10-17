@@ -48,7 +48,7 @@ public class KeyCode {
 	public static final int KEY_8 = 9;
 	public static final int KEY_9 = 10;
 	public static final int KEY_0 = 11;
-	
+	public static final int KEY_PERIOD = 52;
 	
 	public static final int KEY_BACKSLASH = 43;
 	
@@ -200,6 +200,9 @@ public class KeyCode {
 			
 		case KEY_BACKSLASH:
 			return '/';
+			
+		case KEY_PERIOD:
+			return '.';
 		}
 		
 		return 0;
