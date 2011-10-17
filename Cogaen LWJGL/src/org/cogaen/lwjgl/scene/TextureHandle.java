@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.cogaen.core.Core;
-import org.cogaen.logging.LoggingService;
 import org.cogaen.resource.ResourceException;
 import org.cogaen.resource.ResourceHandle;
 import org.cogaen.resource.ResourceService;

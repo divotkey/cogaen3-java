@@ -7,6 +7,7 @@ import org.cogaen.resource.ResourceException;
 import org.cogaen.resource.ResourceHandle;
 import org.newdawn.slick.TrueTypeFont;
 
+@SuppressWarnings("deprecation")
 public class FontHandle extends ResourceHandle {
 
 	public static final int PLAIN = Font.PLAIN;
