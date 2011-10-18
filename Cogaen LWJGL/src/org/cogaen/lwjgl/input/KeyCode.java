@@ -61,7 +61,17 @@ public class KeyCode {
 	public static final int KEY_LSHIFT = 42;	
 	public static final int KEY_RSHIFT = 54;	
 	public static final int KEY_F1 = 59;	
-	public static final int KEY_F2 = 60;	
+	public static final int KEY_F2 = 60;
+	public static final int KEY_F3 = 61;
+	public static final int KEY_F4 = 62;
+	public static final int KEY_F5 = 63;
+	public static final int KEY_F6 = 64;
+	public static final int KEY_F7 = 65;
+	public static final int KEY_F8 = 66;
+	public static final int KEY_F9 = 67;
+	public static final int KEY_F10 = 68;	
+	public static final int KEY_F11 = 87;	
+	public static final int KEY_F12 = 88;	
 	
 	
 	public static boolean isPrintable(int keyCode) {
@@ -79,6 +89,16 @@ public class KeyCode {
 		case KEY_DOWN:
 		case KEY_F1:
 		case KEY_F2:
+		case KEY_F3:
+		case KEY_F4:
+		case KEY_F5:
+		case KEY_F6:
+		case KEY_F7:
+		case KEY_F8:
+		case KEY_F9:
+		case KEY_F10:
+		case KEY_F11:
+		case KEY_F12:
 			return false;
 		}
 		

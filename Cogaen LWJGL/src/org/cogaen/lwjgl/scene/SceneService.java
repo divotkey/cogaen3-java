@@ -350,4 +350,8 @@ public class SceneService extends AbstractService {
 		this.root.removeAllVisuals();
 	}
 
+	public boolean isFullscreen() {
+		return Display.isFullscreen();
+	}
+
 }
