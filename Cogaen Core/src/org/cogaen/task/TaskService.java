@@ -81,4 +81,12 @@ public class TaskService extends AbstractService implements Updateable {
 			this.tasks.next().update();
 		}
 	}
+
+	public int numOfTasks() {
+		return this.tasks.size();
+	}
+
+	public Task getTask(int i) {
+		return this.tasks.get(i);
+	}
 }

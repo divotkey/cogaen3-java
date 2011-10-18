@@ -150,6 +150,25 @@ public class Bag<E> {
 		return this.remaining > 0;
 	}
 	
+	public E get(int idx) {
+		int j = 0;
+		for (int i = 0; i < this.size; ++i) {
+			if (elements[i] != null && j == idx) {
+				break;
+			} else {
+				j++;
+			}
+		}
+		
+		if (j < this.size && this.elements[j] != null) {
+			@SuppressWarnings("unchecked")
+			E result = (E) this.elements[j];
+			return result;
+		}
+		
+		throw new IndexOutOfBoundsException();
+	}
+	
 	public E next() {
 		if (this.remaining <= 0) {
 			return null;
