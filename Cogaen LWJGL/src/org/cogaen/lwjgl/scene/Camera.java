@@ -94,9 +94,10 @@ public class Camera {
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, this.viewport.getWidth(), 0, this.viewport.getHeight(), 1, -1);
 		GL11.glTranslated(this.viewport.getHalfWidth(), this.viewport.getHalfHeight(), 0.0);
-		GL11.glRotatef((float) this.angle, 0, 0, 1);
-		GL11.glTranslated(-this.posX, -this.posY, 0);
+		
 		GL11.glScaled(this.zoom, this.zoom, 0.0);
+		GL11.glRotatef((float) -this.angle, 0, 0, 1);
+		GL11.glTranslated(-this.posX, -this.posY, 0);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
 	}
 	
