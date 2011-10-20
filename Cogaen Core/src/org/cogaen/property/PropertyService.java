@@ -176,5 +176,19 @@ public class PropertyService extends AbstractService {
 			return defaultValue;
 		}
 	}
+
+	public double getDoubleProperty(String key) {
+		String value = getProperty(key);
+		if (value == null) {
+			return 0.0;
+		}
+		
+		try {
+			return Double.parseDouble(value);
+		} catch (NumberFormatException e) {
+			this.logger.logError(LOGGING_SOURCE, "unable to read property value " + key + " as double");
+			return 0;
+		}
+	}
 		
 }
