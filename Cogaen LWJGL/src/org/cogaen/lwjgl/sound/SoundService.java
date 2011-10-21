@@ -124,10 +124,22 @@ public class SoundService extends AbstractService {
 			throw new RuntimeException("unknown source pool " + poolId);
 		}
 		
+		destroyPool(pool);
+	}
+	
+	private void destroyPool(Pool pool) {
 		for (Source source : pool.sources) {
 			IntBuffer buffer = (IntBuffer) BufferUtils.createIntBuffer(1).put(source.getId()).rewind();
 			AL10.alDeleteSources(buffer);
+		}		
+	}
+	
+	public void destroyAllPools() {
+		for (Pool pool : this.pools.values()) {
+			destroyPool(pool);
 		}
+		
+		this.pools.clear();
 	}
 	
 	public Source getSource(CogaenId poolId) {
