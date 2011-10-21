@@ -138,6 +138,15 @@ public class PropertyService extends AbstractService {
 
 		return Boolean.parseBoolean(value);
 	}
+
+	public boolean getBoolProperty(String key) {
+		String value = getProperty(key);
+		if (value == null) {
+			return false;
+		}
+
+		return Boolean.parseBoolean(value);
+	}
 	
 	public void setBoolProperty(String key, boolean value) {
 		setProperty(key, Boolean.toString(value));
@@ -158,6 +167,20 @@ public class PropertyService extends AbstractService {
 		}
 	}
 
+	public int getIntProperty(String key) {
+		String value = getProperty(key);
+		if (value == null) {
+			return 0;
+		}
+		
+		try {
+			return Integer.parseInt(value);
+		} catch (NumberFormatException e) {
+			this.logger.logError(LOGGING_SOURCE, "unable to read property value " + key + " as integer");
+			return 0;
+		}
+	}
+	
 	private void setDoubleProperty(String key, double value) {
 		setProperty(key, Double.toString(value));
 	}
@@ -190,5 +213,5 @@ public class PropertyService extends AbstractService {
 			return 0;
 		}
 	}
-		
+			
 }
