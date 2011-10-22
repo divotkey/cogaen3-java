@@ -66,20 +66,22 @@ public class SceneNode {
 		return false;
 	}
 	
-	public void render() {
+	public void render(int mask) {
 		
 		GL11.glPushMatrix();
 		GL11.glTranslated(this.posX, this.posY, 0.0);
 		GL11.glRotatef((float) this.angle, 0, 0, 1);
 		
 		for (Visual visual : this.visuals) {
-			visual.prolog();
-			visual.render();
-			visual.epilog();
+			if ((visual.getMask() & mask) != 0) {
+				visual.prolog();
+				visual.render();
+				visual.epilog();
+			}
 		}
 		
 		for (SceneNode node : this.nodes) {
-			node.render();
+			node.render(mask);
 		}
 		
 		GL11.glPopMatrix();

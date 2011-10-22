@@ -149,9 +149,11 @@ public class ParticleSystemService extends AbstractService implements Updateable
 	}
 	
 	@Override
-	public void render() {
+	public void render(int mask) {
 		for (ParticleSystem ps : this.particleSystems) {
-			ps.render();
+			if ((ps.getVisual().getMask() & mask) != 0) {
+				ps.render();				
+			}
 		}
 	}
 	

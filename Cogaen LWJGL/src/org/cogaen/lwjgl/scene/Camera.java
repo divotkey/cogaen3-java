@@ -41,12 +41,21 @@ public class Camera {
 	private double posY;
 	private double angle;
 	private double zoom = 1.0;
+	private int width;
+	private int height;
 	private int mask = 0xFFFF;
 	private Viewport viewport;
 	private boolean active = true;
 	
 	Camera(int width, int height) {
+		this.width = width;
+		this.height = height;
 		this.viewport = new Viewport(0, 0, width, height);
+	}
+	
+	public void setViewPort(int x, int y, int width, int height) {
+		this.viewport.setUpperLeftPoint(x, y);
+		this.viewport.setDimensions(width, height);
 	}
 	
 	public int getMask() {
@@ -92,13 +101,14 @@ public class Camera {
 	void applyTransform() {	
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, this.viewport.getWidth(), 0, this.viewport.getHeight(), 1, -1);
-		GL11.glTranslated(this.viewport.getHalfWidth(), this.viewport.getHalfHeight(), 0.0);
+		GL11.glOrtho(0, this.width, 0, this.height, 1, -1);
+		GL11.glTranslated(this.width / 2, this.height / 2, 0.0);
 		
 		GL11.glScaled(this.zoom, this.zoom, 0.0);
 		GL11.glRotatef((float) -this.angle, 0, 0, 1);
 		GL11.glTranslated(-this.posX, -this.posY, 0);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
+		GL11.glViewport(this.viewport.getX(), this.viewport.getY(), this.viewport.getWidth(), this.viewport.getHeight());
 	}
 	
 }

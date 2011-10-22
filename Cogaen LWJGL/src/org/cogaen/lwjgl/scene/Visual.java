@@ -4,6 +4,7 @@ public abstract class Visual {
 
 	private Color color;
 	private double scale = 1.0;
+	private int mask = 0xFFFF;
 
 	public Visual() {
 		this(Color.CYAN);
@@ -29,10 +30,19 @@ public abstract class Visual {
 		return this.scale;
 	}
 	
+	public void setMask(int mask) {
+		this.mask = mask;
+	}
+	
+	public int getMask() {
+		return this.mask;
+	}
+	
 	
 	protected void copyFields(Visual newInstance) {
 		newInstance.color.setColor(this.color);
 		newInstance.scale = this.scale;
+		newInstance.mask = this.mask;
 	}
 	
 	public abstract void prolog();

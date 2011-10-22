@@ -90,7 +90,7 @@ public class SceneService extends AbstractService {
 		addDependency(EventService.ID);
 		addDependency(LoggingService.ID);
 		addDependency(ResourceService.ID);
-		
+
 		this.useProperties = true;
 		this.width = width;
 		this.height = height;
@@ -119,6 +119,7 @@ public class SceneService extends AbstractService {
 	@Override
 	protected void doStart() throws ServiceException {
 		super.doStart();
+		this.logger = LoggingService.getInstance(getCore());
 		
 		if (this.useProperties) {
 			PropertyService prpSrv = PropertyService.getInstance(getCore());
@@ -180,11 +181,11 @@ public class SceneService extends AbstractService {
 			}
 			
 			camera.applyTransform();
-		    this.root.render();
-		}
-
-		for (RenderSubsystem rs : this.subSystems) {
-			rs.render();
+		    this.root.render(camera.getMask());
+		    
+			for (RenderSubsystem rs : this.subSystems) {
+				rs.render(camera.getMask());
+			}
 		}
 		
 		// draw overlays
@@ -192,8 +193,9 @@ public class SceneService extends AbstractService {
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, this.width, this.height, 0, 1, -1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
+		GL11.glViewport(0, 0, this.width, this.height);
 		
-		this.overlayRoot.render();
+		this.overlayRoot.render(0xFFFFFFFF);
 		
 		// font test
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -323,7 +325,7 @@ public class SceneService extends AbstractService {
 	}
 
 	public void destroyCamera(Camera camera) {
-		if (this.cameras.remove(camera)) {
+		if (!this.cameras.remove(camera)) {
 			this.logger.logWarning(LOGGING_SOURCE, "attempt to destroy non-existing camera");			
 		}
 	}
