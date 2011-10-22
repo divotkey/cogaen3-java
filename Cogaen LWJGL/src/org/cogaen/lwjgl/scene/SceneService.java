@@ -82,6 +82,14 @@ public class SceneService extends AbstractService {
 	public static SceneService getInstance(Core core) {
 		return (SceneService) core.getService(ID);
 	}
+
+	public SceneService() {
+		this(0, 0, true, true);
+	}
+	
+	public SceneService(boolean useProperties) {
+		this(0, 0, true, useProperties);
+	}
 	
 	public SceneService(int width, int height, boolean fs, boolean useProperties) {
 		if (useProperties) {
@@ -127,6 +135,12 @@ public class SceneService extends AbstractService {
 			this.fullscreen = prpSrv.getBoolProperty(FS_PROP,  this.fullscreen);
 			this.width = prpSrv.getIntProperty(WIDTH_PROP, this.width);
 			this.height = prpSrv.getIntProperty(HEIGHT_PROP, this.height);
+		}
+		if (this.width <= 0) {
+			this.width = Display.getDesktopDisplayMode().getWidth();
+		}
+		if (this.height <= 0) {
+			this.height = Display.getDesktopDisplayMode().getHeight();
 		}
 		setDisplayMode(this.width, this.height, true);
 		
