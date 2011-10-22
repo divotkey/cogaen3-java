@@ -181,7 +181,7 @@ public class PropertyService extends AbstractService {
 		}
 	}
 	
-	private void setDoubleProperty(String key, double value) {
+	public void setDoubleProperty(String key, double value) {
 		setProperty(key, Double.toString(value));
 	}
 	
