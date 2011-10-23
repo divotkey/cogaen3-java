@@ -105,8 +105,6 @@ public class MultiLineLabelVisual extends Visual {
 				return false;
 			}
 			
-			System.out.println(this.lines[idx].toString());
-			
 			int i = this.lines[idx].length() - 1;
 			while (i > 0 && this.lines[idx].charAt(i) != ' ') {
 				--i;
@@ -114,8 +112,6 @@ public class MultiLineLabelVisual extends Visual {
 			String word = this.lines[idx].substring(i + 1, this.lines[idx].length());
 			this.lines[idx].delete(i, this.lines[idx].length());
 			this.lines[idx + 1].insert(0, word);
-			System.out.println(this.lines[idx].toString());
-			System.out.println(this.lines[idx + 1].toString());
 			
 			int oldCurX = -1;
 			if (idx == this.curY && this.curX > this.lines[idx].length()) {

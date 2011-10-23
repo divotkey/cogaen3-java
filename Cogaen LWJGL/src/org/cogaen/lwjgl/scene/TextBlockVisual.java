@@ -141,20 +141,25 @@ public class TextBlockVisual extends Visual {
 				return false;
 			}
 			
-			char ch = this.lines[idx].charAt(this.lines[idx].length() - 1);
-			this.lines[idx].deleteCharAt(this.lines[idx].length() - 1);
-			this.lines[idx + 1].insert(0, ch);
-
+			int i = this.lines[idx].length() - 1;
+			while (i > 0 && this.lines[idx].charAt(i) != ' ') {
+				--i;
+			}
+			String word = this.lines[idx].substring(i + 1, this.lines[idx].length());
+			this.lines[idx].delete(i, this.lines[idx].length());
+			this.lines[idx + 1].insert(0, word);
+			this.lines[idx + 1].insert(word.length(), ' ');
+			
 			int oldCurX = -1;
 			if (idx == this.curY && this.curX > this.lines[idx].length()) {
 				this.curY++;
 				oldCurX = this.curX;
-				this.curX = 1;
+				this.curX = word.length();
 			}
 			
 			if (!adjust(idx + 1)) {
-				this.lines[idx].append(ch);
-				this.lines[idx + 1].deleteCharAt(0);
+				this.lines[idx].append(word);
+				this.lines[idx + 1].delete(0, word.length());
 				if (oldCurX != -1) {
 					this.curY--;
 					this.curX = oldCurX;
@@ -173,6 +178,7 @@ public class TextBlockVisual extends Visual {
 			this.lines[this.curY].deleteCharAt(this.curX - 1);
 			this.curX--;
 			for (int i = this.curY + 1; i < this.lines.length; ++i) {
+				this.lines[this.curY].append(' ');
 				this.lines[this.curY].append(this.lines[i]);
 				this.lines[i].setLength(0);
 			}
@@ -189,7 +195,7 @@ public class TextBlockVisual extends Visual {
 		}
 			
 	}
-		
+	
 	public void left() {
 		if (this.curX > 0) {
 			this.curX--;
