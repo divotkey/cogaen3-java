@@ -105,20 +105,28 @@ public class MultiLineLabelVisual extends Visual {
 				return false;
 			}
 			
-			char ch = this.lines[idx].charAt(this.lines[idx].length() - 1);
-			this.lines[idx].deleteCharAt(this.lines[idx].length() - 1);
-			this.lines[idx + 1].insert(0, ch);
-
+			System.out.println(this.lines[idx].toString());
+			
+			int i = this.lines[idx].length() - 1;
+			while (i > 0 && this.lines[idx].charAt(i) != ' ') {
+				--i;
+			}
+			String word = this.lines[idx].substring(i + 1, this.lines[idx].length());
+			this.lines[idx].delete(i, this.lines[idx].length());
+			this.lines[idx + 1].insert(0, word);
+			System.out.println(this.lines[idx].toString());
+			System.out.println(this.lines[idx + 1].toString());
+			
 			int oldCurX = -1;
 			if (idx == this.curY && this.curX > this.lines[idx].length()) {
 				this.curY++;
 				oldCurX = this.curX;
-				this.curX = 1;
+				this.curX = word.length();
 			}
 			
 			if (!adjust(idx + 1)) {
-				this.lines[idx].append(ch);
-				this.lines[idx + 1].deleteCharAt(0);
+				this.lines[idx].append(word);
+				this.lines[idx + 1].delete(0, word.length());
 				if (oldCurX != -1) {
 					this.curY--;
 					this.curX = oldCurX;
