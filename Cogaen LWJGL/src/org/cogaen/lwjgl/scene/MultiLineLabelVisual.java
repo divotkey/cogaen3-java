@@ -45,10 +45,10 @@ public class MultiLineLabelVisual extends Visual {
 	@Override
 	public void render() {
 		GL11.glScaled(getScale(), getScale(), 1);
-		getColor().apply();
+		org.newdawn.slick.Color utilColor = new org.newdawn.slick.Color((int) (getColor().getRed() * 255), (int) (getColor().getGreen() * 255), (int) (getColor().getBlue() * 255), (int) (getColor().getAlpha() * 255));
 		
 		for (int i = 0; i < this.lines.length; ++i) {
-			this.ttf.drawString((float) (-this.width / 2), (float) (-this.height / 2 + i * ttf.getHeight() * LINE_SPACE), this.lines[i].toString());						
+			this.ttf.drawString((float) (-this.width / 2), (float) (-this.height / 2 + i * ttf.getHeight() * LINE_SPACE), this.lines[i].toString(), utilColor);						
 		}
 	}
 

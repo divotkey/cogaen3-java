@@ -38,7 +38,6 @@ public abstract class Visual {
 		return this.mask;
 	}
 	
-	
 	protected void copyFields(Visual newInstance) {
 		newInstance.color.setColor(this.color);
 		newInstance.scale = this.scale;
