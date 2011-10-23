@@ -12,6 +12,8 @@ import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.name.CogaenId;
+import org.cogaen.time.TimeService;
+import org.cogaen.time.Timer;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.openal.AL;
@@ -21,11 +23,12 @@ public class SoundService extends AbstractService {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.lwjgl.SoundService");	
 	public static final String NAME = "Cogaen LWJGL Sound Service";
+	private static final double SOUND_GAP = 0.2;
 	private static final String LOGGING_SOURCE = "SNDS";
 	
 	private Map<CogaenId, Pool> pools = new HashMap<CogaenId, Pool>();
 	private LoggingService logger;
-	
+	private Timer timer;
 		
 	/** Position of the listener. */
 	FloatBuffer listenerPos = (FloatBuffer)BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
@@ -58,6 +61,7 @@ public class SoundService extends AbstractService {
 	protected void doStart() throws ServiceException {
 		super.doStart();
 		this.logger = LoggingService.getInstance(getCore());
+		this.timer = TimeService.getInstance(getCore()).getTimer();
 		try {
 			AL.create();
 			AL10.alGetError();
@@ -101,7 +105,7 @@ public class SoundService extends AbstractService {
 	}
 	
 	public void createPool(CogaenId poolId) {
-		Pool old = this.pools.put(poolId, new Pool());
+		Pool old = this.pools.put(poolId, new Pool(this.timer));
 		
 		if (old != null) {
 			this.pools.put(poolId, old);
@@ -151,6 +155,17 @@ public class SoundService extends AbstractService {
 		return pool.getSource();
 	}
 	
+	public void playFromPool(CogaenId poolId) {
+		Pool pool = this.pools.get(poolId);
+		if (pool == null) {
+			throw new RuntimeException("unknown source pool " + poolId);						
+		}
+		
+		if (pool.isReady()) {
+			pool.getSource().play();			
+		}
+	}
+	
 	public void destroySource(Source source) {
 		IntBuffer buffer = (IntBuffer) BufferUtils.createIntBuffer(1).put(source.getId()).rewind();
 		AL10.alDeleteSources(buffer);
@@ -163,6 +178,12 @@ public class SoundService extends AbstractService {
 	private static class Pool {
 		private List<Source> sources = new ArrayList<Source>();
 		private int idx = 0;
+		private Timer timer;
+		private double timeStamp;
+		
+		public Pool(Timer timer) {
+			this.timer = timer;
+		}
 		
 		public void addSource(Source source) {
 			this.sources.add(source);
@@ -184,7 +205,13 @@ public class SoundService extends AbstractService {
 			if (idx >= this.sources.size()) {
 				idx = 0;
 			}
+			
+			this.timeStamp = this.timer.getTime();
 			return source;
+		}
+		
+		public boolean isReady() {
+			return this.timer.getTime() - this.timeStamp > SOUND_GAP;
 		}
 	}
 	
