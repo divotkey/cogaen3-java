@@ -137,13 +137,13 @@ public class TextBlockVisual extends Visual {
 			
 			char ch = this.lines[idx].charAt(this.lines[idx].length() - 1);
 			this.lines[idx].deleteCharAt(this.lines[idx].length() - 1);
-			this.lines[idx + 1].append(ch);
+			this.lines[idx + 1].insert(0, ch);
 
 			int oldCurX = -1;
-			if (idx == this.curY && this.curX == this.lines[idx].length()) {
+			if (idx == this.curY && this.curX > this.lines[idx].length()) {
 				this.curY++;
 				oldCurX = this.curX;
-				this.curX = 0;
+				this.curX = 1;
 			}
 			
 			if (!adjust(idx + 1)) {
@@ -183,7 +183,7 @@ public class TextBlockVisual extends Visual {
 	public void right() {
 		if (this.curX < this.lines[this.curY].length()) {
 			this.curX++;
-		} else if (this.curY < this.lines.length - 1) {
+		} else if (this.curY < this.lines.length - 1 && this.lines[this.curY + 1].length() > 0) {
 			this.curY++;
 			this.curX = 0;
 		}
