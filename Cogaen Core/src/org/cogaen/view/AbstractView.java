@@ -18,7 +18,7 @@ public class AbstractView implements Engageable {
 		this.core = core;
 	}
 	
-	public void addRepresentation(CogaenId entityId, EntityRepresentation er) {
+	public final void addRepresentation(CogaenId entityId, EntityRepresentation er) {
 		EntityRepresentation old = this.representations.put(entityId, er);
 		if (old != null) {
 			this.representations.put(entityId, old);
@@ -28,7 +28,7 @@ public class AbstractView implements Engageable {
 		er.engage();
 	}
 	
-	public void removeRepresentation(CogaenId entityId) {
+	public final void removeRepresentation(CogaenId entityId) {
 		EntityRepresentation er = this.representations.remove(entityId);
 		if (er == null) {
 			throw new RuntimeException("unknown entity id" + entityId);			
@@ -36,22 +36,22 @@ public class AbstractView implements Engageable {
 		er.disengage();
 	}
 	
-	public boolean hasRepresentation(CogaenId entityId) {
+	public final boolean hasRepresentation(CogaenId entityId) {
 		return this.representations.containsKey(entityId);
 	}
 	
-	public EntityRepresentation getRepresentation(CogaenId entityId) {
+	public final EntityRepresentation getRepresentation(CogaenId entityId) {
 		return this.representations.get(entityId);
 	}
 	
-	public void removeAllRepresentations() {
+	public final void removeAllRepresentations() {
 		for (EntityRepresentation er : this.representations.values()) {
 			er.disengage();
 		}
 		this.representations.clear();
 	}
 	
-	public void purgeRepresentation() {
+	public final void purgeRepresentation() {
 		this.representations.clear();
 	}
 	
