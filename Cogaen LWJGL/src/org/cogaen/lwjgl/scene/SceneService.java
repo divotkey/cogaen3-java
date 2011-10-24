@@ -51,6 +51,7 @@ import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.util.Log;
 
+@SuppressWarnings("deprecation")
 public class SceneService extends AbstractService {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.lwjgl.scene.SceneService");
@@ -70,7 +71,6 @@ public class SceneService extends AbstractService {
 	private SceneNode overlayRoot;
 	private List<Camera> cameras = new ArrayList<Camera>();
 	private List<RenderSubsystem> subSystems = new ArrayList<RenderSubsystem>();
-	private int frequency;
 	private LoggingService logger;
 	private Font font;
 	private Clock clock = new Clock();
@@ -146,7 +146,6 @@ public class SceneService extends AbstractService {
 		
 		try {
 			Display.create();
-			this.frequency = Display.getDisplayMode().getFrequency();
 			setFullscreen(this.fullscreen);
 			this.evtSrv = EventService.getInstance(getCore());
 		} catch (LWJGLException e) {
@@ -243,7 +242,6 @@ public class SceneService extends AbstractService {
 		}
 		try {
 			Display.setFullscreen(fullscreen);
-			this.frequency = Display.getDisplayMode().getFrequency();
 		} catch (LWJGLException e) {
 			throw new ServiceException("unable to switch to fullscreen mode", e);
 		}

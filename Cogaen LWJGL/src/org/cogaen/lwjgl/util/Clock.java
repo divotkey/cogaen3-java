@@ -39,9 +39,6 @@ import org.lwjgl.Sys;
  */
 public class Clock {
 
-	/** Duration of one nanosecond in seconds. */
-	private static final double ONE_NANOSECOND = 0.000000001;
-
 	/** Default value used to limit delta time. */
 	private static long DEFAULT_MAX_DELTA_TIME = 250000000;
 	
