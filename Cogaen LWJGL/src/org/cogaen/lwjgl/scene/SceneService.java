@@ -61,6 +61,8 @@ public class SceneService extends AbstractService {
 	private static final String WIDTH_PROP = "lwjgl.screenwidth";
 	private static final String HEIGHT_PROP = "lwjgl.screenheight";
 	private static final String FS_PROP = "lwjgl.fullscreen";
+	private static final boolean DEFAULT_VSYNC = true;
+	private static final String VSYNC_PROP = "lwjgl.vsync";
 	
 	private EventService evtSrv;
 	private int width;
@@ -69,6 +71,7 @@ public class SceneService extends AbstractService {
 	private boolean useProperties;
 	private SceneNode root;
 	private SceneNode overlayRoot;
+	private boolean vsync;
 	private List<Camera> cameras = new ArrayList<Camera>();
 	private List<RenderSubsystem> subSystems = new ArrayList<RenderSubsystem>();
 	private LoggingService logger;
@@ -128,13 +131,13 @@ public class SceneService extends AbstractService {
 	protected void doStart() throws ServiceException {
 		super.doStart();
 		this.logger = LoggingService.getInstance(getCore());
+		PropertyService prpSrv = PropertyService.getInstance(getCore());
 		
 		if (this.useProperties) {
-			PropertyService prpSrv = PropertyService.getInstance(getCore());
-			
 			this.fullscreen = prpSrv.getBoolProperty(FS_PROP,  this.fullscreen);
 			this.width = prpSrv.getIntProperty(WIDTH_PROP, this.width);
 			this.height = prpSrv.getIntProperty(HEIGHT_PROP, this.height);
+			this.vsync = prpSrv.getBoolProperty(VSYNC_PROP, DEFAULT_VSYNC);
 		}
 		if (this.width <= 0) {
 			this.width = Display.getDesktopDisplayMode().getWidth();
@@ -151,7 +154,8 @@ public class SceneService extends AbstractService {
 		} catch (LWJGLException e) {
 			throw new ServiceException(e);
 		}		
-		Display.setVSyncEnabled(true);
+		
+		Display.setVSyncEnabled(this.vsync);
 		
 		// font test
 		java.awt.Font awtFont = new java.awt.Font("Arial", java.awt.Font.PLAIN, 16);
@@ -367,5 +371,13 @@ public class SceneService extends AbstractService {
 	public boolean isFullscreen() {
 		return Display.isFullscreen();
 	}
-
+	
+	public void setVSync(boolean vsync) {
+		Display.setVSyncEnabled(vsync);
+		this.vsync = vsync;
+	}	
+	
+	public boolean isVSync() {
+		return this.vsync;
+	}
 }
