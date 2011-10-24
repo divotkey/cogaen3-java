@@ -208,7 +208,8 @@ public class SceneService extends AbstractService {
 		// draw overlays
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, this.width, this.height, 0, 1, -1);
+//		GL11.glOrtho(0, this.width, this.height, 0, 1, -1);
+		GL11.glOrtho(0, 1.0, 1.0 / getAspectRatio(), 0, 1, -1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
 		GL11.glViewport(0, 0, this.width, this.height);
 		
