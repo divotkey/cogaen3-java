@@ -38,6 +38,9 @@ import java.util.Map;
 import org.cogaen.name.CogaenId;
 import org.cogaen.util.Bag;
 
+/**
+ * The core is the central service locator in cogaen used to retrieve all kind of registered services.
+ */
 public class Core {
 
 	private static final Version VERSION = new Version(3, 1, 0);
@@ -49,14 +52,30 @@ public class Core {
 	private double deltaTime;
 	private double time;
 	
+	/**
+	 * Creates a new instance.
+	 */
 	public Core() {
 		// intentionally left empty
 	}
-	
+
+	/**
+	 * Queries if the specified service has exists.
+	 * 
+	 * @param serviceId {@link CogaenId} of the service that should be queried.
+	 * @return {@code true} if the specified service exists, {@code false} otherwise.
+	 */
 	public boolean hasService(CogaenId serviceId) {
 		return this.servicesMap.containsKey(serviceId);
 	}
 	
+	/**
+	 * Retrieves a Service with the specified id.
+	 * 
+	 * @param serviceId {@link CogaenId} of the service that should be retrieved.
+	 * @return Service specified by the given id.
+	 * @throws RuntimeException if no service with the specified id can be found.
+	 */
 	public Service getService(CogaenId serviceId) {
 		Service srv = this.servicesMap.get(serviceId);
 		if (srv == null) {
@@ -66,6 +85,13 @@ public class Core {
 		return srv;
 	}
 	
+	/**
+	 * Adds a service. 
+	 * 
+	 * @param service Service that should be added.
+	 * throws IllegalStateException if this core has been started.
+	 * throws RuntimeException if the id of the given service is ambiguous.
+	 */
 	public void addService(Service service) {
 		if (this.running) {
 			throw new IllegalStateException();
@@ -79,6 +105,13 @@ public class Core {
 		this.services.add(service);
 	}
 	
+	/**
+	 * Removes the specified service. Services can only be removed before a call to {@link startup} or
+	 * after a call of {@link shutdown}.
+	 * 
+	 * @param serviceId {@link CogaenId} of the service to be removed.
+	 * throws IllegalStateException if this core is running state.
+	 */
 	public void removeService(CogaenId serviceId) {
 		if (this.running) {
 			throw new IllegalStateException();
@@ -88,6 +121,10 @@ public class Core {
 		this.services.remove(service);
 	}
 	
+	/**
+	 * Starts all services.
+	 * After a successful call of this method this core is in 'running' state.
+	 */
 	public void startup() {
 		for (Service service : this.servicesMap.values()) {
 			if (service.getStatus() != Service.Status.STARTED) {
@@ -136,6 +173,10 @@ public class Core {
 		return false;
 	}
 
+	/**
+	 * Stops all services.
+	 * After a successful call to this method this core is in 'stopped' state.
+	 */
 	public void shutdown() {
 		for (Service service : this.servicesMap.values()) {
 			if (service.getStatus() != Service.Status.STOPPED) {
@@ -145,6 +186,13 @@ public class Core {
 		this.running = false;
 	}
 	
+	/**
+	 * Updates this core. 
+	 * The game time and all registered {@code Updateable} objects will be updated.
+	 * 
+	 * @param dt elapsed time in seconds.
+	 * @see addUpdateable
+	 */
 	public void update(double dt) {
 		this.deltaTime = dt;
 		this.time += dt;
@@ -158,6 +206,14 @@ public class Core {
 		}
 	}
 	
+	/**
+	 * Adds an Updateable to the list of objects to be updated when {@link update} is called.
+	 * In most cases a Service will implement the interface {@code Updateable} and 
+	 * register itself as as updatable, if the services needs to be updated each game loop cycle.
+	 * 
+	 * @param updateable {@code Updateable} to be added
+	 * @see Updateable
+	 */
 	public void addUpdateable(Updateable updateable) {
 		this.updateables.add(updateable);
 	}
@@ -170,18 +226,39 @@ public class Core {
 		return this.deltaTime;
 	}
 	
+	/**
+	 * Retrieves the current absolute game time.
+	 * 
+	 * @return game time in seconds.
+	 */
 	public double getTime() {
 		return this.time;
 	}
-	
+
+	/**
+	 * Retrieves the {@link Version} number of this core.
+	 * 
+	 * @return version number of this core.
+	 */
 	public Version getVersion() {
 		return VERSION;
 	}
 	
+	/**
+	 * Returns the number of added services. 
+	 * 
+	 * @return number of services.
+	 */
 	public int numServices() {
 		return this.servicesMap.size();
 	}
-	
+
+	/**
+	 * Retrieves the specified service.
+	 * 
+	 * @param idx index of service to Retrieve.
+	 * @return service with specified index.
+	 */
 	public Service getService(int idx) {
 		return this.services.get(idx);
 	}
