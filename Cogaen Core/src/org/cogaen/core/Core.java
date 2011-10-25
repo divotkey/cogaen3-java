@@ -39,7 +39,7 @@ import org.cogaen.name.CogaenId;
 import org.cogaen.util.Bag;
 
 /**
- * The core is the central service locator in cogaen used to retrieve all kind of registered services.
+ * The core is the central service locator in Cogaen used to retrieve all kind of registered services.
  */
 public class Core {
 
@@ -218,10 +218,18 @@ public class Core {
 		this.updateables.add(updateable);
 	}
 	
+	/**
+	 * Removes the given updateable from the list of objects to be updated.
+	 * @param updateable {@code Updateable} to be removed
+	 */
 	public void removeUpdateable(Updateable updateable) {
 		this.updateables.remove(updateable);
 	}
 
+	/**
+	 * Returns the last elapsed time in secondes.
+	 * @return elapsed time in seconds.
+	 */
 	public double getDeltaTime() {
 		return this.deltaTime;
 	}
