@@ -94,6 +94,12 @@ public class MultiLineLabelVisual extends Visual {
 	}
 	
 	public void setText(String str) {
+		for (int i = 0; i < this.lines.length; ++i) {
+			this.lines[i].setLength(0);
+			this.curX = 0;
+			this.curY = 0;
+		}
+		
 		for (int i = 0; i < str.length(); ++i) {
 			addChar(str.charAt(i));
 		}
