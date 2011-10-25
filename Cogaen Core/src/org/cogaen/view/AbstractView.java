@@ -18,6 +18,10 @@ public class AbstractView implements Engageable {
 		this.core = core;
 	}
 	
+	public void registerResources(CogaenId groupId) {
+		// intentionally left empty
+	}
+	
 	public final void addRepresentation(CogaenId entityId, EntityRepresentation er) {
 		EntityRepresentation old = this.representations.put(entityId, er);
 		if (old != null) {
