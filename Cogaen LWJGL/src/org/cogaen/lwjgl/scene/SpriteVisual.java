@@ -24,6 +24,11 @@ public class SpriteVisual extends Visual {
 		getColor().setAlpha(alpha);
 	}
 	
+	public void setSize(double width, double height) {
+		this.halfWidth = width / 2;
+		this.halfHeight = height / 2;
+	}
+	
 	@Override
 	public void render() {
 		getColor().apply();
