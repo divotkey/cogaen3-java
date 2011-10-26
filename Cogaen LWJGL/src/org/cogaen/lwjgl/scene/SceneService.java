@@ -69,7 +69,6 @@ public class SceneService extends AbstractService {
 	private int height;
 	private boolean fullscreen;
 	private boolean useProperties;
-	private SceneNode root;
 	private SceneNode overlayRoot;
 	private boolean vsync;
 	private List<Camera> cameras = new ArrayList<Camera>();
@@ -108,8 +107,7 @@ public class SceneService extends AbstractService {
 		this.height = height;
 		this.fullscreen = fs;
 		
-		this.root = new SceneNode();
-		this.layers.add(this.root);
+		this.layers.add(createNode());
 		this.overlayRoot = new SceneNode();
 
 		// initialize texture loader
@@ -163,7 +161,7 @@ public class SceneService extends AbstractService {
 		java.awt.Font awtFont = new java.awt.Font("Arial", java.awt.Font.PLAIN, 16);
 		this.font = new TrueTypeFont(awtFont, true);
 		
-		GL11.glDisable(GL11.GL_DEPTH);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_LIGHTING);		
 	}
 	
@@ -200,8 +198,8 @@ public class SceneService extends AbstractService {
 			}
 			
 			camera.applyTransform();
-			for (SceneNode root : this.layers) {
-				root.render(camera.getMask());
+			for (int i = this.layers.size() - 1; i >= 0; --i) {
+				this.layers.get(i).render(camera.getMask());
 			}
 		    
 			for (RenderSubsystem rs : this.subSystems) {
@@ -212,7 +210,6 @@ public class SceneService extends AbstractService {
 		// draw overlays
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-//		GL11.glOrtho(0, this.width, this.height, 0, 1, -1);
 		GL11.glOrtho(0, 1.0, 1.0 / getAspectRatio(), 0, 1, -1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
 		GL11.glViewport(0, 0, this.width, this.height);
@@ -309,13 +306,27 @@ public class SceneService extends AbstractService {
 	    }
 	}	
 
+	public int createLayer() {
+		this.layers.add(createNode());
+		return this.layers.size() - 1;
+	}
+	
+	public void ensuerNumOfLayers(int i) {
+		while (numLayers() < i) {
+			createLayer();
+		}
+	}
+	
+	public int numLayers() {
+		return this.layers.size();
+	}
 	
 	public SceneNode getLayer(int idx) {
 		return this.layers.get(idx);
 	}
 	
 	public SceneNode getRootNode() {
-		return this.root;
+		return getLayer(0);
 	}
 	
 	public SceneNode createNode() {
@@ -325,7 +336,7 @@ public class SceneService extends AbstractService {
 	}
 	
 	public void destroyNode(SceneNode node) {
-		if (this.layers.contains(root) || node == this.overlayRoot) {
+		if (this.layers.contains(node) || node == this.overlayRoot) {
 			throw new IllegalArgumentException("root scene node must not be destroyed");
 		}
 		
@@ -377,7 +388,9 @@ public class SceneService extends AbstractService {
 	public void destroyAll() {
 		destroyAllCameras();
 		destroyAllSceneNodes();
-		this.root.removeAllVisuals();
+		for (SceneNode node : this.layers) {
+			node.removeAllVisuals();
+		}
 	}
 
 	public boolean isFullscreen() {
@@ -392,4 +405,5 @@ public class SceneService extends AbstractService {
 	public boolean isVSync() {
 		return this.vsync;
 	}
+
 }
