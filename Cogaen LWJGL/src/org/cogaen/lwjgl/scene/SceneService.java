@@ -74,6 +74,7 @@ public class SceneService extends AbstractService {
 	private boolean vsync;
 	private List<Camera> cameras = new ArrayList<Camera>();
 	private List<RenderSubsystem> subSystems = new ArrayList<RenderSubsystem>();
+	private List<SceneNode> layers = new ArrayList<SceneNode>();
 	private LoggingService logger;
 	private Font font;
 	private Clock clock = new Clock();
@@ -108,6 +109,7 @@ public class SceneService extends AbstractService {
 		this.fullscreen = fs;
 		
 		this.root = new SceneNode();
+		this.layers.add(this.root);
 		this.overlayRoot = new SceneNode();
 
 		// initialize texture loader
@@ -198,7 +200,9 @@ public class SceneService extends AbstractService {
 			}
 			
 			camera.applyTransform();
-		    this.root.render(camera.getMask());
+			for (SceneNode root : this.layers) {
+				root.render(camera.getMask());
+			}
 		    
 			for (RenderSubsystem rs : this.subSystems) {
 				rs.render(camera.getMask());
@@ -304,6 +308,11 @@ public class SceneService extends AbstractService {
 			throw new ServiceException("unable to setup display mode", e);
 	    }
 	}	
+
+	
+	public SceneNode getLayer(int idx) {
+		return this.layers.get(idx);
+	}
 	
 	public SceneNode getRootNode() {
 		return this.root;
@@ -316,8 +325,8 @@ public class SceneService extends AbstractService {
 	}
 	
 	public void destroyNode(SceneNode node) {
-		if (node == this.root || node == this.overlayRoot) {
-			throw new IllegalArgumentException("root scenen node must not be destroyed");
+		if (this.layers.contains(root) || node == this.overlayRoot) {
+			throw new IllegalArgumentException("root scene node must not be destroyed");
 		}
 		
 		if (!node.getParent().removeNode(node)) {
@@ -326,7 +335,9 @@ public class SceneService extends AbstractService {
 	}
 	
 	public void destroyAllSceneNodes() {
-		this.root.removeAllNodes();
+		for (SceneNode root : this.layers) {
+			root.removeAllNodes();
+		}
 		this.overlayRoot.removeAllNodes();
 	}
 	
