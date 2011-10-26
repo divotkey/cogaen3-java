@@ -134,7 +134,7 @@ public class ResourceService extends AbstractService {
 		group.add(handle);
 	}
 	
-	public boolean isDeclared(CogaenId resourceId) {
+	public boolean isDeclared(String resourceId) {
 		return this.resourceMap.containsKey(resourceId);
 	}
 	
