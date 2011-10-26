@@ -8,6 +8,8 @@ import org.newdawn.slick.TrueTypeFont;
 @SuppressWarnings("deprecation")
 public class MultiLineLabelVisual extends Visual {
 
+	public enum Allignment {LEFT, CENTER, RIGHT};
+	
 	private static final double LINE_SPACE = 1.0;
 	private TrueTypeFont ttf;
 	private StringBuffer lines[];
@@ -15,6 +17,7 @@ public class MultiLineLabelVisual extends Visual {
 	private double height;
 	private int curX;
 	private int curY;
+	private Allignment allignment = Allignment.LEFT;
 	
 	public MultiLineLabelVisual(Core core, String fontRes, double width, double height) {
 		this.ttf = (TrueTypeFont) ResourceService.getInstance(core).getResource(fontRes);
@@ -48,7 +51,24 @@ public class MultiLineLabelVisual extends Visual {
 		org.newdawn.slick.Color utilColor = new org.newdawn.slick.Color((int) (getColor().getRed() * 255), (int) (getColor().getGreen() * 255), (int) (getColor().getBlue() * 255), (int) (getColor().getAlpha() * 255));
 		
 		for (int i = 0; i < this.lines.length; ++i) {
-			this.ttf.drawString((float) (-this.width / 2), (float) (-this.height / 2 + i * ttf.getHeight() * LINE_SPACE), this.lines[i].toString(), utilColor);						
+			switch (this.allignment) {
+			
+			case LEFT:
+				this.ttf.drawString((float) (-this.width / 2), (float) (-this.height / 2 + i * ttf.getHeight() * LINE_SPACE), this.lines[i].toString(), utilColor);						
+				break;
+				
+			case CENTER: {
+				float textWidth = this.ttf.getWidth(this.lines[i].toString());
+				this.ttf.drawString(-textWidth / 2, (float) (-this.height / 2 + i * ttf.getHeight() * LINE_SPACE), this.lines[i].toString(), utilColor);										
+				break;
+			}
+				
+			case RIGHT: {
+				float textWidth = this.ttf.getWidth(this.lines[i].toString());
+				this.ttf.drawString((float) (this.width / 2) - textWidth, (float) (-this.height / 2 + i * ttf.getHeight() * LINE_SPACE), this.lines[i].toString(), utilColor);						
+			}
+			
+			}
 		}
 	}
 
@@ -74,7 +94,7 @@ public class MultiLineLabelVisual extends Visual {
 	}
 
 	private void addChar(char ch) {
-		if (ch == '\n' && this.curY < this.lines.length) {
+		if (ch == '\n' && this.curY < this.lines.length - 1) {
 			this.curY++;
 			this.curX = 0;
 			return;
@@ -155,5 +175,13 @@ public class MultiLineLabelVisual extends Visual {
 	
 	public void setHeight(double height) {
 		this.height = height;
+	}
+
+	public Allignment getAllignment() {
+		return allignment;
+	}
+
+	public void setAllignment(Allignment allignment) {
+		this.allignment = allignment;
 	}
 }
