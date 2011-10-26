@@ -26,11 +26,11 @@ public class Source {
 		AL10.alSourcei(this.id, AL10.AL_BUFFER, sound.getBufferName() );
 	}
 	
-	public void play() {
+	public void playSound() {
 		AL10.alSourcePlay(this.id);
 	}
 	
-	public void stop() {
+	public void stopSound() {
 		AL10.alSourceStop(this.id);
 	}
 	

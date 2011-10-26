@@ -162,7 +162,7 @@ public class SoundService extends AbstractService {
 		}
 		
 		if (pool.isReady()) {
-			pool.getSource().play();			
+			pool.getSource().playSound();			
 		}
 	}
 	
