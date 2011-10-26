@@ -88,6 +88,7 @@ public class SoundService extends AbstractService {
 		int error = AL10.alGetError();
 		if (error != AL10.AL_NO_ERROR) {
 			this.logger.logError(LOGGING_SOURCE, "unable to create open al source, error: " + error);
+			throw new RuntimeException();
 		}
 		
 		Source source = new Source(buffer.get(0));
@@ -133,8 +134,14 @@ public class SoundService extends AbstractService {
 	
 	private void destroyPool(Pool pool) {
 		for (Source source : pool.sources) {
+			source.stopSound();
 			IntBuffer buffer = (IntBuffer) BufferUtils.createIntBuffer(1).put(source.getId()).rewind();
 			AL10.alDeleteSources(buffer);
+			
+			int error = AL10.alGetError();
+			if (error != AL10.AL_NO_ERROR) {
+				this.logger.logError(LOGGING_SOURCE, "unable to delete open al source, error: " + error);
+			}
 		}		
 	}
 	
@@ -167,8 +174,14 @@ public class SoundService extends AbstractService {
 	}
 	
 	public void destroySource(Source source) {
+		source.stopSound();
 		IntBuffer buffer = (IntBuffer) BufferUtils.createIntBuffer(1).put(source.getId()).rewind();
 		AL10.alDeleteSources(buffer);
+		
+		int error = AL10.alGetError();
+		if (error != AL10.AL_NO_ERROR) {
+			this.logger.logError(LOGGING_SOURCE, "unable to delete open al source, error: " + error);
+		}
 		
 		for (Pool pool : this.pools.values()) {
 			pool.removeSource(source);
