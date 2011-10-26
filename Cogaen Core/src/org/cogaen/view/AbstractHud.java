@@ -2,6 +2,7 @@ package org.cogaen.view;
 
 import org.cogaen.core.Core;
 import org.cogaen.core.Engageable;
+import org.cogaen.name.CogaenId;
 
 public class AbstractHud implements Engageable {
 
@@ -10,6 +11,10 @@ public class AbstractHud implements Engageable {
 	
 	public AbstractHud(Core core) {
 		this.core = core;
+	}
+
+	public void registerResources(CogaenId groupId) {
+		// intentionally left empty
 	}
 	
 	@Override
