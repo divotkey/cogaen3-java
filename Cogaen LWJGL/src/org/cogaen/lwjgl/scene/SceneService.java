@@ -102,7 +102,7 @@ public class SceneService extends AbstractService {
 		addDependency(LoggingService.ID);
 		addDependency(ResourceService.ID);
 
-		this.useProperties = true;
+		this.useProperties = useProperties;
 		this.width = width;
 		this.height = height;
 		this.fullscreen = fs;
