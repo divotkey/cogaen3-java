@@ -33,7 +33,7 @@ public class TextVisual extends Visual {
 
 	@Override
 	public void render() {
-		GL11.glScaled(getScale(), getScale(), 1);
+		GL11.glScaled(getScale(), -getScale(), 1);
 		getColor().apply();
 		this.ttf.drawString(0,  0, this.text);
 	}

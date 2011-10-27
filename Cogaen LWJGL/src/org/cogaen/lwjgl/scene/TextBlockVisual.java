@@ -55,7 +55,7 @@ public class TextBlockVisual extends Visual {
 
 	@Override
 	public void render() {
-		GL11.glScaled(getScale(), getScale(), 1);
+		GL11.glScaled(getScale(), -getScale(), 1);
 		getColor().apply();
 		
 		org.newdawn.slick.Color utilColor = new org.newdawn.slick.Color((int) (getColor().getRed() * 255), (int) (getColor().getGreen() * 255), (int) (getColor().getBlue() * 255), (int) (getColor().getAlpha() * 255));

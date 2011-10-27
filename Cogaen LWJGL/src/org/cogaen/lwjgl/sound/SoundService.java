@@ -23,7 +23,7 @@ public class SoundService extends AbstractService {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.lwjgl.SoundService");	
 	public static final String NAME = "Cogaen LWJGL Sound Service";
-	private static final double SOUND_GAP = 0.2;
+	private static final double SOUND_GAP = 0.05;
 	private static final String LOGGING_SOURCE = "SNDS";
 	
 	private Map<CogaenId, Pool> pools = new HashMap<CogaenId, Pool>();

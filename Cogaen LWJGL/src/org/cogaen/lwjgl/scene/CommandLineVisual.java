@@ -49,7 +49,7 @@ public class CommandLineVisual extends Visual {
 
 	@Override
 	public void render() {
-		GL11.glScaled(getScale(), getScale(), 1);
+		GL11.glScaled(getScale(), -getScale(), 1);
 		getColor().apply();
 		
 		if (this.timeStamp < this.timer.getTime()) {
