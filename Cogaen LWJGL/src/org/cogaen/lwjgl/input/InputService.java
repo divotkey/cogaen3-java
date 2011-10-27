@@ -31,6 +31,7 @@
 package org.cogaen.lwjgl.input;
 
 import org.cogaen.core.AbstractService;
+import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
 import org.cogaen.core.Updateable;
 import org.cogaen.event.EventService;
@@ -38,6 +39,7 @@ import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 public class InputService extends AbstractService implements Updateable {
 
@@ -45,6 +47,10 @@ public class InputService extends AbstractService implements Updateable {
 	public static final String NAME = "Cogaen LWJGL Input Service";
 
 	private EventService evtSrv;
+	
+	public static InputService getInstance(Core core) {
+		return (InputService) core.getService(ID);
+	}
 	
 	public InputService() {
 		addDependency(EventService.ID);
@@ -67,6 +73,7 @@ public class InputService extends AbstractService implements Updateable {
 		this.evtSrv = EventService.getInstance(getCore());
 		try {
 			Keyboard.create();
+			Mouse.create();
 		} catch (LWJGLException e) {
 			throw new ServiceException(e);
 		}
@@ -80,6 +87,7 @@ public class InputService extends AbstractService implements Updateable {
 			getCore().removeUpdateable(this);
 		}
 		
+		Mouse.destroy();
 		Keyboard.destroy();
 		this.evtSrv = null;
 		super.doStop();
@@ -106,6 +114,14 @@ public class InputService extends AbstractService implements Updateable {
 				this.evtSrv.dispatchEvent(new KeyReleasedEvent(Keyboard.getEventKey()));				
 			}
 		}
+	}
+	
+	public void hideMouseCursor() {
+		Mouse.setGrabbed(false);
+	}
+	
+	public void showMouseCursor() {
+		Mouse.setGrabbed(true);
 	}
 	
 }
