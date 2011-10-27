@@ -88,7 +88,6 @@ public class SoundService extends AbstractService {
 		int error = AL10.alGetError();
 		if (error != AL10.AL_NO_ERROR) {
 			this.logger.logError(LOGGING_SOURCE, "unable to create open al source, error: " + error);
-			throw new RuntimeException();
 		}
 		
 		Source source = new Source(buffer.get(0));
