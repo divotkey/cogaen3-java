@@ -67,7 +67,7 @@ public class Source {
 	public void reset() {
 		setPitch(1.0);
 		setGain(1.0);
-//		setVelocity(0, 0, 0);
-//		setPosition(0, 0, 0);
+		setVelocity(0, 0, 0);
+		setPosition(0, 0, 0);
 	}
 }

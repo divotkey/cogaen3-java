@@ -8,6 +8,7 @@ import org.cogaen.resource.ResourceException;
 import org.cogaen.resource.ResourceHandle;
 import org.cogaen.resource.ResourceService;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.openal.AL;
 import org.lwjgl.openal.AL10;
 import org.newdawn.slick.openal.WaveData;
 
@@ -52,6 +53,10 @@ public class SoundHandle extends ResourceHandle {
 
 	@Override
 	public void unload(Core core) throws ResourceException {
+		if (!AL.isCreated()) {
+			return;
+		}
+		
 		IntBuffer buffer = (IntBuffer) BufferUtils.createIntBuffer(1).put(this.sound.getBufferName()).rewind();
 		AL10.alDeleteBuffers(buffer);
 		int error = AL10.alGetError();

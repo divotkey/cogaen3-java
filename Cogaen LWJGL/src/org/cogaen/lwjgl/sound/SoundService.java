@@ -12,6 +12,7 @@ import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.name.CogaenId;
+import org.cogaen.resource.ResourceService;
 import org.cogaen.time.TimeService;
 import org.cogaen.time.Timer;
 import org.lwjgl.BufferUtils;
@@ -26,11 +27,10 @@ public class SoundService extends AbstractService {
 	private static final double SOUND_GAP = 0.05;
 	private static final String LOGGING_SOURCE = "SNDS";
 
-	private List<Source> sourcePool = new ArrayList<Source>();
+	private List<Source> sources = new ArrayList<Source>();
 	private Map<CogaenId, Pool> pools = new HashMap<CogaenId, Pool>();
 	private LoggingService logger;
 	private Timer timer;
-	private int dummyBuffer;
 		
 	/** Position of the listener. */
 	FloatBuffer listenerPos = (FloatBuffer)BufferUtils.createFloatBuffer(3).put(new float[] { 0.0f, 0.0f, 0.0f }).rewind();
@@ -47,6 +47,7 @@ public class SoundService extends AbstractService {
 	
 	public SoundService() {
 		addDependency(LoggingService.ID);
+		addDependency(ResourceService.ID);
 	}
 	
 	@Override
@@ -79,53 +80,28 @@ public class SoundService extends AbstractService {
 		int error = AL10.alGetError();
 		if (error != AL10.AL_NO_ERROR) {
 			this.logger.logError(LOGGING_SOURCE, "unable to initialize open al listener, error: " + error);
-		}
-		
-		IntBuffer buffer = BufferUtils.createIntBuffer(1);
-		AL10.alGenBuffers(buffer);
-		error = AL10.alGetError();
-		if (error != AL10.AL_NO_ERROR) {
-			throw new ServiceException("unable to create dummy buffer");
-		}
-		this.dummyBuffer = buffer.get(0);
+		}		
 	}
 
 	@Override
 	protected void doStop() {
-		for (Source source : this.sourcePool) {
-			destroyOpenAlSource(source.getId());
-		}
-		this.sourcePool.clear();
-		
-		IntBuffer buffer = (IntBuffer) BufferUtils.createIntBuffer(1).put(this.dummyBuffer).rewind();
-		AL10.alDeleteBuffers(buffer);
-		int error = AL10.alGetError();
-		if (error != AL10.AL_NO_ERROR) {
-			this.logger.logError(LOGGING_SOURCE, "unable to destroy dummy buffer");
-		}
-		
 		AL.destroy();
 		this.logger = null;
 		super.doStop();
 	}
 
 	public Source createSource() {
-		Source source;
-		if (this.sourcePool.size() == 0) {
-			IntBuffer buffer = BufferUtils.createIntBuffer(1);
-			AL10.alGenSources(buffer);
-			int error = AL10.alGetError();
-			if (error != AL10.AL_NO_ERROR) {
-				this.logger.logError(LOGGING_SOURCE, "unable to create open al source, error: " + error);
-			}
-			
-			source = new Source(this, buffer.get(0));
-		} else {
-			source = this.sourcePool.remove(this.sourcePool.size() - 1);
-			source.reset();
+		IntBuffer buffer = BufferUtils.createIntBuffer(1);
+		AL10.alGenSources(buffer);
+		int error = AL10.alGetError();
+		if (error != AL10.AL_NO_ERROR) {
+			this.logger.logError(LOGGING_SOURCE,
+					"unable to create open al source, error: " + error);
 		}
-		
-		return source;		
+
+		Source source = new Source(this, buffer.get(0));
+		this.sources.add(source);
+		return source;
 	}
 			
 	public boolean hasPool(CogaenId poolId) {
@@ -161,16 +137,7 @@ public class SoundService extends AbstractService {
 	
 	private void destroyPool(Pool pool) {
 		for (Source source : pool.sources) {
-			assert(!this.sourcePool.contains(source));
-			
-			source.stopSound();
-//			destroyOpenAlSource(source.getId());
-			AL10.alSourcei(source.getId(), AL10.AL_BUFFER, this.dummyBuffer);
-			int error = AL10.alGetError();
-			if (error != AL10.AL_NO_ERROR) {
-				this.logger.logError(LOGGING_SOURCE, "unable to release sound from open al source, error: " + error);
-			}				
-			this.sourcePool.add(source);
+			destroyOpenAlSource(source);
 		}		
 		pool.sources.clear();
 	}
@@ -181,6 +148,17 @@ public class SoundService extends AbstractService {
 		}
 		
 		this.pools.clear();
+	}
+	
+	public void destroyAllSources() {
+		while (this.sources.size() > 0) {
+			destroySource(this.sources.remove(this.sources.size() - 1));
+		}
+	}
+	
+	public void destroyAll() {
+		destroyAllSources();
+		destroyAllPools();
 	}
 	
 	public Source getSource(CogaenId poolId) {
@@ -203,28 +181,20 @@ public class SoundService extends AbstractService {
 		}
 	}
 
-	private void destroyOpenAlSource(int id) {
-		IntBuffer buffer = (IntBuffer) BufferUtils.createIntBuffer(1).put(id).rewind();
+	private void destroyOpenAlSource(Source source) {
+		IntBuffer buffer = (IntBuffer) BufferUtils.createIntBuffer(1).put(source.getId()).rewind();
 		AL10.alDeleteSources(buffer);
 		
 		int error = AL10.alGetError();
 		if (error != AL10.AL_NO_ERROR) {
 			this.logger.logError(LOGGING_SOURCE, "unable to delete open al source, error: " + error);
 		}		
+		
+		this.sources.remove(source);
 	}
 	
 	public void destroySource(Source source) {
-		if (this.sourcePool.contains(source)) {
-			throw new RuntimeException("source already destroyed");
-		}
-		source.stopSound();
-		AL10.alSourcei(source.getId(), AL10.AL_BUFFER, this.dummyBuffer);
-		int error = AL10.alGetError();
-		if (error != AL10.AL_NO_ERROR) {
-			this.logger.logError(LOGGING_SOURCE, "unable to release sound from open al source, error: " + error);
-		}				
-		this.sourcePool.add(source);
-//		destroyOpenAlSource(source.getId());
+		destroyOpenAlSource(source);
 		
 		for (Pool pool : this.pools.values()) {
 			pool.removeSource(source);
