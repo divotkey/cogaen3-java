@@ -18,7 +18,7 @@ public class CircleVisual extends Visual {
 		
 		GL11.glBegin(GL11.GL_LINE_LOOP);
 		double r = this.radius * getScale();
-		for (int i = 0; i < 360; i += 20) {
+		for (int i = 0; i < 360; i += 10) {
 			double degInRad = i * DEG2RAD;
 			GL11.glVertex2d(Math.cos(degInRad) * r, Math.sin(degInRad) * r);
 		}
