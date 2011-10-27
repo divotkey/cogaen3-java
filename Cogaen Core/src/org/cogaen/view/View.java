@@ -7,14 +7,14 @@ import org.cogaen.core.Core;
 import org.cogaen.core.Engageable;
 import org.cogaen.name.CogaenId;
 
-public class AbstractView implements Engageable {
+public class View implements Engageable {
 
 	private Core core;
 	private boolean engaged;
 
 	private Map<CogaenId, EntityRepresentation> representations = new HashMap<CogaenId, EntityRepresentation>();
 	
-	public AbstractView(Core core) {
+	public View(Core core) {
 		this.core = core;
 	}
 	
