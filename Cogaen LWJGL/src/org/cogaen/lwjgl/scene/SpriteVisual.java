@@ -8,6 +8,7 @@ public class SpriteVisual extends Visual {
 	private Texture texture;
 	private double halfWidth;
 	private double halfHeight;
+	private boolean flipVertical;
 	
 	SpriteVisual(Texture texture, double width, double height) {
 		super(Color.WHITE);
@@ -29,10 +30,21 @@ public class SpriteVisual extends Visual {
 		this.halfHeight = height / 2;
 	}
 	
+	public boolean isFlipVertical() {
+		return flipVertical;
+	}
+
+	public void setFlipVertical(boolean upsideDown) {
+		this.flipVertical = upsideDown;
+	}
+	
 	@Override
 	public void render() {
 		getColor().apply();
-		    	
+		
+		if (this.flipVertical) {
+			GL11.glScaled(1, -1, 1);
+		}
     	
 	    GL11.glBegin(GL11.GL_QUADS);
 	    GL11.glTexCoord2f(0.0f, this.texture.getHeight());
