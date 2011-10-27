@@ -54,11 +54,7 @@ public class View implements Engageable {
 		}
 		this.representations.clear();
 	}
-	
-	public final void purgeRepresentation() {
-		this.representations.clear();
-	}
-	
+		
 	@Override
 	public void engage() {
 		this.engaged = true;
@@ -66,7 +62,7 @@ public class View implements Engageable {
 
 	@Override
 	public void disengage() {
-		purgeRepresentation();
+		removeAllRepresentations();
 		this.engaged = false;
 	}
 

@@ -38,7 +38,7 @@ public abstract class ResourceHandle {
 	
 	public abstract void load(Core core) throws ResourceException;
 	
-	public abstract void unload(Core core);
+	public abstract void unload(Core core) throws ResourceException;
 	
 	public abstract Object getResource();
 }

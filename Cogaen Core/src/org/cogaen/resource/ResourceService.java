@@ -166,7 +166,12 @@ public class ResourceService extends AbstractService {
 		this.logger.logNotice(LOGGING_SOURCE, "unloading resource group " + groupId);
 		for (ResourceHandle handle : group) {
 			if (handle.isLoaded()) {
-				handle.unload(getCore());
+				try {
+					handle.unload(getCore());
+					this.logger.logInfo(LOGGING_SOURCE, "unloaded resource: " + this.invResourceMap.get(handle));					
+				} catch (ResourceException e) {
+					this.logger.logWarning(LOGGING_SOURCE, "unable to unload resource: " + e.getMessage());					
+				}
 			}
 		}
 	}
@@ -175,7 +180,12 @@ public class ResourceService extends AbstractService {
 		this.logger.logNotice(LOGGING_SOURCE, "unloading resources");
 		for (ResourceHandle handle : this.resourceMap.values()) {
 			if (handle.isLoaded()) {
-				handle.unload(getCore());
+				try {
+					handle.unload(getCore());
+					this.logger.logInfo(LOGGING_SOURCE, "unloaded resource: " + this.invResourceMap.get(handle));					
+				} catch (ResourceException e) {
+					this.logger.logWarning(LOGGING_SOURCE, "unable to unload resource: " + e.getMessage());					
+				}
 			}
 		}
 	}
