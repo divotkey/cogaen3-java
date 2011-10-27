@@ -40,7 +40,7 @@ public class BasicState implements State {
 		this.core = core;
 	}
 	
-	public Core getCore() {
+	public final Core getCore() {
 		return this.core;
 	}
 	
