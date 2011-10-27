@@ -56,10 +56,15 @@ public class TaskService extends AbstractService implements Updateable {
 
 	@Override
 	protected void doStop() {
-		this.logger = null;
 		if (getStatus() != Status.PAUSED) {
 			getCore().removeUpdateable(this);
 		}
+		
+		if (this.tasks.size() != 0) {
+			this.logger.logWarning(LOGGING_SOURCE, "num of tasks = " + this.tasks.size());
+		}
+		this.logger = null;
+		
 		super.doStop();
 	}
 	
