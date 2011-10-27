@@ -3,19 +3,19 @@ package org.cogaen.lwjgl.sound;
 import java.nio.FloatBuffer;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.openal.AL10;
+
 
 public class Source {
-	private int id;
-	private FloatBuffer pos = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] {0.0f, 0.0f, 0.0f}).rewind();
-	private FloatBuffer vel = (FloatBuffer) BufferUtils.createFloatBuffer(3).put(new float[] {0.0f, 0.0f, 0.0f}).rewind();
+	private FloatBuffer pos = BufferUtils.createFloatBuffer(3);
+	private FloatBuffer vel = BufferUtils.createFloatBuffer(3);
 	
-	public Source(int id) {
+	private int id;
+	private SoundService soundService;
+	
+	public Source(SoundService soundService, int id) {
+		this.soundService = soundService;
 		this.id = id;
-		AL10.alSourcef(this.id, AL10.AL_PITCH, 1.0f);
-		AL10.alSourcef(this.id, AL10.AL_GAIN, 1.0f);
-		AL10.alSource(this.id, AL10.AL_POSITION, this.pos);
-		AL10.alSource(this.id, AL10.AL_VELOCITY, this.vel);
+		reset();
 	}
 	
 	public int getId() {
@@ -23,35 +23,51 @@ public class Source {
 	}
 		
 	public void assignSound(Sound sound) {
-		AL10.alSourcei(this.id, AL10.AL_BUFFER, sound.getBufferName() );
+		this.soundService.assignSound(this.id, sound.getBufferName());
 	}
 	
 	public void playSound() {
-		AL10.alSourcePlay(this.id);
+		this.soundService.play(this.id);
 	}
 	
 	public void stopSound() {
-		AL10.alSourceStop(this.id);
+		this.soundService.stop(this.id);
 	}
 	
 	public void setPitch(double pitch) {
-		AL10.alSourcef(this.id, AL10.AL_PITCH, (float) pitch);
+		this.soundService.setPitch(this.id, pitch);
 	}
 	
 	public void setGain(double gain) {
-		AL10.alSourcef(this.id, AL10.AL_GAIN, (float) gain);		
+		this.soundService.setGain(this.id, gain);
 	}
 	
 	public void setPosition(double x, double y, double z) {
-		pos.rewind();
-		pos.put((float) x);
-		pos.put((float) y);
-		pos.put((float) z);
-		pos.rewind();
-		AL10.alSource(this.id, AL10.AL_POSITION, this.pos);
+		this.pos.rewind();
+		this.pos.put((float) x);
+		this.pos.put((float) y);
+		this.pos.put((float) z);
+		this.pos.rewind();
+		this.soundService.setPosition(this.id, this.pos);
 	}
 	
-	public void setLooping(boolean value) {
-		AL10.alSourcei(this.id, AL10.AL_LOOPING, value ? AL10.AL_TRUE : AL10.AL_FALSE);
+	public void setVelocity(double x, double y, double z) {
+		this.vel.rewind();
+		this.vel.put((float) x);
+		this.vel.put((float) y);
+		this.vel.put((float) z);
+		this.vel.rewind();
+		this.soundService.setVelocity(this.id, vel);
+	}
+	
+	public void setLooping(boolean looping) {
+		this.soundService.setLooping(this.id, looping);
+	}
+
+	public void reset() {
+		setPitch(1.0);
+		setGain(1.0);
+//		setVelocity(0, 0, 0);
+//		setPosition(0, 0, 0);
 	}
 }

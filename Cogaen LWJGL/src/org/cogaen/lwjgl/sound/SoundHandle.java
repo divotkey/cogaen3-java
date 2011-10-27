@@ -29,6 +29,10 @@ public class SoundHandle extends ResourceHandle {
 	public void load(Core core) throws ResourceException {
 		IntBuffer buffer = BufferUtils.createIntBuffer(1);
 		AL10.alGenBuffers(buffer);
+		int error = AL10.alGetError();
+		if (error != AL10.AL_NO_ERROR) {
+			throw new ResourceException("unable to create buffer, error: " + error);
+		}		
 		
 		InputStream is = ResourceService.getInstance(core).getStream(this.filename);
 		if (is == null) {
@@ -37,15 +41,23 @@ public class SoundHandle extends ResourceHandle {
 		
 		WaveData waveFile = WaveData.create(is);
 		AL10.alBufferData(buffer.get(0), waveFile.format, waveFile.data, waveFile.samplerate);
+		error = AL10.alGetError();
+		if (error != AL10.AL_NO_ERROR) {
+			throw new ResourceException("unable to load sound buffer, error: " + error);
+		}		
 		waveFile.dispose();
 		
 		this.sound = new Sound(buffer.get(0));
 	}
 
 	@Override
-	public void unload(Core core) {
+	public void unload(Core core) throws ResourceException {
 		IntBuffer buffer = (IntBuffer) BufferUtils.createIntBuffer(1).put(this.sound.getBufferName()).rewind();
 		AL10.alDeleteBuffers(buffer);
+		int error = AL10.alGetError();
+		if (error != AL10.AL_NO_ERROR) {
+			throw new ResourceException("unable to unload sound buffer, error: " + error);
+		}		
 		this.sound = null;
 	}
 
