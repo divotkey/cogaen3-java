@@ -295,7 +295,7 @@ public class SceneService extends AbstractService {
 	        }
 
 	        if (targetDisplayMode == null) {
-	            System.out.println("Failed to find value mode: "+width+"x"+height+" fs="+fullscreen);
+	        	this.logger.logWarning("LOGGING_SOURCE", "Failed to find value mode: " + width + "x" + height + " fs=" + fullscreen);
 	            return;
 	        }
 
