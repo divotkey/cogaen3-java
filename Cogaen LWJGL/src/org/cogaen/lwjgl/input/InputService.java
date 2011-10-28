@@ -117,11 +117,11 @@ public class InputService extends AbstractService implements Updateable {
 	}
 	
 	public void hideMouseCursor() {
-		Mouse.setGrabbed(false);
+		Mouse.setGrabbed(true);
 	}
 	
 	public void showMouseCursor() {
-		Mouse.setGrabbed(true);
+		Mouse.setGrabbed(false);
 	}
 	
 }
