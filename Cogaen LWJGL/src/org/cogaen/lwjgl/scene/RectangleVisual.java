@@ -59,4 +59,12 @@ public class RectangleVisual extends Visual {
 	public boolean isFilled() {
 		return this.glMode == GL11.GL_QUADS;
 	}
+
+	public void setWidth(double width) {
+		this.halfWidth = width / 2;
+	}
+	
+	public void setHeight(double height) {
+		this.halfHeight = height / 2;
+	}
 }
