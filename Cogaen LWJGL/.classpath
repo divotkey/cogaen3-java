@@ -3,8 +3,9 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/Cogaen Core"/>
-	<classpathentry kind="lib" path="lib/lwjgl.jar"/>
-	<classpathentry kind="lib" path="lib/slick-util.jar"/>
-	<classpathentry kind="lib" path="lib/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="lib271/jinput.jar"/>
+	<classpathentry kind="lib" path="lib271/lwjgl_util.jar"/>
+	<classpathentry kind="lib" path="lib271/lwjgl.jar"/>
+	<classpathentry kind="lib" path="lib271/slick-util.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
