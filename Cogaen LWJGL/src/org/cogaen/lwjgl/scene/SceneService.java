@@ -228,7 +228,7 @@ public class SceneService extends AbstractService {
     	GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glColor4d(1, 0, 1, 1);		
-		font.drawString(this.width - 100, 10, this.fps);		
+		font.drawString(5, this.height - 20, this.fps);		
 		
 	    Display.update();		
 	
