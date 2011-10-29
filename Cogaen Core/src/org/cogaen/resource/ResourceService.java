@@ -40,6 +40,7 @@ import java.util.Map;
 import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
+import org.cogaen.event.EventService;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.name.CogaenId;
 
@@ -48,11 +49,15 @@ public class ResourceService extends AbstractService {
 	public static final CogaenId ID = new CogaenId("org.cogaen.resource.ResourceService");
 	public static final String NAME = "Cogaen Resource Service";
 	public static final String LOGGING_SOURCE = "RSRC";
+	private static final double DEFAULT_DEFERRED_LOADING_DELAY = 0.01;
 	
 	private Map<CogaenId, List<ResourceHandle>> groups = new HashMap<CogaenId, List<ResourceHandle>>();
 	private Map<String, ResourceHandle> resourceMap = new HashMap<String, ResourceHandle>();
 	private Map<ResourceHandle, String> invResourceMap = new HashMap<ResourceHandle, String>();
 	private LoggingService logger;
+	private EventService evtSrv;
+	private boolean deferredLoading;
+	private double deferredLoadingDelay = DEFAULT_DEFERRED_LOADING_DELAY;
 	
 	public static ResourceService getInstance(Core core) {
 		return (ResourceService) core.getService(ID);
@@ -60,6 +65,7 @@ public class ResourceService extends AbstractService {
 	
 	public ResourceService() {
 		addDependency(LoggingService.ID);
+		addDependency(EventService.ID);
 	}
 	
 	@Override
@@ -76,11 +82,13 @@ public class ResourceService extends AbstractService {
 	protected void doStart() throws ServiceException {
 		super.doStart();
 		this.logger = LoggingService.getInstance(getCore());
+		this.evtSrv = EventService.getInstance(getCore());
 	}
 
 	@Override
 	protected void doStop() {
 		unloadAll();
+		this.evtSrv = null;
 		this.logger = null;
 		super.doStop();
 	}
@@ -120,7 +128,7 @@ public class ResourceService extends AbstractService {
 		ResourceHandle old = this.resourceMap.put(name, handle);
 		if (old != null) {
 			this.resourceMap.put(name, old);
-			throw new RuntimeException("ambiguous resource id " + groupId);
+			throw new RuntimeException("ambiguous resource name " + name);
 		}
 		assert(!this.invResourceMap.containsKey(handle));
 		this.invResourceMap.put(handle, name);
@@ -144,8 +152,13 @@ public class ResourceService extends AbstractService {
 			throw new RuntimeException("unonkown resource group " + groupId);
 		}
 		
-		this.logger.logNotice(LOGGING_SOURCE, "preloading resource group " + groupId);
+		if (!this.deferredLoading) {
+			this.logger.logNotice(LOGGING_SOURCE, "preloading resource group " + groupId);
+		}
+		
+		int cntLoaded = 0;
 		for (ResourceHandle handle : group) {
+			cntLoaded++;
 			if (!handle.isLoaded()) {
 				try {
 					handle.load(getCore());
@@ -153,7 +166,16 @@ public class ResourceService extends AbstractService {
 				} catch (ResourceException e) {
 					this.logger.logWarning(LOGGING_SOURCE, "unable to load resource: " + e.getMessage());
 				}
+				
+				if (this.deferredLoading) {
+					this.evtSrv.dispatchEvent(new GroupLoadUpdateEvent(groupId, ((double) cntLoaded / group.size())), this.deferredLoadingDelay);
+					return;
+				}
 			}
+		}
+		
+		if (this.deferredLoading) {
+			this.evtSrv.dispatchEvent(new GroupLoadUpdateEvent(groupId, 1.0));
 		}
 	}
 
@@ -205,5 +227,21 @@ public class ResourceService extends AbstractService {
 		}
 		
 		return handle.getResource();
+	}
+
+	public boolean isDeferredLoading() {
+		return deferredLoading;
+	}
+
+	public void setDeferredLoading(boolean deferredLoading) {
+		this.deferredLoading = deferredLoading;
+	}
+
+	public double getDeferredLoadingDelay() {
+		return deferredLoadingDelay;
+	}
+
+	public void setDeferredLoadingDelay(double deferredLoadingDelay) {
+		this.deferredLoadingDelay = deferredLoadingDelay;
 	}
 }
