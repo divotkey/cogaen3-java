@@ -110,7 +110,6 @@ public class ParticleSystem  {
 		c.setBlue(this.startColor.getBlue() * p + this.endColor.getBlue() * (1 - p));
 		c.setAlpha(this.startColor.getAlpha() * p + this.endColor.getAlpha() * (1 - p));
 		this.visual.setScale(size);
-		this.visual.getColor().setAlpha(p);
 		this.visual.render();
 		
 		GL11.glPopMatrix();
