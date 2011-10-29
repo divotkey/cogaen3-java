@@ -20,6 +20,8 @@ public class MultiLineLabelVisual extends Visual {
 	private Allignment allignment = Allignment.LEFT;
 	
 	public MultiLineLabelVisual(Core core, String fontRes, double width, double height) {
+		
+		
 		this.ttf = (TrueTypeFont) ResourceService.getInstance(core).getResource(fontRes);
 		this.width = width;
 		this.height = height;
@@ -28,6 +30,10 @@ public class MultiLineLabelVisual extends Visual {
 		this.lines = new StringBuffer[nLines];
 		for (int i = 0; i < nLines; ++i) {
 			this.lines[i] = new StringBuffer();
+		}
+		
+		if (this.lines.length == 0) {
+			throw new RuntimeException("dimension to small for text output");
 		}
 		
 		this.curX = 0;

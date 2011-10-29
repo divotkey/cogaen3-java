@@ -38,6 +38,10 @@ public class TextBlockVisual extends Visual {
 			this.lines[i] = new StringBuffer();
 		}
 		
+		if (this.lines.length == 0) {
+			throw new RuntimeException("dimension to small for text output");
+		}		
+		
 		this.curX = 0;
 		this.curY = 0;
 	}
