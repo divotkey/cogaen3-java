@@ -74,6 +74,9 @@ public class TaskService extends AbstractService implements Updateable {
 	}
 	
 	public void destroyTask(Task task) {
+		if (task == null) {
+			throw new NullPointerException();
+		}
 		this.tasks.remove(task);
 		task.destroy();
 		String name = task.getName();
