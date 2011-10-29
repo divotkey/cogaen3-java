@@ -34,6 +34,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -49,15 +50,13 @@ public class ResourceService extends AbstractService {
 	public static final CogaenId ID = new CogaenId("org.cogaen.resource.ResourceService");
 	public static final String NAME = "Cogaen Resource Service";
 	public static final String LOGGING_SOURCE = "RSRC";
-	private static final double DEFAULT_DEFERRED_LOADING_DELAY = 0.01;
-	
 	private Map<CogaenId, List<ResourceHandle>> groups = new HashMap<CogaenId, List<ResourceHandle>>();
 	private Map<String, ResourceHandle> resourceMap = new HashMap<String, ResourceHandle>();
 	private Map<ResourceHandle, String> invResourceMap = new HashMap<ResourceHandle, String>();
 	private LoggingService logger;
-	private EventService evtSrv;
-	private boolean deferredLoading;
-	private double deferredLoadingDelay = DEFAULT_DEFERRED_LOADING_DELAY;
+	private Iterator<ResourceHandle> deferredIterator;
+	private int deferredCounter;
+	private int deferredSize;
 	
 	public static ResourceService getInstance(Core core) {
 		return (ResourceService) core.getService(ID);
@@ -82,13 +81,12 @@ public class ResourceService extends AbstractService {
 	protected void doStart() throws ServiceException {
 		super.doStart();
 		this.logger = LoggingService.getInstance(getCore());
-		this.evtSrv = EventService.getInstance(getCore());
+		EventService.getInstance(getCore());
 	}
 
 	@Override
 	protected void doStop() {
 		unloadAll();
-		this.evtSrv = null;
 		this.logger = null;
 		super.doStop();
 	}
@@ -146,19 +144,47 @@ public class ResourceService extends AbstractService {
 		return this.resourceMap.containsKey(resourceId);
 	}
 	
+	public void loadGroupDeferred(CogaenId groupId) {
+		List<ResourceHandle> group = this.groups.get(groupId);
+		if (group == null) {
+			throw new RuntimeException("unonkown resource group " + groupId);
+		}
+		
+		this.logger.logNotice(LOGGING_SOURCE, "preloading resource group " + groupId);
+		this.deferredIterator = group.iterator();
+		this.deferredCounter = 0;
+		this.deferredSize = group.size();
+	}
+	
+	public boolean hasNextDeferredResource() {
+		return this.deferredIterator.hasNext();
+	}
+	
+	public double loadNextDeferredResource() {
+		ResourceHandle handle = this.deferredIterator.next();
+		this.deferredCounter++;
+		
+		if (!handle.isLoaded()) {
+			try {
+				handle.load(getCore());
+				this.logger.logInfo(LOGGING_SOURCE, "loaded resource " + this.invResourceMap.get(handle));
+			} catch (ResourceException e) {
+				this.logger.logWarning(LOGGING_SOURCE, "unable to load resource: " + e.getMessage());
+			}
+		}
+		
+		return (double) this.deferredCounter / this.deferredSize;
+	}
+	
 	public void loadGroup(CogaenId groupId) {
 		List<ResourceHandle> group = this.groups.get(groupId);
 		if (group == null) {
 			throw new RuntimeException("unonkown resource group " + groupId);
 		}
 		
-		if (!this.deferredLoading) {
-			this.logger.logNotice(LOGGING_SOURCE, "preloading resource group " + groupId);
-		}
+		this.logger.logNotice(LOGGING_SOURCE, "preloading resource group " + groupId);
 		
-		int cntLoaded = 0;
 		for (ResourceHandle handle : group) {
-			cntLoaded++;
 			if (!handle.isLoaded()) {
 				try {
 					handle.load(getCore());
@@ -166,16 +192,7 @@ public class ResourceService extends AbstractService {
 				} catch (ResourceException e) {
 					this.logger.logWarning(LOGGING_SOURCE, "unable to load resource: " + e.getMessage());
 				}
-				
-				if (this.deferredLoading) {
-					this.evtSrv.dispatchEvent(new GroupLoadUpdateEvent(groupId, ((double) cntLoaded / group.size())), this.deferredLoadingDelay);
-					return;
-				}
 			}
-		}
-		
-		if (this.deferredLoading) {
-			this.evtSrv.dispatchEvent(new GroupLoadUpdateEvent(groupId, 1.0));
 		}
 	}
 
@@ -227,21 +244,5 @@ public class ResourceService extends AbstractService {
 		}
 		
 		return handle.getResource();
-	}
-
-	public boolean isDeferredLoading() {
-		return deferredLoading;
-	}
-
-	public void setDeferredLoading(boolean deferredLoading) {
-		this.deferredLoading = deferredLoading;
-	}
-
-	public double getDeferredLoadingDelay() {
-		return deferredLoadingDelay;
-	}
-
-	public void setDeferredLoadingDelay(double deferredLoadingDelay) {
-		this.deferredLoadingDelay = deferredLoadingDelay;
 	}
 }
