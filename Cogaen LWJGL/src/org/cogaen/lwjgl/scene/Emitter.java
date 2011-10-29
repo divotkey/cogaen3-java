@@ -26,7 +26,7 @@ public abstract class Emitter {
 	
 	public abstract void emit(Particle particle);
 
-	protected void copyFields(PointEmitter newInstance) {
+	protected void copyFields(Emitter newInstance) {
 		newInstance.posX = this.posX;
 		newInstance.posY = this.posY;
 		newInstance.angle = this.angle;
