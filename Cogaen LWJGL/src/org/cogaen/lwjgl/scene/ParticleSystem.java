@@ -20,6 +20,8 @@ public class ParticleSystem  {
 	private boolean autoOff = false;
 	private double startSize = 1.0;
 	private double endSize = 1.0;
+	private Color startColor = new Color(Color.WHITE);
+	private Color endColor = new Color(Color.WHITE);
 	
 	ParticleSystem() {
 		// intentionally left empty
@@ -31,6 +33,10 @@ public class ParticleSystem  {
 		newInstance.particlesPerSecond = this.particlesPerSecond;
 		newInstance.emitter = this.emitter.newInstance();
 		newInstance.visual = this.visual.newInstance();
+		newInstance.startSize = this.startSize;
+		newInstance.endSize = this.endSize;
+		newInstance.startColor.setColor(this.startColor);
+		newInstance.endColor.setColor(this.endColor);
 		
 		return newInstance;
 	}
@@ -97,11 +103,14 @@ public class ParticleSystem  {
 		GL11.glPushMatrix();
 		GL11.glTranslated(particle.getPosX(), particle.getPosY(), 0);
 		GL11.glRotatef((float) (particle.getAngle() * RAD2DEG), 0, 0, 1);
-		//GL11.glScaled(size, size, 1);
 		
+		Color c = this.visual.getColor();
+		c.setRed(this.startColor.getRed() * p + this.endColor.getRed() * (1 - p));
+		c.setGreen(this.startColor.getGreen() * p + this.endColor.getGreen() * (1 - p));
+		c.setBlue(this.startColor.getBlue() * p + this.endColor.getBlue() * (1 - p));
+		c.setAlpha(this.startColor.getAlpha() * p + this.endColor.getAlpha() * (1 - p));
 		this.visual.setScale(size);
 		this.visual.getColor().setAlpha(p);
-		this.visual.getColor().apply();
 		this.visual.render();
 		
 		GL11.glPopMatrix();
@@ -176,5 +185,21 @@ public class ParticleSystem  {
 	
 	public double getEndSize() {
 		return this.endSize;
+	}
+	
+	public void setStartColor(ReadableColor color) {
+		this.startColor.setColor(color);
+	}
+	
+	public Color getStartColor() {
+		return this.startColor;
+	}
+	
+	public Color getEndColor() {
+		return this.endColor;
+	}
+	
+	public void setEndColor(ReadableColor color) {
+		this.endColor.setColor(color);
 	}
 }

@@ -11,6 +11,7 @@ public class Color implements ReadableColor {
 	public static final ReadableColor BLUE = new Color(0, 0, 1, 1);
 	public static final ReadableColor GREEN = new Color(0, 1, 0, 1);
 	public static final ReadableColor ORANGE = new Color(1, 0.64, 0, 1);
+	public static final ReadableColor YELLOW = new Color(1, 1, 0, 1);
 	
 	
 	private double red;
