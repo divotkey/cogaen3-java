@@ -43,7 +43,7 @@ public class FadeOutTask extends AbstractTask {
 
 	@Override
 	public void destroy() {
-		this.visual.getColor().setAlpha(1.0);
+		this.visual.getColor().setAlpha(0.0);
 		if (this.finishedEventId != null) {
 			EventService.getInstance(getCore()).dispatchEvent(new SimpleEvent(this.finishedEventId));
 		}
