@@ -13,6 +13,7 @@ public class PointEmitter extends Emitter {
 	private double minTimeToLive = 0.5;
 	private double maxTimeToLive = 1.0;
 	private double acceleration[] = new double[3];
+	private double drag = 0.0;
 	
 	@Override
 	public void emit(Particle particle) {
@@ -25,6 +26,7 @@ public class PointEmitter extends Emitter {
 		particle.setVelocity(vx, vy, this.minAngularSpeed + this.maxAngularSpeed * this.random.nextDouble());
 		particle.setAcceleration(this.acceleration[0], this.acceleration[1], this.acceleration[2]);
 		particle.setTimeToLive(this.minTimeToLive + this.maxTimeToLive * this.random.nextDouble());
+		particle.setDrag(this.drag);
 		particle.activate();
 	}
 
@@ -63,6 +65,7 @@ public class PointEmitter extends Emitter {
 		newInstance.maxAngularSpeed = this.maxAngularSpeed;
 		newInstance.minTimeToLive = this.minTimeToLive;
 		newInstance.maxTimeToLive = this.maxTimeToLive;
+		newInstance.drag = this.drag;
 		for (int i = 0; i < 3; ++i) {
 			newInstance.acceleration[i] = this.acceleration[i];
 		}
@@ -92,4 +95,12 @@ public class PointEmitter extends Emitter {
 		this.acceleration[2] = alpha;
 	}
 
+	public double getDrag() {
+		return drag;
+	}
+
+	public void setDrag(double drag) {
+		this.drag = drag;
+	}
+	
 }

@@ -5,11 +5,14 @@ public class Particle {
 	private double position[] = new double[3];
 	private double velocity[] = new double[3];
 	private double acceleration[] = new double[3];
+	private double externalAcceleration[] = new double[3];
 	private double timeToLive;
 	private double lifeTime = 0;
+	private double drag = 0;
 
 	public void update(double dt) {
 		for (int i = 0; i < 3; ++i) {
+			this.acceleration[i] = -this.velocity[i] * this.drag + this.externalAcceleration[i];
 			this.velocity[i] += this.acceleration[i] * dt;
 			this.position[i] += this.velocity[i] * dt;
 		}
@@ -46,9 +49,9 @@ public class Particle {
 	}
 	
 	public void setAcceleration(double ax, double ay, double alpha) {
-		this.acceleration[0] = ax;
-		this.acceleration[1] = ay;
-		this.acceleration[2] = alpha;
+		this.externalAcceleration[0] = ax;
+		this.externalAcceleration[1] = ay;
+		this.externalAcceleration[2] = alpha;
 	}
 
 	public double getPosX() {
@@ -65,5 +68,13 @@ public class Particle {
 	
 	public double getLifeTime() {
 		return this.lifeTime;
+	}
+
+	public double getDrag() {
+		return drag;
+	}
+
+	public void setDrag(double drag) {
+		this.drag = drag;
 	}
 }

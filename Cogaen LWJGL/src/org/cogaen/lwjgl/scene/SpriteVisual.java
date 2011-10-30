@@ -9,6 +9,7 @@ public class SpriteVisual extends Visual {
 	private double halfWidth;
 	private double halfHeight;
 	private boolean flipVertical;
+	private int blendMode = GL11.GL_ONE_MINUS_SRC_ALPHA;
 	
 	SpriteVisual(Texture texture, double width, double height) {
 		super(Color.WHITE);
@@ -66,6 +67,7 @@ public class SpriteVisual extends Visual {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
     	GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, this.blendMode);
     	texture.bind();	// or GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture.getTextureID());
 	}
 
@@ -81,8 +83,16 @@ public class SpriteVisual extends Visual {
 		instance.halfWidth = this.halfWidth;
 		instance.halfHeight = this.halfHeight;
 		instance.texture = this.texture;
+		instance.blendMode = this.blendMode;
 		
 		return instance;
 	}
 
+	public void setAdditive(boolean value) {
+		this.blendMode = value ? GL11.GL_ONE : GL11.GL_ONE_MINUS_SRC_ALPHA;
+	}
+	
+	public boolean isAdditive() {
+		return this.blendMode == GL11.GL_ONE;
+	}
 }
