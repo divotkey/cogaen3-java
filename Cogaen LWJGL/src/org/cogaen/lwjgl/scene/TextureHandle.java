@@ -7,7 +7,6 @@ import org.cogaen.core.Core;
 import org.cogaen.resource.ResourceException;
 import org.cogaen.resource.ResourceHandle;
 import org.cogaen.resource.ResourceService;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 import org.newdawn.slick.opengl.TextureLoader;
@@ -52,7 +51,7 @@ public class TextureHandle extends ResourceHandle {
 
 	@Override
 	public void unload(Core core) {
-		if (Display.isCreated()) {
+		if (SceneService.getInstance(core).isValid()) {
 			this.texture.release();
 			this.texture = null;
 		}

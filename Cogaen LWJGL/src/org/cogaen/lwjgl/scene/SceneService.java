@@ -48,6 +48,7 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.DisplayMode;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GLContext;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.util.Log;
@@ -419,6 +420,10 @@ public class SceneService extends AbstractService {
 	
 	public boolean isVSync() {
 		return this.vsync;
+	}
+	
+	public boolean isValid() {
+		return Display.isCreated() && (this.parent == null || GLContext.getCapabilities() != null);
 	}
 
 }
