@@ -33,6 +33,7 @@ package org.cogaen.state;
 import org.cogaen.action.LoggingAction;
 import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
+import org.cogaen.core.CoreListener;
 import org.cogaen.core.Service;
 import org.cogaen.core.ServiceException;
 import org.cogaen.event.EventService;
@@ -40,7 +41,7 @@ import org.cogaen.logging.LoggingService;
 import org.cogaen.logging.LoggingService.Priority;
 import org.cogaen.name.CogaenId;
 
-public class GameStateService extends AbstractService {
+public class GameStateService extends AbstractService implements CoreListener {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.event.GameStateService");
 	public static final String NAME = "Cogaen Game State Service";
@@ -112,11 +113,14 @@ public class GameStateService extends AbstractService {
 		this.stateMachine.addState(createLoggingState(END_STATE_ID), END_STATE_ID);
 		this.stateMachine.setStartState(START_STATE_ID);
 		this.stateMachine.engage();
+		
+		getCore().addListener(this);
 	}
 
 	@Override
 	protected void doStop() {
 		this.stateMachine.disengage();
+		getCore().removeListener(this);
 		super.doStop();
 	}
 
@@ -126,6 +130,11 @@ public class GameStateService extends AbstractService {
 		loggingState.addExitAction(new LoggingAction(getCore(), Priority.NOTICE, LOGGING_SOURCE, "exiting game state " + stateId));		
 		
 		return loggingState;
+	}
+
+	@Override
+	public void shutdownInitiated() {
+		setCurrentState(END_STATE_ID);
 	}
 	
 }

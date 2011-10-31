@@ -47,6 +47,7 @@ public class Core {
 	
 	private Map<CogaenId, Service> servicesMap = new HashMap<CogaenId, Service>();
 	private List<Service> services = new ArrayList<Service>();
+	private List<CoreListener> listeners = new ArrayList<CoreListener>();
 	private Bag<Updateable> updateables = new Bag<Updateable>();
 	private boolean running = false;
 	private double deltaTime;
@@ -83,6 +84,19 @@ public class Core {
 		}
 		
 		return srv;
+	}
+	
+	public void addListener(CoreListener listener) {
+		if (this.listeners.contains(listener)) {
+			throw new RuntimeException("listener already in list: " + listener.getClass().getName());
+		}
+		this.listeners.add(listener);
+	}
+	
+	public void removeListener(CoreListener listener) {
+		if ( !this.listeners.remove(listener) ) {
+			throw new RuntimeException("listener not registered: " + listener.getClass().getName());
+		}
 	}
 	
 	/**
@@ -178,6 +192,10 @@ public class Core {
 	 * After a successful call to this method this core is in 'stopped' state.
 	 */
 	public void shutdown() {
+		for (CoreListener listener : this.listeners) {
+			listener.shutdownInitiated();
+		}
+		
 		for (Service service : this.servicesMap.values()) {
 			if (service.getStatus() != Service.Status.STOPPED) {
 				stopService(service);
