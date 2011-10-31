@@ -11,6 +11,7 @@ import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
 import org.cogaen.logging.LoggingService;
+import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.resource.ResourceService;
 import org.cogaen.time.TimeService;
@@ -48,6 +49,7 @@ public class SoundService extends AbstractService {
 	public SoundService() {
 		addDependency(LoggingService.ID);
 		addDependency(ResourceService.ID);
+		addDependency(SceneService.ID);
 	}
 	
 	@Override
