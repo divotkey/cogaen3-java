@@ -30,6 +30,7 @@
 
 package org.cogaen.lwjgl.scene;
 
+import java.awt.Canvas;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -81,20 +82,29 @@ public class SceneService extends AbstractService {
 	private int fpsAvg = 300;
 	private int fpsCnt = 0;
 	private String fps = new String("FPS:");
+	private Canvas parent;
 	
 	public static SceneService getInstance(Core core) {
 		return (SceneService) core.getService(ID);
 	}
 
 	public SceneService() {
-		this(0, 0, true, true);
+		this(null, 0, 0, true, true);
 	}
 	
 	public SceneService(boolean useProperties) {
-		this(0, 0, true, useProperties);
+		this(null, 0, 0, true, useProperties);
+	}
+
+	public SceneService(Canvas parent, int width, int height) {
+		this(parent, width, height, false, false);
+	}
+
+	public SceneService(int width, int height, boolean fs, boolean useProperties) {
+		this(null, width, height, fs, useProperties);
 	}
 	
-	public SceneService(int width, int height, boolean fs, boolean useProperties) {
+	public SceneService(Canvas parent, int width, int height, boolean fs, boolean useProperties) {
 		if (useProperties) {
 			addDependency(PropertyService.ID);
 		}
@@ -106,6 +116,7 @@ public class SceneService extends AbstractService {
 		this.width = width;
 		this.height = height;
 		this.fullscreen = fs;
+		this.parent = parent;
 		
 		this.layers.add(createNode());
 		this.overlayRoot = new SceneNode();
@@ -148,6 +159,9 @@ public class SceneService extends AbstractService {
 		setDisplayMode(this.width, this.height, true);
 		
 		try {
+			if (this.parent != null) {
+				Display.setParent(this.parent);
+			}
 			Display.create();
 			setFullscreen(this.fullscreen);
 			this.evtSrv = EventService.getInstance(getCore());
