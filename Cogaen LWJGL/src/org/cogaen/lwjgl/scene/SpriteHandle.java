@@ -46,7 +46,7 @@ public class SpriteHandle extends ResourceHandle {
 
 	@Override
 	public Object getResource() {
-		return this.sprite;
+		return this.sprite.newInstance();
 	}
 
 }
