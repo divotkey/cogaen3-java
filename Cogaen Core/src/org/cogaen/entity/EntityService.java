@@ -17,11 +17,10 @@ public class EntityService extends AbstractService implements Updateable{
 	public static final CogaenId ID = new CogaenId("org.cogaen.entity.EntityService");
 	public static final String NAME = "Cogaen Entity Service";
 	
-	private Map<CogaenId, Entity> entities = new HashMap<CogaenId, Entity>();
+	private Map<CogaenId, Entity> entitiesMap = new HashMap<CogaenId, Entity>();
+	private List<Entity> entities = new ArrayList<Entity>();
 	private List<Entity> entitiesToRemove = new ArrayList<Entity>();
 	private Bag<Updateable> updateables = new Bag<Updateable>();
-//	private List<Updateable> updateables = new ArrayList<Updateable>();
-//	private List<Entity> entititesToAdd = new ArrayList<Entity>();
 	public static EntityService getInstance(Core core) {
 		return (EntityService) core.getService(ID);
 	}
@@ -43,7 +42,8 @@ public class EntityService extends AbstractService implements Updateable{
 	@Override
 	public void update() {
 		for (Entity entity : this.entitiesToRemove) {
-			this.entities.remove(entity.getId());
+			this.entitiesMap.remove(entity.getId());
+			this.entities.remove(entity);
 			entity.disengage();
 		}
 		this.entitiesToRemove.clear();
@@ -81,11 +81,12 @@ public class EntityService extends AbstractService implements Updateable{
 	
 	public void addEntity(Entity entity) {
 		CogaenId id = entity.getId();
-		Entity old = this.entities.put(id, entity);
+		Entity old = this.entitiesMap.put(id, entity);
 		if (old != null) {
-			this.entities.put(id, old);
+			this.entitiesMap.put(id, old);
 			throw new RuntimeException("ambiguous entity id " + id);
 		}
+		this.entities.add(entity);
 		entity.engage();
 	}
 	
@@ -94,24 +95,29 @@ public class EntityService extends AbstractService implements Updateable{
 	}
 	
 	public boolean hasEntity(CogaenId entityId) {
-		return this.entities.containsKey(entityId);
+		return this.entitiesMap.containsKey(entityId);
 	}
 	
 	public void removeAllEntities() {
-		for (Entity entity : this.entities.values()) {
+		for (Entity entity : this.entitiesMap.values()) {
 			entity.disengage();
 		}
+		this.entitiesMap.clear();
 		this.entities.clear();
 	}
 	
 	public Entity getEntity(CogaenId entityId) {
-		Entity entity = this.entities.get(entityId);
+		Entity entity = this.entitiesMap.get(entityId);
 		
 		if (entity == null) {
 			throw new RuntimeException("unknown entity " + entityId);
 		}
 		
 		return entity;
+	}
+	
+	public Entity getEntity(int idx) {
+		return this.entities.get(idx);
 	}
 
 	public void addUpdateable(Updateable updateable) {
@@ -123,6 +129,6 @@ public class EntityService extends AbstractService implements Updateable{
 	}	
 	
 	public int numEntities() {
-		return this.entities.size();
+		return this.entitiesMap.size();
 	}
 }
