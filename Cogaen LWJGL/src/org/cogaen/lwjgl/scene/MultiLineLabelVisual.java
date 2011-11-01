@@ -99,7 +99,7 @@ public class MultiLineLabelVisual extends Visual {
 		return instance;
 	}
 
-	private void addChar(char ch) {
+	public void addChar(char ch) {
 		if (ch == '\n' && this.curY < this.lines.length - 1) {
 			this.curY++;
 			this.curX = 0;
