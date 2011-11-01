@@ -33,11 +33,11 @@ public class TypeWriterTask extends AbstractTask {
 	@Override
 	public void update() {
 		if (this.timeStamp <= this.timer.getTime()) {
-			this.mll.addChar(this.text.charAt(this.idx++));
 			if (this.idx >= this.text.length()) {
 				EventService.getInstance(getCore()).dispatchEvent(new SimpleEvent(this.finishedEventId));
 				TaskService.getInstance(getCore()).destroyTask(this);
 			} else {
+				this.mll.addChar(this.text.charAt(this.idx++));
 				this.timeStamp = this.timer.getTime() + this.typeDelay;					
 			}
 		}
