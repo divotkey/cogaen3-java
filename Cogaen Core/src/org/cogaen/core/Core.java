@@ -139,7 +139,7 @@ public class Core {
 	 * Starts all services.
 	 * After a successful call of this method this core is in 'running' state.
 	 */
-	public void startup() {
+	public void startup() throws ServiceException {
 		for (Service service : this.servicesMap.values()) {
 			if (service.getStatus() != Service.Status.STARTED) {
 				startService(service);
@@ -148,7 +148,7 @@ public class Core {
 		this.running = true;
 	}
 	
-	private void startService(Service service) {
+	private void startService(Service service) throws ServiceException {
 		for (int i = 0; i < service.numOfDependencies(); ++i) {
 			Service dependency = this.servicesMap.get(service.getDependency(i));
 			if (dependency == null) {
@@ -159,11 +159,7 @@ public class Core {
 			}
 		}
 		
-		try {
-			service.start(this);
-		} catch (ServiceException e) {
-			throw new RuntimeException("unable to start " + service.getName(), e);
-		}
+		service.start(this);
 	}
 	
 	private void stopService(Service service) {
