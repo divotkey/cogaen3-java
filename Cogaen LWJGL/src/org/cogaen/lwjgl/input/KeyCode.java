@@ -56,6 +56,8 @@ public class KeyCode {
 	public static final int KEY_SPACE = 57;
 	public static final int KEY_LCONTROL = 29;
 	public static final int KEY_RCONTROL = 157;
+	public static final int KEY_LALT = 56;
+	public static final int KEY_RALT = 184;
 	public static final int KEY_BACK = 14;
 	public static final int KEY_RETURN = 28;	
 	public static final int KEY_LSHIFT = 42;	
@@ -78,6 +80,8 @@ public class KeyCode {
 		switch (keyCode) {
 		case KEY_LCONTROL:
 		case KEY_RCONTROL:
+		case KEY_LALT:
+		case KEY_RALT:
 		case KEY_BACK:
 		case KEY_RETURN:
 		case KEY_LSHIFT:
