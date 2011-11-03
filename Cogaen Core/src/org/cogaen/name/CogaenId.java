@@ -97,9 +97,9 @@ public class CogaenId {
 	@Override
 	public String toString() {
 		if (!this.generated) {
-			return "{" + this.id + "}";
+			return this.id;
 		} else {
-			return "{0x" + Integer.toHexString(this.code) + "}";
+			return "0x" + Integer.toHexString(this.code);
 		}
 	}
 	
