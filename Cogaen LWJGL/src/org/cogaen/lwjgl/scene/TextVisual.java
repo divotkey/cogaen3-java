@@ -44,11 +44,11 @@ public class TextVisual extends Visual {
 			break;
 			
 		case CENTER:
-			this.ttf.drawString(-this.ttf.getWidth(this.text) / 2,  0, this.text);
+			this.ttf.drawString(-this.ttf.getWidth(this.text) / 2,  this.ttf.getHeight() / 2, this.text);
 			break;
 			
 		case RIGHT:
-			this.ttf.drawString(-this.ttf.getWidth(this.text),  0, this.text);
+			this.ttf.drawString(-this.ttf.getWidth(this.text),  this.ttf.getHeight() / 2, this.text);
 			break;
 		}
 	}
