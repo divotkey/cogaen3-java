@@ -59,6 +59,7 @@ public class TextBlockVisual extends Visual {
 
 	@Override
 	public void render() {
+		GL11.glPushMatrix();
 		GL11.glScaled(getScale(), -getScale(), 1);
 		getColor().apply();
 		
@@ -96,6 +97,7 @@ public class TextBlockVisual extends Visual {
 	        GL11.glVertex2d(x, y - curHeight);
 		    GL11.glEnd();
 		}
+		GL11.glPopMatrix();
 	}
 
 	@Override

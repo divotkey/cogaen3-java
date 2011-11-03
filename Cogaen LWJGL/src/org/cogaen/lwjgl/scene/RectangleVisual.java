@@ -1,4 +1,4 @@
-package org.cogaen.lwjgl.scene;
+        package org.cogaen.lwjgl.scene;
 
 import org.lwjgl.opengl.GL11;
 

@@ -35,22 +35,24 @@ public class TextVisual extends Visual {
 
 	@Override
 	public void render() {
+		GL11.glPushMatrix();
 		GL11.glScaled(getScale(), -getScale(), 1);
 		getColor().apply();
 		
 		switch (this.alignment) {
 		case LEFT:
-			this.ttf.drawString(0,  0, this.text);
+			this.ttf.drawString(0,  -this.ttf.getHeight() / 2.0f, this.text);
 			break;
 			
 		case CENTER:
-			this.ttf.drawString(-this.ttf.getWidth(this.text) / 2,  this.ttf.getHeight() / 2, this.text);
+			this.ttf.drawString(-this.ttf.getWidth(this.text) / 2,  -this.ttf.getHeight() / 2.0f, this.text);
 			break;
 			
 		case RIGHT:
-			this.ttf.drawString(-this.ttf.getWidth(this.text),  this.ttf.getHeight() / 2, this.text);
+			this.ttf.drawString(-this.ttf.getWidth(this.text), -this.ttf.getHeight() / 2.0f, this.text);
 			break;
 		}
+		GL11.glPopMatrix();
 	}
 
 	@Override
