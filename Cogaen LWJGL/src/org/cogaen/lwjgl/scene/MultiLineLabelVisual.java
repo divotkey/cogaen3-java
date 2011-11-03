@@ -8,7 +8,7 @@ import org.newdawn.slick.TrueTypeFont;
 @SuppressWarnings("deprecation")
 public class MultiLineLabelVisual extends Visual {
 
-	public enum Allignment {LEFT, CENTER, RIGHT};
+	public enum Alignment {LEFT, CENTER, RIGHT};
 	
 	private static final double LINE_SPACE = 1.0;
 	private TrueTypeFont ttf;
@@ -17,7 +17,7 @@ public class MultiLineLabelVisual extends Visual {
 	private double height;
 	private int curX;
 	private int curY;
-	private Allignment allignment = Allignment.LEFT;
+	private Alignment alignment = Alignment.LEFT;
 	
 	public MultiLineLabelVisual(Core core, String fontRes, double width, double height) {
 		
@@ -57,7 +57,7 @@ public class MultiLineLabelVisual extends Visual {
 		org.newdawn.slick.Color utilColor = new org.newdawn.slick.Color((int) (getColor().getRed() * 255), (int) (getColor().getGreen() * 255), (int) (getColor().getBlue() * 255), (int) (getColor().getAlpha() * 255));
 		
 		for (int i = 0; i < this.lines.length; ++i) {
-			switch (this.allignment) {
+			switch (this.alignment) {
 			
 			case LEFT:
 				this.ttf.drawString((float) (-this.width / 2), (float) (-this.height / 2 + i * ttf.getHeight() * LINE_SPACE), this.lines[i].toString(), utilColor);						
@@ -91,6 +91,7 @@ public class MultiLineLabelVisual extends Visual {
 		instance.ttf = ttf;
 		instance.width = this.width;
 		instance.height = this.height;
+		instance.alignment = this.alignment;
 		
 		for (int i = 0; i < this.lines.length; ++i) {
 			instance.lines[i] = new StringBuffer(this.lines[i]);
@@ -183,11 +184,11 @@ public class MultiLineLabelVisual extends Visual {
 		this.height = height;
 	}
 
-	public Allignment getAllignment() {
-		return allignment;
+	public Alignment getAlignment() {
+		return alignment;
 	}
 
-	public void setAllignment(Allignment allignment) {
-		this.allignment = allignment;
+	public void setAlignment(Alignment allignment) {
+		this.alignment = allignment;
 	}
 }

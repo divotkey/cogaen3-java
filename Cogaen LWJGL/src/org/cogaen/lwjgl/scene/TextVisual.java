@@ -8,8 +8,10 @@ import org.newdawn.slick.TrueTypeFont;
 @SuppressWarnings("deprecation")
 public class TextVisual extends Visual {
 
+	public enum Alignment {LEFT, CENTER, RIGHT};
 	private TrueTypeFont ttf;
 	private String text;
+	private Alignment alignment = Alignment.LEFT;
 
 	public TextVisual(Core core, String fontRes) {
 		this(core, fontRes, "");
@@ -35,7 +37,20 @@ public class TextVisual extends Visual {
 	public void render() {
 		GL11.glScaled(getScale(), -getScale(), 1);
 		getColor().apply();
-		this.ttf.drawString(0,  0, this.text);
+		
+		switch (this.alignment) {
+		case LEFT:
+			this.ttf.drawString(0,  0, this.text);
+			break;
+			
+		case CENTER:
+			this.ttf.drawString(-this.ttf.getWidth(this.text) / 2,  0, this.text);
+			break;
+			
+		case RIGHT:
+			this.ttf.drawString(-this.ttf.getWidth(this.text),  0, this.text);
+			break;
+		}
 	}
 
 	@Override
@@ -49,6 +64,7 @@ public class TextVisual extends Visual {
 		super.copyFields(instance);
 		instance.text = this.text;
 		instance.ttf = this.ttf;
+		instance.alignment = this.alignment;
 		
 		return instance;
 	}
@@ -59,6 +75,14 @@ public class TextVisual extends Visual {
 	
 	public String getText() {
 		return this.text;
+	}
+
+	public Alignment getAllignment() {
+		return alignment;
+	}
+
+	public void setAllignment(Alignment allignment) {
+		this.alignment = allignment;
 	}
 
 }
