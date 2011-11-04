@@ -61,7 +61,10 @@ public class TaskService extends AbstractService implements Updateable {
 		}
 		
 		if (this.tasks.size() != 0) {
-			this.logger.logWarning(LOGGING_SOURCE, "num of tasks = " + this.tasks.size());
+			this.logger.logWarning(LOGGING_SOURCE, "num of tasks = " + this.tasks.size());				
+			for (this.tasks.reset(); this.tasks.hasNext(); ) {
+				this.logger.logDebug(LOGGING_SOURCE, "task " + tasks.next().getName() + " was not destroyed");				
+			}
 		}
 		this.logger = null;
 		
