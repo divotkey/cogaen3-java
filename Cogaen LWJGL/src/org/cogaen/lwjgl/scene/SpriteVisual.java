@@ -94,4 +94,12 @@ public class SpriteVisual extends Visual {
 	public boolean isAdditive() {
 		return this.blendMode == GL11.GL_ONE;
 	}
+	
+	public double getWidth() {
+		return this.halfWidth * 2;
+	}
+	
+	public double getHeight() {
+		return this.halfHeight * 2;
+	}
 }
