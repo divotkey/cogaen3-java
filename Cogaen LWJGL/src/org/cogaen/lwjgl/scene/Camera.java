@@ -110,5 +110,13 @@ public class Camera {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
 		GL11.glViewport(this.viewport.getX(), this.viewport.getY(), this.viewport.getWidth(), this.viewport.getHeight());
 	}
+
+	public double getPosX() {
+		return this.posX;
+	}
+	
+	public double getPosY() {
+		return this.posY;
+	}
 	
 }
