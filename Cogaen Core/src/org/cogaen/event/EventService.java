@@ -123,7 +123,7 @@ public class EventService extends AbstractService implements Updateable {
 		if (numListeners > 0) {
 			for (Bag<EventListener> listeners : this.listenerMap.values()) {
 				for (listeners.reset(); listeners.hasNext();) {
-					this.logger.logDebug(LOGGING_SOURCE, "listener " + listeners.getClass().getName() + " was not removed");					
+					this.logger.logDebug(LOGGING_SOURCE, "listener " + listeners.next().getClass().getName() + " was not removed");					
 				}
 			}
 		}
