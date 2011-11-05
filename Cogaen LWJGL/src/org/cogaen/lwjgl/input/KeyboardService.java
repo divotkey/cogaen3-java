@@ -41,18 +41,18 @@ import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 
-public class InputService extends AbstractService implements Updateable {
+public class KeyboardService extends AbstractService implements Updateable {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.lwjgl.input.InputService");
 	public static final String NAME = "Cogaen LWJGL Input Service";
 
 	private EventService evtSrv;
 	
-	public static InputService getInstance(Core core) {
-		return (InputService) core.getService(ID);
+	public static KeyboardService getInstance(Core core) {
+		return (KeyboardService) core.getService(ID);
 	}
 	
-	public InputService() {
+	public KeyboardService() {
 		addDependency(EventService.ID);
 		addDependency(SceneService.ID);
 	}
