@@ -43,7 +43,7 @@ import org.cogaen.util.Bag;
  */
 public class Core {
 
-	private static final Version VERSION = new Version(3, 1, 0);
+	private static final Version VERSION = new Version(3, 1, 1);
 	
 	private Map<CogaenId, Service> servicesMap = new HashMap<CogaenId, Service>();
 	private List<Service> services = new ArrayList<Service>();

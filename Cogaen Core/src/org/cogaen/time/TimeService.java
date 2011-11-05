@@ -33,13 +33,13 @@ package org.cogaen.time;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
-import org.cogaen.core.Updateable;
+import org.cogaen.core.ServiceException;
+import org.cogaen.core.UpdateableService;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.name.CogaenId;
 
-public class TimeService extends AbstractService implements Updateable {
+public class TimeService extends UpdateableService {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.time.TimeService");
 	public static final String NAME = "Cogaen Time Service";
@@ -47,6 +47,11 @@ public class TimeService extends AbstractService implements Updateable {
 	public static final CogaenId DEFAULT_TIMER_ID = new CogaenId("Default Timer");
 	
 	private Map<CogaenId, Timer> timers = new HashMap<CogaenId, Timer>();
+	
+	
+	public static TimeService getInstance(Core core) {
+		return (TimeService) core.getService(ID);
+	}
 	
 	public TimeService() {
 		addDependency(LoggingService.ID);
@@ -91,10 +96,6 @@ public class TimeService extends AbstractService implements Updateable {
 	public String getName() {
 		return NAME;
 	}
-	
-	public static TimeService getInstance(Core core) {
-		return (TimeService) core.getService(ID);
-	}
 
 	@Override
 	public void update() {
@@ -104,27 +105,15 @@ public class TimeService extends AbstractService implements Updateable {
 	}
 
 	@Override
-	protected void doPause() {
-		getCore().removeUpdateable(this);
-	}
-
-	@Override
-	protected void doResume() {
-		getCore().addUpdateable(this);
-	}
-
-	@Override
-	protected void doStart() {
+	protected void doStart() throws ServiceException {
+		super.doStart();
 		createTimer(DEFAULT_TIMER_ID);
-		getCore().addUpdateable(this);
 	}
 
 	@Override
 	protected void doStop() {
-		if (getStatus() != Status.PAUSED) {
-			getCore().removeUpdateable(this);
-		}
 		this.timers.clear();
+		super.doStop();
 	}
 
 }

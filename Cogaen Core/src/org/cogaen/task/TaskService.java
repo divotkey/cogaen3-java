@@ -1,14 +1,13 @@
 package org.cogaen.task;
 
-import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
-import org.cogaen.core.Updateable;
+import org.cogaen.core.UpdateableService;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.util.Bag;
 
-public class TaskService extends AbstractService implements Updateable {
+public class TaskService extends UpdateableService {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.tast.TaskService");
 	public static final String NAME = "Cogaen Task Service";
@@ -36,30 +35,13 @@ public class TaskService extends AbstractService implements Updateable {
 	}
 	
 	@Override
-	protected void doPause() {
-		getCore().removeUpdateable(this);
-		super.doPause();
-	}
-
-	@Override
-	protected void doResume() {
-		super.doResume();
-		getCore().addUpdateable(this);
-	}
-
-	@Override
 	protected void doStart() throws ServiceException {
 		super.doStart();
-		getCore().addUpdateable(this);
 		this.logger = LoggingService.getInstance(getCore());
 	}
 
 	@Override
 	protected void doStop() {
-		if (getStatus() != Status.PAUSED) {
-			getCore().removeUpdateable(this);
-		}
-		
 		if (this.tasks.size() != 0) {
 			this.logger.logWarning(LOGGING_SOURCE, "num of tasks = " + this.tasks.size());				
 			for (this.tasks.reset(); this.tasks.hasNext(); ) {

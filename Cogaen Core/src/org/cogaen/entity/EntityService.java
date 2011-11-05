@@ -5,14 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
-import org.cogaen.core.ServiceException;
 import org.cogaen.core.Updateable;
+import org.cogaen.core.UpdateableService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.util.Bag;
 
-public class EntityService extends AbstractService implements Updateable{
+public class EntityService extends UpdateableService {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.entity.EntityService");
 	public static final String NAME = "Cogaen Entity Service";
@@ -51,32 +50,6 @@ public class EntityService extends AbstractService implements Updateable{
 		for (updateables.reset(); updateables.hasNext();) {
 			updateables.next().update();
 		}
-	}
-	
-	@Override
-	protected void doPause() {
-		getCore().removeUpdateable(this);
-		super.doPause();
-	}
-
-	@Override
-	protected void doResume() {
-		super.doResume();
-		getCore().addUpdateable(this);
-	}
-
-	@Override
-	protected void doStart() throws ServiceException {
-		super.doStart();
-		getCore().addUpdateable(this);
-	}
-
-	@Override
-	protected void doStop() {
-		if (getStatus() != Status.PAUSED) {
-			getCore().removeUpdateable(this);
-		}
-		super.doStop();
 	}
 	
 	public void addEntity(Entity entity) {

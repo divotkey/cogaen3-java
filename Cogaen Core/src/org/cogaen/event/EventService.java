@@ -36,15 +36,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
-import org.cogaen.core.Updateable;
+import org.cogaen.core.UpdateableService;
 import org.cogaen.logging.LoggingService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.util.Bag;
 
-public class EventService extends AbstractService implements Updateable {
+public class EventService extends UpdateableService {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.event.EventService");
 	public static final String NAME = "Cogaen Event Service";
@@ -78,22 +77,9 @@ public class EventService extends AbstractService implements Updateable {
 	}
 
 	@Override
-	protected void doPause() {
-		getCore().removeUpdateable(this);
-		super.doPause();
-	}
-
-	@Override
-	protected void doResume() {
-		super.doResume();
-		getCore().addUpdateable(this);
-	}
-
-	@Override
 	protected void doStart() throws ServiceException {
 		super.doStart();
 		this.logger = LoggingService.getInstance(getCore());
-		getCore().addUpdateable(this);
 	}
 
 	@Override
@@ -107,10 +93,6 @@ public class EventService extends AbstractService implements Updateable {
 			event.release();
 		}
 		this.events2.clear();
-		
-		if (getStatus() != Status.PAUSED) {
-			getCore().removeUpdateable(this);
-		}
 		
 		int numListeners = 0;
 		for (Bag<EventListener> listeners : this.listenerMap.values()) {
