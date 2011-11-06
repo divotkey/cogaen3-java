@@ -37,19 +37,20 @@ public class TextVisual extends Visual {
 	public void render() {
 		GL11.glPushMatrix();
 		GL11.glScaled(getScale(), -getScale(), 1);
-		getColor().apply();
+
+		org.newdawn.slick.Color utilColor = new org.newdawn.slick.Color((int) (getColor().getRed() * 255), (int) (getColor().getGreen() * 255), (int) (getColor().getBlue() * 255), (int) (getColor().getAlpha() * 255));
 		
 		switch (this.alignment) {
 		case LEFT:
-			this.ttf.drawString(0,  -this.ttf.getHeight() / 2.0f, this.text);
+			this.ttf.drawString(0,  -this.ttf.getHeight() / 2.0f, this.text, utilColor);
 			break;
 			
 		case CENTER:
-			this.ttf.drawString(-this.ttf.getWidth(this.text) / 2,  -this.ttf.getHeight() / 2.0f, this.text);
+			this.ttf.drawString(-this.ttf.getWidth(this.text) / 2,  -this.ttf.getHeight() / 2.0f, this.text, utilColor);
 			break;
 			
 		case RIGHT:
-			this.ttf.drawString(-this.ttf.getWidth(this.text), -this.ttf.getHeight() / 2.0f, this.text);
+			this.ttf.drawString(-this.ttf.getWidth(this.text), -this.ttf.getHeight() / 2.0f, this.text, utilColor);
 			break;
 		}
 		GL11.glPopMatrix();

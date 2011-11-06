@@ -17,7 +17,6 @@ public class ViewToWorld {
 		this.camera = camera;
 	}
 	
-	
 	public void transform(double x, double y) {
 		v.x = x - this.halfWidth;
 		v.y = y - this.halfHeight;
