@@ -261,4 +261,22 @@ public class TextBlockVisual extends Visual {
 	public Timer getTimer() {
 		return this.timer;
 	}
+
+	public String getText() {
+		StringBuffer buf = new StringBuffer();
+		for (int i = 0; i < lines.length; ++i) {
+			if (lines[i].length() > 0) {
+				buf.append(lines[i]);
+			}
+		}
+		return buf.toString().trim();
+	}
+
+	public void setText(String string) {
+		for (int i = 0; i < this.lines.length; ++i) {
+			this.lines[i].setLength(0);
+		}
+		this.curX = 0;
+		this.curY = 0;
+	}
 }
