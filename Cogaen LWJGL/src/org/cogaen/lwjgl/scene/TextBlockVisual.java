@@ -154,10 +154,16 @@ public class TextBlockVisual extends Visual {
 			while (i > 0 && this.lines[idx].charAt(i) != ' ') {
 				--i;
 			}
+			if (i == 0) {
+				return false;
+			}
 			String word = this.lines[idx].substring(i + 1, this.lines[idx].length());
 			this.lines[idx].delete(i, this.lines[idx].length());
 			this.lines[idx + 1].insert(0, word);
-			this.lines[idx + 1].insert(word.length(), ' ');
+			boolean needSpace = this.lines[idx + 1].length() > word.length();
+			if (needSpace) {
+				this.lines[idx + 1].insert(word.length(), ' ');
+			}
 			
 			int oldCurX = -1;
 			if (idx == this.curY && this.curX > this.lines[idx].length()) {
@@ -169,6 +175,9 @@ public class TextBlockVisual extends Visual {
 			if (!adjust(idx + 1)) {
 				this.lines[idx].append(word);
 				this.lines[idx + 1].delete(0, word.length());
+				if (needSpace) {
+					this.lines[idx + 1].delete(0, 1);					
+				}
 				if (oldCurX != -1) {
 					this.curY--;
 					this.curX = oldCurX;
@@ -187,9 +196,11 @@ public class TextBlockVisual extends Visual {
 			this.lines[this.curY].deleteCharAt(this.curX - 1);
 			this.curX--;
 			for (int i = this.curY + 1; i < this.lines.length; ++i) {
-				this.lines[this.curY].append(' ');
-				this.lines[this.curY].append(this.lines[i]);
-				this.lines[i].setLength(0);
+				if (this.lines[i].length() > 0) {
+					this.lines[this.curY].append(' ');
+					this.lines[this.curY].append(this.lines[i]);
+					this.lines[i].setLength(0);
+				}
 			}
 			adjust(this.curY);
 		} else if (this.curY > 0) {
@@ -202,7 +213,6 @@ public class TextBlockVisual extends Visual {
 			}
 			adjust(this.curY);
 		}
-			
 	}
 	
 	public void left() {
@@ -230,6 +240,10 @@ public class TextBlockVisual extends Visual {
 	}
 
 	public void down() {
+		System.out.println("curY = " + this.curY);
+		if (curY < this.lines.length - 1) {
+			System.out.println("length = " + this.lines[this.curY + 1].length());
+		}
 		if (this.curY < this.lines.length - 1 && this.lines[this.curY + 1].length() != 0) {
 			this.curY++;
 			if (this.curX > this.lines[this.curY].length()) {
@@ -266,6 +280,7 @@ public class TextBlockVisual extends Visual {
 		StringBuffer buf = new StringBuffer();
 		for (int i = 0; i < lines.length; ++i) {
 			if (lines[i].length() > 0) {
+				buf.append(' ');
 				buf.append(lines[i]);
 			}
 		}
