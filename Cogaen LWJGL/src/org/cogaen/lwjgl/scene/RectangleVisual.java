@@ -9,8 +9,7 @@ public class RectangleVisual extends Visual {
 	private int glMode;
 	
 	public RectangleVisual(double width, double height) {
-		this.halfWidth = width * 0.5;
-		this.halfHeight = height * 0.5;
+		setDimension(width,height);
 		this.glMode = GL11.GL_QUADS;
 	}
 	
@@ -67,5 +66,10 @@ public class RectangleVisual extends Visual {
 	
 	public void setHeight(double height) {
 		this.halfHeight = height / 2;
+	}
+
+	public void setDimension(double width, double height) {
+		this.halfWidth = width * 0.5;
+		this.halfHeight = height * 0.5;
 	}
 }
