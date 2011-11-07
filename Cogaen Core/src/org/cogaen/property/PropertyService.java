@@ -18,7 +18,6 @@ public class PropertyService extends AbstractService {
 	
 	public static final CogaenId ID = new CogaenId("org.cogaen.property.PropertyService");
 	public static final String NAME = "Cogaen Property Service";
-	public static final String DEFAULT_PROPERTY_FILE = "cogaen.cfg";
 	public static final String LOGGING_SOURCE = "PRPT";
 	private static final String DEFAULT_FILE_COMMENT = "Cogaen Properties File";
 
@@ -32,7 +31,7 @@ public class PropertyService extends AbstractService {
 	}
 	
 	public PropertyService() {
-		this(DEFAULT_PROPERTY_FILE);
+		this(null);
 	}
 	
 	public PropertyService(String filename) {
@@ -63,6 +62,10 @@ public class PropertyService extends AbstractService {
 		super.doStart();
 		
 		this.logger = LoggingService.getInstance(getCore());
+		if (this.filename == null) {
+			this.properties = new Properties();
+			return;
+		}
 
 		File file = new File(this.filename);
 		if (!file.exists() || file.isDirectory()) {
@@ -87,19 +90,20 @@ public class PropertyService extends AbstractService {
 	@Override
 	protected void doStop() {
 		
-		File file = new File(this.filename);
-		try {
-			FileOutputStream fos = new FileOutputStream(file);
-			this.properties.store(fos, this.fileComment);
-			fos.close();
-		} catch (FileNotFoundException e) {
-			this.logger.logError(LOGGING_SOURCE, "unable to create properties file " + file.getAbsolutePath());
-		} catch (IOException e) {
-			this.logger.logError(LOGGING_SOURCE, "unable to store properties file " + file.getAbsolutePath());
-		}
-		
+		if (this.filename != null) {
+			File file = new File(this.filename);
+			try {
+				FileOutputStream fos = new FileOutputStream(file);
+				this.properties.store(fos, this.fileComment);
+				fos.close();
+			} catch (FileNotFoundException e) {
+				this.logger.logError(LOGGING_SOURCE, "unable to create properties file " + file.getAbsolutePath());
+			} catch (IOException e) {
+				this.logger.logError(LOGGING_SOURCE, "unable to store properties file " + file.getAbsolutePath());
+			}
+			
 		this.logger.logNotice(LOGGING_SOURCE, "properties stored to file " + file.getAbsolutePath());
-		
+		}		
 		super.doStop();
 	}
 	
