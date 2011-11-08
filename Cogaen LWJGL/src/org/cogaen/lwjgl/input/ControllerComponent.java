@@ -13,10 +13,6 @@ public class ControllerComponent extends Component implements ControllerState, E
 	private double vPos;
 	private boolean buttons[];
 	
-	public ControllerComponent(CogaenId attributeId) {
-		this(0);
-	}
-	
 	public ControllerComponent(int nButtons) {
 		this.buttons = new boolean[nButtons];
 	}
