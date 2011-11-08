@@ -1,5 +1,6 @@
 package org.cogaen.view;
 
+import org.cogaen.core.Core;
 import org.cogaen.core.Engageable;
 import org.cogaen.name.CogaenId;
 
@@ -7,9 +8,11 @@ public class EntityRepresentation implements Engageable {
 
 	private CogaenId entityId;
 	private boolean engaged;
+	private Core core;
 	
-	public EntityRepresentation(CogaenId entityId) {
+	public EntityRepresentation(Core core, CogaenId entityId) {
 		this.entityId = entityId;
+		this.core = core;
 	}
 
 	@Override
@@ -29,6 +32,10 @@ public class EntityRepresentation implements Engageable {
 	
 	public final CogaenId getEntityId() {
 		return this.entityId;
+	}
+	
+	public final Core getCore() {
+		return this.core;
 	}
 	
 }
