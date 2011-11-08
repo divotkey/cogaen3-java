@@ -40,7 +40,7 @@ public abstract class Event {
 		// intentionally left empty
 	}
 	
-	public boolean isOfType(CogaenId id) {
+	public final boolean isOfType(CogaenId id) {
 		return getTypeId().equals(id);
 	}
 	
