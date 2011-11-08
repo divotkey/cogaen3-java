@@ -20,6 +20,7 @@ public class TextBlockVisual extends Visual {
 	private Timer timer;
 	private double timeStamp;
 	private boolean cursorOn;
+	private boolean showCursor = true;
 	private int curX;
 	private int curY;
 	
@@ -74,7 +75,7 @@ public class TextBlockVisual extends Visual {
 			this.ttf.drawString((float) (-this.width / 2), (float) (-this.height / 2 + i * ttf.getHeight() * LINE_SPACE), this.lines[i].toString(), utilColor);						
 		}
 		
-		if (this.cursorOn) {
+		if (this.cursorOn && this.showCursor) {
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
 	    	GL11.glEnable(GL11.GL_BLEND);
 	    	
@@ -115,6 +116,7 @@ public class TextBlockVisual extends Visual {
 		instance.height = this.height;
 		instance.timer = this.timer;
 		instance.timeStamp = this.timeStamp;
+		instance.showCursor = this.showCursor;
 		
 		for (int i = 0; i < this.lines.length; ++i) {
 			instance.lines[i] = new StringBuffer(this.lines[i]);
@@ -294,4 +296,13 @@ public class TextBlockVisual extends Visual {
 		this.curX = 0;
 		this.curY = 0;
 	}
+
+	public boolean isShowCursor() {
+		return showCursor;
+	}
+
+	public void setShowCursor(boolean showCursor) {
+		this.showCursor = showCursor;
+	}
+	
 }
