@@ -60,11 +60,11 @@ public class View implements Engageable {
 		this.representationsMap.clear();
 	}
 		
-	public int numOfRepresentation() {
+	public final int numOfRepresentation() {
 		return this.representations.size();
 	}
 	
-	public EntityRepresentation getRepresentation(int idx) {
+	public final EntityRepresentation getRepresentation(int idx) {
 		return this.representations.get(idx);
 	}
 	
