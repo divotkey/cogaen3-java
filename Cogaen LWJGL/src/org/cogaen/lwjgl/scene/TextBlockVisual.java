@@ -289,12 +289,13 @@ public class TextBlockVisual extends Visual {
 		return buf.toString().trim();
 	}
 
-	public void setText(String string) {
+	public void setText(String text) {
 		for (int i = 0; i < this.lines.length; ++i) {
 			this.lines[i].setLength(0);
 		}
 		this.curX = 0;
 		this.curY = 0;
+		addString(text);
 	}
 
 	public boolean isShowCursor() {
