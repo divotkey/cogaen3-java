@@ -389,6 +389,14 @@ public class SceneService extends AbstractService {
 		this.cameras.clear();
 	}
 	
+	public int numCameras() {
+		return this.cameras.size();
+	}
+	
+	public Camera getCamera(int idx) {
+		return this.cameras.get(idx);
+	}
+	
 	public int getScreenWidth() {
 		return this.width;
 	}

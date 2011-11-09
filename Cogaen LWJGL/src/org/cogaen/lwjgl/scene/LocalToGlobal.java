@@ -1,14 +1,10 @@
 package org.cogaen.lwjgl.scene;
 
-import org.cogaen.core.Core;
 import org.cogaen.math.Vector2;
 
 public class LocalToGlobal {
 
 	private Vector2 v = new Vector2();
-	
-	public LocalToGlobal(Core core) {
-	}
 	
 	public void transform(SceneNode node) {
 		if (node == null) {

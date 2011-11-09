@@ -242,10 +242,6 @@ public class TextBlockVisual extends Visual {
 	}
 
 	public void down() {
-		System.out.println("curY = " + this.curY);
-		if (curY < this.lines.length - 1) {
-			System.out.println("length = " + this.lines[this.curY + 1].length());
-		}
 		if (this.curY < this.lines.length - 1 && this.lines[this.curY + 1].length() != 0) {
 			this.curY++;
 			if (this.curX > this.lines[this.curY].length()) {

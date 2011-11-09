@@ -9,30 +9,39 @@ public class WorldToView {
 	private int halfHeight;
 	private double ar;
 	private Vector2 v = new Vector2();
-	private Camera camera;
+	private SceneService scnSrv;
 	
-	public WorldToView(Core core, Camera camera) {
-		SceneService scnSrv = SceneService.getInstance(core);
-		this.halfWidth = scnSrv.getScreenWidth() / 2;
-		this.halfHeight = scnSrv.getScreenHeight() / 2;
-		this.ar = scnSrv.getAspectRatio();
-		this.camera = camera;
+	public WorldToView(Core core) {
+		this.scnSrv = SceneService.getInstance(core);
+		this.halfWidth = this.scnSrv.getScreenWidth() / 2;
+		this.halfHeight = this.scnSrv.getScreenHeight() / 2;
+		this.ar = this.scnSrv.getAspectRatio();
 	}
 	
-	public void transform(double x, double y) {
+	public void transform(double x, double y, int cameraIdx) {
+		Camera camera = this.scnSrv.getCamera(cameraIdx);
+		if (cameraIdx < 0 || cameraIdx >= this.scnSrv.numCameras()) {
+			throw new IllegalArgumentException("camera index out of range: " + cameraIdx);
+		}
+		
 		this.v.set(x, y);
-		this.v.x -= this.camera.getPosX();
-		this.v.y -= this.camera.getPosY();
-		this.v.scale(this.camera.getZoom());
+		this.v.x -= camera.getPosX();
+		this.v.y -= camera.getPosY();
+		this.v.scale(camera.getZoom());
 		this.v.x += this.halfWidth;
 		this.v.y += this.halfHeight;
 	}
 	
-	public void transform(SceneNode node) {
+	public void transform(SceneNode node, int cameraIdx) {
+		Camera camera = this.scnSrv.getCamera(cameraIdx);
+		if (cameraIdx < 0 || cameraIdx >= this.scnSrv.numCameras()) {
+			throw new IllegalArgumentException("camera index out of range: " + cameraIdx);
+		}
+
 		nodeTransform(node);
-		this.v.x -= this.camera.getPosX();
-		this.v.y -= this.camera.getPosY();
-		this.v.scale(this.camera.getZoom());
+		this.v.x -= camera.getPosX();
+		this.v.y -= camera.getPosY();
+		this.v.scale(camera.getZoom());
 		this.v.x += this.halfWidth;
 		this.v.y += this.halfHeight;
 	}
