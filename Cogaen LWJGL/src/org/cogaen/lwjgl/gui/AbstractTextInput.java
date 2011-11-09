@@ -10,6 +10,7 @@ import org.cogaen.lwjgl.input.KeyPressedEvent;
 import org.cogaen.lwjgl.input.KeyReleasedEvent;
 import org.cogaen.lwjgl.input.MouseButtonPressedEvent;
 import org.cogaen.lwjgl.scene.Color;
+import org.cogaen.lwjgl.scene.ReadableColor;
 import org.cogaen.lwjgl.scene.TextBlockVisual;
 import org.cogaen.name.CogaenId;
 
@@ -42,7 +43,6 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 		evtSrv.addListener(this, MouseButtonPressedEvent.TYPE_ID);
 		
 		this.tbv = new TextBlockVisual(getCore(), fontRes, getWidth() * this.gap / getScale(), getHeight() * this.gap / getScale());
-		this.tbv.setColor(getDarkColor());
 		this.tbv.setScale(getScale());
 		
 		getBaseNode().addVisual(this.tbv);
@@ -58,12 +58,10 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 		if (value) {
 			evtSrv.removeListener(this);
 			this.tbv.setShowCursor(false);
-			this.tbv.setColor(getPrimaryColor());
 		} else {
 			evtSrv.addListener(this, KeyPressedEvent.TYPE_ID);
 			evtSrv.addListener(this, KeyReleasedEvent.TYPE_ID);
 			evtSrv.addListener(this, MouseButtonPressedEvent.TYPE_ID);
-			this.tbv.setColor(getDarkColor());
 			this.tbv.setShowCursor(true);
 		}
 		super.setDisabled(value);
@@ -78,10 +76,12 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 		super.setVisible(value);
 	}
 	
-	@Override
-	public void setDarkColor(Color color) {
-		super.setDarkColor(color);
-		this.tbv.setColor(getDarkColor());
+	public void setTextColor(ReadableColor color) {
+		this.tbv.setColor(color);
+	}
+	
+	public Color getTextColor() {
+		return this.tbv.getColor();
 	}
 	
 	@Override

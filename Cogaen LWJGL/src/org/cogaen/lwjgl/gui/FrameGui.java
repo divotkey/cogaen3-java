@@ -2,6 +2,7 @@ package org.cogaen.lwjgl.gui;
 
 import org.cogaen.core.Core;
 import org.cogaen.lwjgl.scene.Color;
+import org.cogaen.lwjgl.scene.ReadableColor;
 import org.cogaen.lwjgl.scene.RectangleVisual;
 import org.cogaen.lwjgl.scene.Visual;
 
@@ -9,6 +10,9 @@ public abstract class FrameGui extends Gui {
 
 	private Visual frame;
 	private Visual frameBackground;
+	private Color selectColor = new Color(Color.GREEN);
+	private Color frameColor = new Color(Color.BLUE);
+	private Color backColor = new Color(Color.RED);
 	
 	public FrameGui(Core core, double width, double height) {
 		super(core, width, height);
@@ -20,13 +24,13 @@ public abstract class FrameGui extends Gui {
 		
 		RectangleVisual rec = new RectangleVisual(getWidth(), getHeight());
 		rec.setFilled(true);
-		rec.setColor(getLightColor());
+		rec.setColor(getBackColor());
 		getBaseNode().addVisual(rec);
 		this.frameBackground = rec;
 
 		rec = new RectangleVisual(getWidth(), getHeight());
 		rec.setFilled(false);
-		rec.setColor(getPrimaryColor());
+		rec.setColor(getFrameColor());
 		getBaseNode().addVisual(rec);
 		this.frame = rec;
 	}
@@ -44,16 +48,37 @@ public abstract class FrameGui extends Gui {
 		return this.frameBackground;
 	}
 
-	@Override
-	public void setPrimaryColor(Color color) {
-		super.setPrimaryColor(color);
-		this.frame.setColor(getPrimaryColor());
+	public void setFrameColor(ReadableColor color) {
+		this.frameColor.setColor(color);
+		if (!isSelected() && this.frame != null) {
+			this.frame.setColor(color);
+		}
+	}
+	
+	public ReadableColor getSelectColor() {
+		return selectColor;
 	}
 
-	@Override
-	public void setLightColor(Color color) {
-		super.setLightColor(color);
-		this.frameBackground.setColor(getLightColor());
+	public void setSelectColor(ReadableColor color) {
+		this.selectColor.setColor(color);
+		if (isSelected() && this.frame != null) {
+			this.frame.setColor(color);
+		}
+	}
+	
+	public ReadableColor getFrameColor() {
+		return this.frameColor;
+	}
+	
+	public void setBackColor(ReadableColor color) {
+		this.backColor.setColor(color);
+		if (this.frameBackground != null) {
+			this.frameBackground.setColor(color);
+		}
+	}
+	
+	public ReadableColor getBackColor() {
+		return this.backColor;
 	}
 	
 	@Override
@@ -67,5 +92,14 @@ public abstract class FrameGui extends Gui {
 		
 		super.setVisible(value);
 	}
-	
+
+	@Override
+	public void setSelected(boolean value) {
+		if (value == isSelected()) {
+			return;
+		}
+		
+		this.frame.setColor(value ? this.selectColor : this.frameColor);
+		super.setSelected(value);
+	}
 }

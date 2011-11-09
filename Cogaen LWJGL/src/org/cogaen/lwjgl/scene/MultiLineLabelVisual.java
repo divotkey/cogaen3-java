@@ -8,8 +8,6 @@ import org.newdawn.slick.TrueTypeFont;
 @SuppressWarnings("deprecation")
 public class MultiLineLabelVisual extends Visual {
 
-	public enum Alignment {LEFT, CENTER, RIGHT};
-	
 	private static final double LINE_SPACE = 1.0;
 	private TrueTypeFont ttf;
 	private StringBuffer lines[];

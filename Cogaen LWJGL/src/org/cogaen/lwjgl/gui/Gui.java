@@ -2,7 +2,6 @@ package org.cogaen.lwjgl.gui;
 
 import org.cogaen.core.Core;
 import org.cogaen.core.Engageable;
-import org.cogaen.lwjgl.scene.Color;
 import org.cogaen.lwjgl.scene.SceneNode;
 import org.cogaen.lwjgl.scene.SceneService;
 
@@ -14,12 +13,10 @@ public abstract class Gui implements Engageable {
 	private boolean engaged;
 	private double width;
 	private double height;
-	private Color primaryColor = new Color(Color.GRAY);
-	private Color lightColor = new Color(Color.LIGHT_GRAY);
-	private Color darkColor = new Color(Color.DARK_GRAY);
 	private int referenceResolution = DEFAULT_REFERENCE_RESOLUTION;
 	private boolean visible;
 	private boolean disabled;
+	private boolean selected;
 	
 	public Gui(Core core, double width, double height) {
 		this.core = core;
@@ -70,30 +67,6 @@ public abstract class Gui implements Engageable {
 		this.height = height;
 	}
 
-	public Color getPrimaryColor() {
-		return primaryColor;
-	}
-
-	public void setPrimaryColor(Color color) {
-		this.primaryColor = color;
-	}
-
-	public Color getLightColor() {
-		return lightColor;
-	}
-
-	public void setLightColor(Color color) {
-		this.lightColor = color;
-	}
-
-	public Color getDarkColor() {
-		return darkColor;
-	}
-
-	public void setDarkColor(Color color) {
-		this.darkColor = color;
-	}
-
 	public int getReferenceResolution() {
 		return referenceResolution;
 	}
@@ -115,5 +88,13 @@ public abstract class Gui implements Engageable {
 	
 	public final boolean isVisible() {
 		return this.visible;
+	}
+	
+	public void setSelected(boolean value) {
+		this.selected = value;
+	}
+	
+	public final boolean isSelected() {
+		return this.selected;
 	}
 }

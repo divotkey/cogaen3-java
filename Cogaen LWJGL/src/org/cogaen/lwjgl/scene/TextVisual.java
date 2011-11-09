@@ -8,7 +8,6 @@ import org.newdawn.slick.TrueTypeFont;
 @SuppressWarnings("deprecation")
 public class TextVisual extends Visual {
 
-	public enum Alignment {LEFT, CENTER, RIGHT};
 	private TrueTypeFont ttf;
 	private String text;
 	private Alignment alignment = Alignment.LEFT;
