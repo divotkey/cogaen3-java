@@ -67,7 +67,7 @@ public abstract class Gui implements Engageable {
 		this.height = height;
 	}
 
-	public int getReferenceResolution() {
+	public final int getReferenceResolution() {
 		return referenceResolution;
 	}
 

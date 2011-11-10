@@ -115,8 +115,18 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 		super.setVisible(value);
 	}
 	
+	@Override
+	public void setReferenceResolution(int referenceResolution) {
+		super.setReferenceResolution(referenceResolution);
+		if (this.text != null) {
+			this.text.setScale(getScale());
+		}
+	}
+
 	public void setTextColor(ReadableColor color) {
 		this.text.setColor(color);
 	}
+	
+	
 	
 }

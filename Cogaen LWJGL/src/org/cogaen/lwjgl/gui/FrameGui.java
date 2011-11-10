@@ -6,7 +6,7 @@ import org.cogaen.lwjgl.scene.ReadableColor;
 import org.cogaen.lwjgl.scene.RectangleVisual;
 import org.cogaen.lwjgl.scene.Visual;
 
-public abstract class FrameGui extends Gui {
+public class FrameGui extends Gui {
 
 	private Visual frame;
 	private Visual frameBackground;
