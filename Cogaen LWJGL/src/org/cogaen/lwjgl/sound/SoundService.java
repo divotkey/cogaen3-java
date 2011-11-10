@@ -1,25 +1,3 @@
-package org.cogaen.lwjgl.sound;
-
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.cogaen.core.AbstractService;
-import org.cogaen.core.Core;
-import org.cogaen.core.ServiceException;
-import org.cogaen.logging.LoggingService;
-import org.cogaen.lwjgl.scene.SceneService;
-import org.cogaen.name.CogaenId;
-import org.cogaen.resource.ResourceService;
-import org.cogaen.time.TimeService;
-import org.cogaen.time.Timer;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.openal.AL;
-import org.lwjgl.openal.AL10;
 /* 
 -----------------------------------------------------------------------------
                    Cogaen - Component-based Game Engine V3
@@ -49,6 +27,29 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 */
+
+package org.cogaen.lwjgl.sound;
+
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.cogaen.core.AbstractService;
+import org.cogaen.core.Core;
+import org.cogaen.core.ServiceException;
+import org.cogaen.logging.LoggingService;
+import org.cogaen.lwjgl.scene.SceneService;
+import org.cogaen.name.CogaenId;
+import org.cogaen.resource.ResourceService;
+import org.cogaen.time.TimeService;
+import org.cogaen.time.Timer;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.openal.AL;
+import org.lwjgl.openal.AL10;
 
 public class SoundService extends AbstractService {
 
