@@ -25,12 +25,14 @@ public class FrameGui extends Gui {
 		RectangleVisual rec = new RectangleVisual(getWidth(), getHeight());
 		rec.setFilled(true);
 		rec.setColor(getBackColor());
+		rec.setMask(getMask());
 		getBaseNode().addVisual(rec);
 		this.frameBackground = rec;
 
 		rec = new RectangleVisual(getWidth(), getHeight());
 		rec.setFilled(false);
 		rec.setColor(getFrameColor());
+		rec.setMask(getMask());
 		getBaseNode().addVisual(rec);
 		this.frame = rec;
 	}
@@ -87,8 +89,8 @@ public class FrameGui extends Gui {
 			return;
 		}
 		
-		getFrame().setMask(value ? 0xFFFF : 0x0000);
-		getBackground().setMask(value ? 0xFFFF : 0x0000);
+		getFrame().setMask(value ? getMask() : 0x0000);
+		getBackground().setMask(value ? getMask() : 0x0000);
 		
 		super.setVisible(value);
 	}
@@ -102,4 +104,16 @@ public class FrameGui extends Gui {
 		this.frame.setColor(value ? this.selectColor : this.frameColor);
 		super.setSelected(value);
 	}
+
+	@Override
+	public void setMask(int mask) {
+		super.setMask(mask);
+		if (this.frame != null) {
+			this.frame.setMask(getMask());
+		}
+		if (this.frameBackground != null) {
+			this.frameBackground.setMask(getMask());
+		}
+	}
+	
 }

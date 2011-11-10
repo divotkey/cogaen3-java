@@ -17,6 +17,7 @@ public abstract class Gui implements Engageable {
 	private boolean visible;
 	private boolean disabled;
 	private boolean selected;
+	private int mask;
 	
 	public Gui(Core core, double width, double height) {
 		this.core = core;
@@ -96,5 +97,13 @@ public abstract class Gui implements Engageable {
 	
 	public final boolean isSelected() {
 		return this.selected;
+	}
+
+	public final int getMask() {
+		return mask;
+	}
+
+	public void setMask(int mask) {
+		this.mask = mask;
 	}
 }

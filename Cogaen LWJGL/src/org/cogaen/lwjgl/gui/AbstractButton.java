@@ -111,7 +111,7 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 		if (isVisible() == value) {
 			return;
 		}
-		this.text.setMask(value ? 0xFFFF : 0x0000);
+		this.text.setMask(value ? getMask() : 0x0000);
 		super.setVisible(value);
 	}
 	
@@ -120,6 +120,16 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 		super.setReferenceResolution(referenceResolution);
 		if (this.text != null) {
 			this.text.setScale(getScale());
+		}
+	}
+	
+	
+
+	@Override
+	public void setMask(int mask) {
+		super.setMask(mask);
+		if (this.text != null) {
+			this.text.setMask(getMask());
 		}
 	}
 
