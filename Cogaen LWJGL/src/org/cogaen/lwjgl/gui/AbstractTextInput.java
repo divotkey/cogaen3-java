@@ -56,12 +56,12 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 		
 		EventService evtSrv = EventService.getInstance(getCore());
 		if (value) {
-			evtSrv.removeListener(this);
+			evtSrv.removeListener(this, KeyPressedEvent.TYPE_ID);
+			evtSrv.removeListener(this, KeyReleasedEvent.TYPE_ID);
 			this.tbv.setShowCursor(false);
 		} else {
 			evtSrv.addListener(this, KeyPressedEvent.TYPE_ID);
 			evtSrv.addListener(this, KeyReleasedEvent.TYPE_ID);
-			evtSrv.addListener(this, MouseButtonPressedEvent.TYPE_ID);
 			this.tbv.setShowCursor(true);
 		}
 		super.setDisabled(value);
@@ -116,6 +116,12 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 		}
 		
 		switch (event.getKeyCode()) {
+		
+		case KeyCode.KEY_LSHIFT:
+		case KeyCode.KEY_RSHIFT:
+			this.shift = true;
+			break;
+			
 		case KeyCode.KEY_BACK:
 			this.tbv.back();
 			break;
@@ -142,8 +148,8 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 		this.tbv.setText(text);
 	}
 	
-	public void getText(String text) {
-		this.tbv.getText();
+	public String getText() {
+		return this.tbv.getText();
 	}
 
 	public double getGap() {
