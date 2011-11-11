@@ -68,6 +68,14 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 	}
 
 	@Override
+	public void disengage() {
+		if (!isDisabled()) {
+			EventService.getInstance(getCore()).removeListener(this);
+		}
+		super.disengage();
+	}
+
+	@Override
 	public void setVisible(boolean value) {
 		if (isVisible() == value) {
 			return;
