@@ -17,7 +17,7 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 
 	public static final String DEFAULT_TEXT = "Ok";
 	public static final CogaenId DEFAULT_PRESSED_EVENT_ID = new CogaenId("ButtonPressed");
-	private static final double PRESSED_EVENT_DELAY = 0.1;
+	private static final double PRESSED_EVENT_DELAY = 0.05;
 	private TextVisual text;
 	private String fontRes;
 	private CogaenId pressedEventId;
