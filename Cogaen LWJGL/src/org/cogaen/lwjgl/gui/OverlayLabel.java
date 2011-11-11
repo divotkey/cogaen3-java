@@ -2,7 +2,7 @@ package org.cogaen.lwjgl.gui;
 
 import org.cogaen.core.Core;
 
-public class OverlayLabel extends Label {
+public class OverlayLabel extends AbstractLabel {
 
 	public OverlayLabel(Core core, String fontRes, double width, double height) {
 		super(core, fontRes, width, height);

@@ -13,6 +13,7 @@ public class FrameGui extends Gui {
 	private Color selectColor = new Color(Color.GREEN);
 	private Color frameColor = new Color(Color.BLUE);
 	private Color backColor = new Color(Color.RED);
+	private boolean useFrame = true;
 	
 	public FrameGui(Core core, double width, double height) {
 		super(core, width, height);
@@ -89,12 +90,26 @@ public class FrameGui extends Gui {
 			return;
 		}
 		
-		getFrame().setMask(value ? getMask() : 0x0000);
-		getBackground().setMask(value ? getMask() : 0x0000);
+		getFrame().setMask(value && this.useFrame ? getMask() : 0x0000);
+		getBackground().setMask(value && this.useFrame ? getMask() : 0x0000);
 		
 		super.setVisible(value);
 	}
 
+	public final void setUseFrame(boolean value) {
+		if (this.useFrame == value) {
+			return;
+		}
+
+		getFrame().setMask(value ? getMask() : 0x0000);
+		getBackground().setMask(value ? getMask() : 0x0000);
+		this.useFrame = value;
+	}
+	
+	public final boolean isUseFrame() {
+		return this.useFrame;
+	}
+	
 	@Override
 	public void setSelected(boolean value) {
 		if (value == isSelected()) {
@@ -109,10 +124,10 @@ public class FrameGui extends Gui {
 	public void setMask(int mask) {
 		super.setMask(mask);
 		if (this.frame != null) {
-			this.frame.setMask(getMask());
+			this.frame.setMask(this.useFrame ? getMask() : 0x000);
 		}
 		if (this.frameBackground != null) {
-			this.frameBackground.setMask(getMask());
+			this.frameBackground.setMask(this.useFrame ? getMask() : 0x000);
 		}
 	}
 	

@@ -2,7 +2,7 @@ package org.cogaen.lwjgl.gui;
 
 import org.cogaen.core.Core;
 
-public class WorldLabel extends Label {
+public class WorldLabel extends AbstractLabel {
 
 	private double worldSize;
 

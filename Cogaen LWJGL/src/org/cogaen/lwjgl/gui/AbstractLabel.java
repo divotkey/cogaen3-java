@@ -6,7 +6,7 @@ import org.cogaen.lwjgl.scene.Color;
 import org.cogaen.lwjgl.scene.MultiLineLabelVisual;
 import org.cogaen.lwjgl.scene.ReadableColor;
 
-public abstract class Label extends FrameGui {
+public abstract class AbstractLabel extends FrameGui {
 
 	private static final double DEFAULT_GAP = 0.97;
 	private MultiLineLabelVisual mll;
@@ -14,7 +14,7 @@ public abstract class Label extends FrameGui {
 	private Alignment alignment = Alignment.LEFT;
 	private double gap = DEFAULT_GAP;
 	
-	public Label(Core core, String fontRes, double width, double height) {
+	public AbstractLabel(Core core, String fontRes, double width, double height) {
 		super(core, width, height);
 		this.fontRes = fontRes;
 	}
