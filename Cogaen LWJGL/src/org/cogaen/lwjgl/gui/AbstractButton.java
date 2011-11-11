@@ -1,3 +1,34 @@
+/* 
+-----------------------------------------------------------------------------
+                   Cogaen - Component-based Game Engine V3
+-----------------------------------------------------------------------------
+This software is developed by the Cogaen Development Team. Please have a 
+look at our project home page for further details: http://www.cogaen.org
+   
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+Copyright (c) 2010-2011 Roman Divotkey
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+*/
+
+
 package org.cogaen.lwjgl.gui;
 
 import org.cogaen.core.Core;
@@ -7,6 +38,7 @@ import org.cogaen.event.EventService;
 import org.cogaen.event.SimpleEvent;
 import org.cogaen.lwjgl.input.MouseButtonPressedEvent;
 import org.cogaen.lwjgl.input.MouseButtonReleasedEvent;
+import org.cogaen.lwjgl.scene.Color;
 import org.cogaen.lwjgl.scene.ReadableColor;
 import org.cogaen.lwjgl.scene.TextVisual;
 import org.cogaen.lwjgl.scene.Alignment;
@@ -16,10 +48,11 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 
 	public static final String DEFAULT_TEXT = "Ok";
 	public static final CogaenId DEFAULT_PRESSED_EVENT_ID = new CogaenId("ButtonPressed");
-	private static final double PRESSED_EVENT_DELAY = 0.1;
+	private static final double PRESSED_EVENT_DELAY = 0.05;
 	private TextVisual text;
 	private String fontRes;
 	private CogaenId pressedEventId;
+	private Color textColor = new Color(Color.BLACK);
 	
 	public AbstractButton(Core core, String fontRes, double width, double height) {
 		super(core, width, height);
@@ -40,6 +73,7 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 		this.text.setScale(getScale());
 		this.text.setAllignment(Alignment.CENTER);
 		this.text.setText(DEFAULT_TEXT);
+		this.text.setColor(this.textColor);
 		getBaseNode().addVisual(this.text);
 	}
 
@@ -98,9 +132,11 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 		EventService evtSrv = EventService.getInstance(getCore());
 		if (value) {
 			evtSrv.removeListener(this);
+			this.text.getColor().setAlpha(0.5);
 		} else {
 			evtSrv.addListener(this, MouseButtonPressedEvent.TYPE_ID);
 			evtSrv.addListener(this, MouseButtonReleasedEvent.TYPE_ID);
+			this.text.getColor().setAlpha(1.0);
 		}
 		
 		super.setDisabled(value);
@@ -122,8 +158,6 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 			this.text.setScale(getScale());
 		}
 	}
-	
-	
 
 	@Override
 	public void setMask(int mask) {
@@ -134,9 +168,10 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 	}
 
 	public void setTextColor(ReadableColor color) {
-		this.text.setColor(color);
+		this.textColor.setColor(color);
+		if (this.text != null) {
+			this.text.setColor(color);
+		}
 	}
-	
-	
 	
 }
