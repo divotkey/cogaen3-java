@@ -7,6 +7,7 @@ import org.cogaen.event.EventService;
 import org.cogaen.event.SimpleEvent;
 import org.cogaen.lwjgl.input.MouseButtonPressedEvent;
 import org.cogaen.lwjgl.input.MouseButtonReleasedEvent;
+import org.cogaen.lwjgl.scene.Color;
 import org.cogaen.lwjgl.scene.ReadableColor;
 import org.cogaen.lwjgl.scene.TextVisual;
 import org.cogaen.lwjgl.scene.Alignment;
@@ -20,6 +21,7 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 	private TextVisual text;
 	private String fontRes;
 	private CogaenId pressedEventId;
+	private Color textColor = new Color(Color.BLACK);
 	
 	public AbstractButton(Core core, String fontRes, double width, double height) {
 		super(core, width, height);
@@ -40,6 +42,7 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 		this.text.setScale(getScale());
 		this.text.setAllignment(Alignment.CENTER);
 		this.text.setText(DEFAULT_TEXT);
+		this.text.setColor(this.textColor);
 		getBaseNode().addVisual(this.text);
 	}
 
@@ -98,9 +101,11 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 		EventService evtSrv = EventService.getInstance(getCore());
 		if (value) {
 			evtSrv.removeListener(this);
+			this.text.getColor().setAlpha(0.5);
 		} else {
 			evtSrv.addListener(this, MouseButtonPressedEvent.TYPE_ID);
 			evtSrv.addListener(this, MouseButtonReleasedEvent.TYPE_ID);
+			this.text.getColor().setAlpha(1.0);
 		}
 		
 		super.setDisabled(value);
@@ -122,8 +127,6 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 			this.text.setScale(getScale());
 		}
 	}
-	
-	
 
 	@Override
 	public void setMask(int mask) {
@@ -134,9 +137,10 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 	}
 
 	public void setTextColor(ReadableColor color) {
-		this.text.setColor(color);
+		this.textColor.setColor(color);
+		if (this.text != null) {
+			this.text.setColor(color);
+		}
 	}
-	
-	
 	
 }
