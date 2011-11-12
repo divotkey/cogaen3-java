@@ -39,7 +39,7 @@ import org.cogaen.task.TaskService;
 import org.cogaen.time.TimeService;
 import org.cogaen.time.Timer;
 
-public class FadeInTask extends AbstractTask {
+public class VisualFadeInTask extends AbstractTask {
 
 	public static final CogaenId FADE_IN_FINISHED_EVENT_ID = new CogaenId("FadeInFinished");
 	
@@ -49,8 +49,8 @@ public class FadeInTask extends AbstractTask {
 	private double startTime;
 	private CogaenId finishedEventId = FADE_IN_FINISHED_EVENT_ID;
 	
-	public FadeInTask(Core core, Visual visual, double fadeTime) {
-		super(core, "Fade-in");
+	public VisualFadeInTask(Core core, Visual visual, double fadeTime) {
+		super(core, "Visual Fade-in");
 		this.visual = visual;
 		this.visual.getColor().setAlpha(0.0);
 		this.fadeTime = fadeTime;
