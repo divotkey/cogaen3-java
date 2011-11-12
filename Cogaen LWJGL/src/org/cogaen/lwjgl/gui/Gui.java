@@ -47,7 +47,7 @@ public abstract class Gui implements Engageable {
 	private boolean visible;
 	private boolean disabled;
 	private boolean selected;
-	private int mask;
+	private int mask = 0xFFFF;
 	
 	public Gui(Core core, double width, double height) {
 		this.core = core;
@@ -61,6 +61,7 @@ public abstract class Gui implements Engageable {
 		this.engaged = true;
 		this.visible = true;
 		this.disabled = false;
+		
 	}
 
 	@Override

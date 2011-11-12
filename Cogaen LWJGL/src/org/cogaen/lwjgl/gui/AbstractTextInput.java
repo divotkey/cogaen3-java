@@ -75,6 +75,7 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 		
 		this.tbv = new TextBlockVisual(getCore(), fontRes, getWidth() * this.gap / getScale(), getHeight() * this.gap / getScale());
 		this.tbv.setScale(getScale());
+		this.tbv.setMask(getMask());
 		
 		getBaseNode().addVisual(this.tbv);
 	}

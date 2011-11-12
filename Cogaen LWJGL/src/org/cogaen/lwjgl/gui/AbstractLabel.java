@@ -59,6 +59,7 @@ public abstract class AbstractLabel extends FrameGui {
 		this.mll = new MultiLineLabelVisual(getCore(), this.fontRes, getWidth() * this.gap / getScale(), getHeight() * this.gap / getScale());
 		this.mll.setScale(getScale());
 		this.mll.setAlignment(this.alignment);
+		this.mll.setMask(getMask());
 		getBaseNode().addVisual(this.mll);
 	}
 

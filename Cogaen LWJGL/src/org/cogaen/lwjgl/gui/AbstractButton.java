@@ -74,6 +74,7 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 		this.text.setAllignment(Alignment.CENTER);
 		this.text.setText(DEFAULT_TEXT);
 		this.text.setColor(this.textColor);
+		this.text.setMask(getMask());
 		getBaseNode().addVisual(this.text);
 	}
 
@@ -82,6 +83,7 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 		if (!isDisabled()) {
 			EventService.getInstance(getCore()).removeListener(this);
 		}
+		
 		super.disengage();
 	}
 	
