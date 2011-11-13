@@ -34,10 +34,14 @@ import org.cogaen.core.Core;
 
 public class OverlayLabel extends AbstractLabel {
 
-	public OverlayLabel(Core core, String fontRes, double width, double height) {
-		super(core, fontRes, width, height);
+	public OverlayLabel(Core core, String fontRes, double width, double height, int referenceResolution) {
+		super(core, fontRes, width, height, referenceResolution);
 	}
 
+	public OverlayLabel(Core core, String fontRes, double width, double height) {
+		super(core, fontRes, width, height, Gui.DEFAULT_REFERENCE_RESOLUTION);
+	}
+	
 	@Override
 	protected double getScale() {
 		return 1.0 / getReferenceResolution();

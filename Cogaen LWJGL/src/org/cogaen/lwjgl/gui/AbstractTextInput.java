@@ -56,8 +56,8 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 	private boolean shift;
 	private CogaenId pressedEventId;
 
-	public AbstractTextInput(Core core, String fontRes, double width, double height) {
-		super(core, width, height);
+	public AbstractTextInput(Core core, String fontRes, double width, double height, int referenceResolution) {
+		super(core, width, height, referenceResolution);
 		this.fontRes = fontRes;
 	}
 

@@ -45,8 +45,8 @@ public abstract class AbstractLabel extends FrameGui {
 	private Alignment alignment = Alignment.LEFT;
 	private double gap = DEFAULT_GAP;
 	
-	public AbstractLabel(Core core, String fontRes, double width, double height) {
-		super(core, width, height);
+	public AbstractLabel(Core core, String fontRes, double width, double height, int referenceResolution) {
+		super(core, width, height, referenceResolution);
 		this.fontRes = fontRes;
 	}
 

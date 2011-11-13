@@ -41,11 +41,15 @@ public class WorldButton extends AbstractButton {
 	private ViewToWorld viewToWorld;
 	private LocalToGlobal localToGlobal = new LocalToGlobal();
 	private int cameraIdx = DEFAULT_CAMERA_IDX;
-	
-	public WorldButton(Core core, double worldWidth, String fontRes, double width, double height) {
-		super(core, fontRes, width, height);
+
+	public WorldButton(Core core, double worldWidth, String fontRes, double width, double height, int referenceResolution) {
+		super(core, fontRes, width, height, referenceResolution);
 		this.worldWidth = worldWidth;
 		this.viewToWorld = new ViewToWorld(core);
+	}
+	
+	public WorldButton(Core core, double worldWidth, String fontRes, double width, double height) {
+		this(core, worldWidth, fontRes, width, height, Gui.DEFAULT_REFERENCE_RESOLUTION);
 	}
 
 	@Override

@@ -43,16 +43,17 @@ public abstract class Gui implements Engageable {
 	private boolean engaged;
 	private double width;
 	private double height;
-	private int referenceResolution = DEFAULT_REFERENCE_RESOLUTION;
+	private int referenceResolution;
 	private boolean visible;
 	private boolean disabled;
 	private boolean selected;
 	private int mask = 0xFFFF;
-	
-	public Gui(Core core, double width, double height) {
+
+	public Gui(Core core, double width, double height, int referenceResolution) {
 		this.core = core;
 		this.width = width;
 		this.height = height;
+		this.referenceResolution = referenceResolution;
 	}
 
 	@Override
@@ -101,10 +102,6 @@ public abstract class Gui implements Engageable {
 
 	public final int getReferenceResolution() {
 		return referenceResolution;
-	}
-
-	public void setReferenceResolution(int referenceResolution) {
-		this.referenceResolution = referenceResolution;
 	}
 	
 	public void setDisabled(boolean value) {

@@ -45,11 +45,11 @@ public class FrameGui extends Gui {
 	private Color frameColor = new Color(Color.BLUE);
 	private Color backColor = new Color(Color.RED);
 	private boolean useFrame = true;
-	
-	public FrameGui(Core core, double width, double height) {
-		super(core, width, height);
-	}
 
+	public FrameGui(Core core, double width, double height, int referenceResolution) {
+		super(core, width, height, referenceResolution);
+	}
+	
 	@Override
 	public void engage() {
 		super.engage();

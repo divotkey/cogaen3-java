@@ -39,11 +39,15 @@ public class OverlayTextInput extends AbstractTextInput {
 	private ViewToOverlay viewToOverlay;
 	private LocalToGlobal localToGlobal = new LocalToGlobal();
 	
-	public OverlayTextInput(Core core, String fontRes, double width, double height) {
-		super(core, fontRes, width, height);
+	public OverlayTextInput(Core core, String fontRes, double width, double height, int referenceResolution) {
+		super(core, fontRes, width, height, referenceResolution);
 		this.viewToOverlay = new ViewToOverlay(core);
 	}
 
+	public OverlayTextInput(Core core, String fontRes, double width, double height) {
+		this(core, fontRes, width, height, Gui.DEFAULT_REFERENCE_RESOLUTION);
+	}
+	
 	@Override
 	protected boolean isHit(double x, double y) {
 		this.viewToOverlay.transform(x, y);

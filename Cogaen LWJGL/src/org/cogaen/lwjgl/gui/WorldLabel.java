@@ -36,11 +36,15 @@ public class WorldLabel extends AbstractLabel {
 
 	private double worldSize;
 
-	public WorldLabel(Core core, double worldSize, String fontRes, double width, double height) {
-		super(core, fontRes, width, height);
+	public WorldLabel(Core core, double worldSize, String fontRes, double width, double height, int referenceResolution) {
+		super(core, fontRes, width, height, referenceResolution);
 		this.worldSize = worldSize;
 	}
 
+	public WorldLabel(Core core, double worldSize, String fontRes, double width, double height) {
+		this(core, worldSize, fontRes, width, height, Gui.DEFAULT_REFERENCE_RESOLUTION);
+	}
+	
 	@Override
 	protected double getScale() {
 		return this.worldSize / getReferenceResolution();

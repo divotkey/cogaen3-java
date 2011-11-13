@@ -42,12 +42,16 @@ public class WorldTextInput extends AbstractTextInput {
 	private LocalToGlobal localToGlobal = new LocalToGlobal();
 	private int cameraIdx = DEFAULT_CAMERA_IDX;
 	
-	public WorldTextInput(Core core, double worldWidth, String fontRes, double width, double height) {
-		super(core, fontRes, width, height);
+	public WorldTextInput(Core core, double worldWidth, String fontRes, double width, double height, int referenceResolution) {
+		super(core, fontRes, width, height, referenceResolution);
 		this.viewToWorld = new ViewToWorld(core);
 		this.worldWidth = worldWidth;
 	}
 
+	public WorldTextInput(Core core, double worldWidth, String fontRes, double width, double height) {
+		this(core, worldWidth, fontRes, width, height, Gui.DEFAULT_REFERENCE_RESOLUTION);
+	}
+	
 	@Override
 	protected double getScale() {
 		return this.worldWidth / getReferenceResolution();

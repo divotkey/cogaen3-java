@@ -53,10 +53,14 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 	private String fontRes;
 	private CogaenId pressedEventId;
 	private Color textColor = new Color(Color.BLACK);
+
+	public AbstractButton(Core core, String fontRes, double width, double height, int referenceResolution) {
+		super(core, width, height, referenceResolution);
+		this.fontRes = fontRes;
+	}
 	
 	public AbstractButton(Core core, String fontRes, double width, double height) {
-		super(core, width, height);
-		this.fontRes = fontRes;
+		this(core, fontRes, width, height, Gui.DEFAULT_REFERENCE_RESOLUTION);
 	}
 
 	protected abstract boolean isHit(double x, double y);
@@ -153,14 +157,6 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 		super.setVisible(value);
 	}
 	
-	@Override
-	public void setReferenceResolution(int referenceResolution) {
-		super.setReferenceResolution(referenceResolution);
-		if (this.text != null) {
-			this.text.setScale(getScale());
-		}
-	}
-
 	@Override
 	public void setMask(int mask) {
 		super.setMask(mask);
