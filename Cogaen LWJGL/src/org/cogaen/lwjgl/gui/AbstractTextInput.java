@@ -37,6 +37,7 @@ import org.cogaen.event.EventListener;
 import org.cogaen.event.EventService;
 import org.cogaen.event.SimpleEvent;
 import org.cogaen.lwjgl.input.KeyCode;
+import org.cogaen.lwjgl.input.KeyCodeEN;
 import org.cogaen.lwjgl.input.KeyPressedEvent;
 import org.cogaen.lwjgl.input.KeyReleasedEvent;
 import org.cogaen.lwjgl.input.MouseButtonPressedEvent;
@@ -55,6 +56,7 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 	private double gap = DEFAULT_GAP;
 	private boolean shift;
 	private CogaenId pressedEventId;
+	private KeyCode keyCode = new KeyCodeEN();
 
 	public AbstractTextInput(Core core, String fontRes, double width, double height, int referenceResolution) {
 		super(core, width, height, referenceResolution);
@@ -149,7 +151,7 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 
 	private void handleKeyPressed(KeyPressedEvent event) {
 		if (KeyCode.isPrintable(event.getKeyCode())) {
-			this.tbv.addChar(KeyCode.getChar(event.getKeyCode(), this.shift));
+			this.tbv.addChar(this.keyCode.getChar(event.getKeyCode(), this.shift));
 			return;
 		}
 		
@@ -205,4 +207,13 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 	public void setPressedEventId(CogaenId pressedEventId) {
 		this.pressedEventId = pressedEventId;
 	}
+
+	public KeyCode getKeyCode() {
+		return keyCode;
+	}
+
+	public void setKeyCode(KeyCode keyCode) {
+		this.keyCode = keyCode;
+	}
+	
 }
