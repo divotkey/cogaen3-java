@@ -87,34 +87,34 @@ public class KeyCodeEN extends KeyCode {
 			return upperCase ? 'Z' : 'z';
 
 		case KEY_1:
-			return '1';
+			return upperCase ? '!' : '1';
 
 		case KEY_2:
-			return '2';
+			return upperCase ? '@' : '2';
 			
 		case KEY_3:
-			return '3';
+			return upperCase ? '#' : '3';
 			
 		case KEY_4:
-			return '4';
+			return upperCase ? '$' : '4';
 			
 		case KEY_5:
-			return '5';
+			return upperCase ? '%' : '5';
 			
 		case KEY_6:
-			return '6';
+			return upperCase ? '^' : '6';
 			
 		case KEY_7:
-			return '7';
+			return upperCase ? '&' : '7';
 
 		case KEY_8:
-			return '8';
+			return upperCase ? '*' : '8';
 
 		case KEY_9:
-			return '9';
+			return upperCase ? '(' : '9';
 
 		case KEY_0:
-			return '0';
+			return upperCase ? ')' : '0';
 			
 		case KEY_BACKSLASH:
 			return '/';
