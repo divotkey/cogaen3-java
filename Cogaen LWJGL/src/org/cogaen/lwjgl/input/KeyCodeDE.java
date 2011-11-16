@@ -117,10 +117,34 @@ public class KeyCodeDE extends KeyCode {
 			return upperCase ? '=' : '0';
 			
 		case KEY_BACKSLASH:
-			return '/';
+			return upperCase ? '°' : '/';
 			
 		case KEY_PERIOD:
-			return '.';
+			return upperCase ? ':' : '.';
+			
+		case KEY_COMMA:
+			return upperCase ? ';' : ',';
+			
+		case KEY_MINUS: 
+			return upperCase ? '_' : '-';
+			
+		case KEY_GRAVE:
+			return upperCase ? 'Ö' : 'ö';
+			
+		case KEY_APOSTROPHE:
+			return upperCase ? 'Ä' : 'ä';
+			
+		case KEY_SLASH:
+			return upperCase ? '\'' : '#';
+			
+		case KEY_EQUALS:
+			return upperCase ? '*' : '+';
+			
+		case KEY_LBRACKET:
+			return upperCase ? '?' : 'ß';
+			
+		case KEY_NULL:
+			return upperCase ? '>' : '<';
 		}
 		
 		return 0;

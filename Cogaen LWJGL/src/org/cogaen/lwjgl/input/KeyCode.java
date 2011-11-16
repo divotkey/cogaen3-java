@@ -79,9 +79,18 @@ public abstract class KeyCode {
 	public static final int KEY_8 = 9;
 	public static final int KEY_9 = 10;
 	public static final int KEY_0 = 11;
+	
+	public static final int KEY_COMMA = 51;
 	public static final int KEY_PERIOD = 52;
+	public static final int KEY_NULL = 0;
 	
 	public static final int KEY_BACKSLASH = 43;
+	public static final int KEY_GRAVE = 41;
+	public static final int KEY_APOSTROPHE = 40;
+	public static final int KEY_SLASH = 53;
+	public static final int KEY_EQUALS = 13;
+	public static final int KEY_LBRACKET = 26;
+	public static final int KEY_RBRACKET = 27;
 	
 	
 	public static final int KEY_SPACE = 57;
