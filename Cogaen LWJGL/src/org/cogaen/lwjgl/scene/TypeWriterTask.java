@@ -42,8 +42,8 @@ import org.cogaen.time.Timer;
 public class TypeWriterTask extends AbstractTask {
 	
 	public static final CogaenId TYPING_FINISHED_EVENT_ID = new CogaenId("TypingFinished");
-	private static final double DEFAULT_TYPE_DELAY = 0.015;
-	private MultiLineLabelVisual mll;
+	public static final double DEFAULT_TYPE_DELAY = 0.015;
+	private Label label;
 	private String text;
 	private int idx;
 	private Timer timer;
@@ -51,9 +51,9 @@ public class TypeWriterTask extends AbstractTask {
 	private double typeDelay = DEFAULT_TYPE_DELAY;
 	private CogaenId finishedEventId = TYPING_FINISHED_EVENT_ID;
 	
-	public TypeWriterTask(Core core, MultiLineLabelVisual mll, String text) {
+	public TypeWriterTask(Core core, Label label, String text) {
 		super(core, "Type Writer");
-		this.mll = mll;
+		this.label = label;
 		this.text = text;
 		this.idx = 0;
 		this.timer = TimeService.getInstance(getCore()).getTimer();
@@ -67,7 +67,7 @@ public class TypeWriterTask extends AbstractTask {
 				EventService.getInstance(getCore()).dispatchEvent(new SimpleEvent(this.finishedEventId));
 				TaskService.getInstance(getCore()).destroyTask(this);
 			} else {
-				this.mll.addChar(this.text.charAt(this.idx++));
+				this.label.addChar(this.text.charAt(this.idx++));
 				this.timeStamp = this.timer.getTime() + this.typeDelay;					
 			}
 		}

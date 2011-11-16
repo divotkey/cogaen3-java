@@ -34,10 +34,11 @@ package org.cogaen.lwjgl.gui;
 import org.cogaen.core.Core;
 import org.cogaen.lwjgl.scene.Alignment;
 import org.cogaen.lwjgl.scene.Color;
+import org.cogaen.lwjgl.scene.Label;
 import org.cogaen.lwjgl.scene.MultiLineLabelVisual;
 import org.cogaen.lwjgl.scene.ReadableColor;
 
-public abstract class AbstractLabel extends FrameGui {
+public abstract class AbstractLabel extends FrameGui implements Label {
 
 	private static final double DEFAULT_GAP = 0.97;
 	private MultiLineLabelVisual mll;
@@ -85,8 +86,14 @@ public abstract class AbstractLabel extends FrameGui {
 		}
 	}
 
+	@Override
 	public void setText(String text) {
 		this.mll.setText(text);
+	}
+
+	@Override
+	public void addChar(char ch) {
+		this.mll.addChar(ch);
 	}
 
 	public double getGap() {

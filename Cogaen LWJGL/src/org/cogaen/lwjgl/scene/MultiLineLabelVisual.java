@@ -36,7 +36,7 @@ import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.TrueTypeFont;
 
 @SuppressWarnings("deprecation")
-public class MultiLineLabelVisual extends Visual {
+public class MultiLineLabelVisual extends Visual implements Label {
 
 	private static final double LINE_SPACE = 1.0;
 	private TrueTypeFont ttf;
@@ -130,6 +130,7 @@ public class MultiLineLabelVisual extends Visual {
 		return instance;
 	}
 
+	@Override
 	public void addChar(char ch) {
 		if (ch == '\n' && this.curY < this.lines.length - 1) {
 			this.curY++;
@@ -150,6 +151,7 @@ public class MultiLineLabelVisual extends Visual {
 		}
 	}
 	
+	@Override
 	public void setText(String str) {
 		for (int i = 0; i < this.lines.length; ++i) {
 			this.lines[i].setLength(0);
