@@ -58,6 +58,7 @@ public class View implements Engageable {
 			er.disengage();
 		}
 		this.representationsMap.clear();
+		this.representations.clear();
 	}
 		
 	public final int numOfRepresentation() {
