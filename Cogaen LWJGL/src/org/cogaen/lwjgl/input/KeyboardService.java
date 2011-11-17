@@ -110,7 +110,6 @@ public class KeyboardService extends AbstractService implements Updateable {
 		while (Keyboard.next()) {
 			if (Keyboard.getEventKeyState()) {
 				this.evtSrv.dispatchEvent(new KeyPressedEvent(Keyboard.getEventKey()));
-				System.out.println("Key: " + Keyboard.getEventKey());
 			} else {
 				this.evtSrv.dispatchEvent(new KeyReleasedEvent(Keyboard.getEventKey()));				
 			}
