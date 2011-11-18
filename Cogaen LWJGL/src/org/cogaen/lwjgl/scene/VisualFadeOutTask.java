@@ -18,12 +18,18 @@ public class VisualFadeOutTask extends AbstractTask {
 	private Timer timer;
 	private double startTime;
 	private CogaenId finishedEventId = FADE_OUT_FINISHED_EVENT_ID;
-	
+	private double startAlpha;
+
 	public VisualFadeOutTask(Core core, Visual visual, double fadeTime) {
+		this(core, visual, fadeTime, 1.0);
+	}
+	
+	public VisualFadeOutTask(Core core, Visual visual, double fadeTime, double startAlpha) {
 		super(core, "Fade-out");
 		this.visual = visual;
-		this.visual.getColor().setAlpha(1.0);
 		this.fadeTime = fadeTime;
+		this.startAlpha = startAlpha;
+		this.visual.getColor().setAlpha(this.startAlpha);
 		
 		this.timer = TimeService.getInstance(core).getTimer();
 		this.startTime = this.timer.getTime();
@@ -33,20 +39,21 @@ public class VisualFadeOutTask extends AbstractTask {
 	public void update() {
 		double elapsed = this.timer.getTime() - this.startTime;
 		if (elapsed >= fadeTime) {
+			this.visual.getColor().setAlpha(0.0);
 			TaskService.getInstance(getCore()).destroyTask(this);
+			if (this.finishedEventId != null) {
+				EventService.getInstance(getCore()).dispatchEvent(new SimpleEvent(this.finishedEventId));
+			}
 			return;
 		}
 		
-		double alpha = 1.0 - (elapsed / this.fadeTime);
-		this.visual.getColor().setAlpha(alpha);
+		double p = elapsed / this.fadeTime;
+		this.visual.getColor().setAlpha(this.startAlpha + p * -this.startAlpha);
 	}
 
 	@Override
 	public void destroy() {
-		this.visual.getColor().setAlpha(0.0);
-		if (this.finishedEventId != null) {
-			EventService.getInstance(getCore()).dispatchEvent(new SimpleEvent(this.finishedEventId));
-		}
+		// intentionally left empty
 	}
 
 	public CogaenId getFinishedEventId() {
@@ -55,5 +62,9 @@ public class VisualFadeOutTask extends AbstractTask {
 
 	public void setFinishedEventId(CogaenId finishedEventId) {
 		this.finishedEventId = finishedEventId;
+	}
+
+	public double getCurrentAlpha() {
+		return this.visual.getColor().getAlpha();
 	}
 }

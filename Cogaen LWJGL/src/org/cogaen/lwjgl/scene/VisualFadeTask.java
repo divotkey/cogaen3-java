@@ -39,27 +39,29 @@ import org.cogaen.task.TaskService;
 import org.cogaen.time.TimeService;
 import org.cogaen.time.Timer;
 
-public class VisualFadeInTask extends AbstractTask {
+public class VisualFadeTask extends AbstractTask {
 
-	public static final CogaenId FADE_IN_FINISHED_EVENT_ID = new CogaenId("FadeInFinished");
+	public static final CogaenId FADE_FINISHED_EVENT_ID = new CogaenId("FadeFinished");
 	
 	private Visual visual;
 	private double fadeTime;
 	private Timer timer;
 	private double startTime;
-	private CogaenId finishedEventId = FADE_IN_FINISHED_EVENT_ID;
-	private double targetAlpha;
+	private CogaenId finishedEventId = FADE_FINISHED_EVENT_ID;
+	private double targetAlpha = 1.0;
+	private double startAlpha = 0.0;
 
-	public VisualFadeInTask(Core core, Visual visual, double fadeTime) {
-		this(core, visual, fadeTime, 1.0);
-	}	
+	public VisualFadeTask(Core core, Visual visual, double fadeTime, double targetAlpha) {
+		this(core, visual, fadeTime, visual.getColor().getAlpha(), targetAlpha);
+	}
 	
-	public VisualFadeInTask(Core core, Visual visual, double fadeTime, double targetAlpha) {
-		super(core, "Visual Fade-in");
+	public VisualFadeTask(Core core, Visual visual, double fadeTime, double startAlpha, double targetAlpha) {
+		super(core, "Visual Fade");
 		this.visual = visual;
 		this.fadeTime = fadeTime;
+		this.startAlpha = startAlpha;
 		this.targetAlpha = targetAlpha;
-		this.visual.getColor().setAlpha(0.0);
+		this.visual.getColor().setAlpha(this.startAlpha);
 		
 		this.timer = TimeService.getInstance(core).getTimer();
 		this.startTime = this.timer.getTime();
@@ -76,9 +78,10 @@ public class VisualFadeInTask extends AbstractTask {
 			}
 			return;
 		}
-		
-		double alpha = elapsed / this.fadeTime;
-		this.visual.getColor().setAlpha(this.targetAlpha * alpha);
+
+		double range =  this.targetAlpha - this.startAlpha;
+		double p = elapsed / this.fadeTime;
+		this.visual.getColor().setAlpha(this.startAlpha + range * p);
 	}
 
 	@Override
@@ -92,5 +95,21 @@ public class VisualFadeInTask extends AbstractTask {
 
 	public void setFinishedEventId(CogaenId finishedEventId) {
 		this.finishedEventId = finishedEventId;
+	}
+
+	public double getTargetAlpha() {
+		return targetAlpha;
+	}
+
+	public void setTargetAlpha(double targetAlpha) {
+		this.targetAlpha = targetAlpha;
+	}
+
+	public double getStartAlpha() {
+		return startAlpha;
+	}
+
+	public void setStartAlpha(double startAlpha) {
+		this.startAlpha = startAlpha;
 	}
 }
