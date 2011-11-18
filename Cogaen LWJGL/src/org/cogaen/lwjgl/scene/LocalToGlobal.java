@@ -42,8 +42,8 @@ public class LocalToGlobal {
 			return;
 		}
 
-		transform(node.getParent());
 		v.rotate(node.getAngle());
+		transform(node.getParent());
 		this.v.x += node.getPosX();
 		this.v.y += node.getPosY();
 	}
