@@ -67,6 +67,7 @@ public abstract class Gui implements Engageable {
 
 	@Override
 	public void disengage() {
+		assert(isEngaged());
 		SceneService.getInstance(getCore()).destroyNode(this.baseNode);
 		this.engaged = false;
 	}

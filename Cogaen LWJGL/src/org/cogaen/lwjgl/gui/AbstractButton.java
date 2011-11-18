@@ -101,6 +101,10 @@ public abstract class AbstractButton extends FrameGui implements EventListener {
 
 	@Override
 	public void handleEvent(Event event) {
+		if (!isEngaged()) {
+			return;
+		}
+		
 		if (event.isOfType(MouseButtonPressedEvent.TYPE_ID)) {
 			handleMouseButtonPressed((MouseButtonPressedEvent) event);
 		} else if (event.isOfType(MouseButtonReleasedEvent.TYPE_ID)) {

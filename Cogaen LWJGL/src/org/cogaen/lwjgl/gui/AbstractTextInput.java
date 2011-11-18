@@ -126,6 +126,9 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 	
 	@Override
 	public void handleEvent(Event event) {
+		if (!isEngaged()) {
+			return;
+		}
 		if (event.isOfType(KeyPressedEvent.TYPE_ID)) {
 			handleKeyPressed((KeyPressedEvent) event);
 		} else if (event.isOfType(KeyReleasedEvent.TYPE_ID)) {
