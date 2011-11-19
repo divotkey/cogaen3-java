@@ -114,40 +114,4 @@ public abstract class KeyCode {
 	public static final int KEY_F10 = 68;	
 	public static final int KEY_F11 = 87;	
 	public static final int KEY_F12 = 88;	
-	
-	
-	public static boolean isPrintable(int keyCode) {
-		switch (keyCode) {
-		case KEY_LCONTROL:
-		case KEY_RCONTROL:
-		case KEY_LALT:
-		case KEY_RALT:
-		case KEY_BACK:
-		case KEY_RETURN:
-		case KEY_LSHIFT:
-		case KEY_RSHIFT:
-		case KEY_ESC:
-		case KEY_LEFT:
-		case KEY_RIGHT:
-		case KEY_UP:
-		case KEY_DOWN:
-		case KEY_F1:
-		case KEY_F2:
-		case KEY_F3:
-		case KEY_F4:
-		case KEY_F5:
-		case KEY_F6:
-		case KEY_F7:
-		case KEY_F8:
-		case KEY_F9:
-		case KEY_F10:
-		case KEY_F11:
-		case KEY_F12:
-			return false;
-		}
-		
-		return true;
-	}
-	
-	public abstract char getChar(int keyCode, boolean upperCase);	
 }

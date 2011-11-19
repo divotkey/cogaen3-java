@@ -38,9 +38,11 @@ public class KeyPressedEvent extends Event {
 	public static final CogaenId TYPE_ID = new CogaenId("KeyPressed");
 	
 	private int keyCode;
+	private char character;
 	
-	public KeyPressedEvent(int keyCode) {
+	public KeyPressedEvent(int keyCode, char character) {
 		this.keyCode = keyCode;
+		this.character = character;
 	}
 	
 	@Override
@@ -50,5 +52,9 @@ public class KeyPressedEvent extends Event {
 
 	public int getKeyCode() {
 		return this.keyCode;
+	}
+
+	public char getCharacter() {
+		return character;
 	}
 }

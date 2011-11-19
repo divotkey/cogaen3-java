@@ -38,8 +38,9 @@ public class KeyReleasedEvent extends Event {
 	public static final CogaenId TYPE_ID = new CogaenId("KeyReleased");
 	
 	private int keyCode;
+	private char character;
 	
-	public KeyReleasedEvent(int keyCode) {
+	public KeyReleasedEvent(int keyCode, char character) {
 		this.keyCode = keyCode;
 	}
 	
@@ -50,5 +51,9 @@ public class KeyReleasedEvent extends Event {
 
 	public int getKeyCode() {
 		return this.keyCode;
+	}
+	
+	public char getCharacter() {
+		return character;
 	}
 }
