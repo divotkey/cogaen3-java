@@ -146,7 +146,7 @@ public abstract class AbstractTextInput extends FrameGui implements EventListene
 	}
 
 	private void handleKeyPressed(KeyPressedEvent event) {
-		if (event.getCharacter() != 0 && event.getKeyCode() != KeyCode.KEY_BACK) {
+		if (event.getCharacter() != 0 && event.getKeyCode() != KeyCode.KEY_BACK && event.getKeyCode() != KeyCode.KEY_ESC) {
 			this.tbv.addChar(event.getCharacter());
 			return;
 		}
