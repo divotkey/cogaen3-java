@@ -103,4 +103,11 @@ public class MouseService extends UpdateableService {
 		}
 	}
 
+	public void hideMouseCursor() {
+		Mouse.setGrabbed(true);
+	}
+	
+	public void showMouseCursor() {
+		Mouse.setGrabbed(false);
+	}
 }
