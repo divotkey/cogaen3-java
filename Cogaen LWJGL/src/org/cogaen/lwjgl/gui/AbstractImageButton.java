@@ -126,6 +126,11 @@ public abstract class AbstractImageButton extends Gui implements EventListener {
 		if (value) {
 			evtSrv.removeListener(this);
 			this.normal.getColor().setAlpha(0.5);
+			if (this.mouseOver) {
+				setWidth(this.origWidth);
+				setHeight(this.origHeight);
+				this.mouseOver = false;
+			}
 		} else {
 			evtSrv.addListener(this, MouseButtonPressedEvent.TYPE_ID);
 			evtSrv.addListener(this, MouseButtonReleasedEvent.TYPE_ID);
