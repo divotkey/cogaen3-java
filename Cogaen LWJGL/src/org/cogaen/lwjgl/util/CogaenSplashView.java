@@ -7,18 +7,13 @@ import org.cogaen.event.EventService;
 import org.cogaen.event.SimpleEvent;
 import org.cogaen.lwjgl.input.KeyPressedEvent;
 import org.cogaen.lwjgl.input.MouseButtonPressedEvent;
-import org.cogaen.lwjgl.scene.Color;
-import org.cogaen.lwjgl.scene.RectangleVisual;
 import org.cogaen.lwjgl.scene.SceneNode;
 import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.lwjgl.scene.SpriteHandle;
 import org.cogaen.lwjgl.scene.SpriteVisual;
 import org.cogaen.lwjgl.scene.TextureHandle;
-import org.cogaen.lwjgl.scene.Visual;
-import org.cogaen.lwjgl.scene.VisualFadeTask;
 import org.cogaen.name.CogaenId;
 import org.cogaen.resource.ResourceService;
-import org.cogaen.task.TaskService;
 import org.cogaen.view.View;
 
 public class CogaenSplashView extends View implements EventListener {
@@ -29,12 +24,11 @@ public class CogaenSplashView extends View implements EventListener {
 	private static final CogaenId FADE_OUT_FINISHED = new CogaenId("SplashFadeOutFinished");
 	private static final CogaenId END_OF_SPLASH = new CogaenId("EndOfSplashDisplay");;
 	private SpriteVisual splash;
-	private VisualFadeTask fadeIn;
-	private Visual fade;
-	private boolean busy;
+	private Fader fader;
 	
 	public CogaenSplashView(Core core) {
 		super(core);
+		this.fader = new Fader(getCore(), FADE_TIME);
 	}
 
 	@Override
@@ -68,15 +62,9 @@ public class CogaenSplashView extends View implements EventListener {
 		node.addVisual(splash);
 		scnSrv.getOverlayRoot().addNode(node);
 		
-		
-		RectangleVisual rec = new RectangleVisual(1.0, 1.0 / scnSrv.getAspectRatio());
-		this.fade = rec;
-		this.fade.setColor(Color.BLACK);
-		node.addVisual(this.fade);
-		this.fadeIn = new VisualFadeTask(getCore(), this.fade, FADE_TIME, 1.0, 0.0);
-		this.fadeIn.setFinishedEventId(FADE_IN_FINISHED);
-		TaskService.getInstance(getCore()).attachTask(this.fadeIn);
-		this.busy = false;
+		this.fader.engage();
+		this.fader.setFadeFinishedId(FADE_IN_FINISHED);
+		this.fader.fadeIn();
 	}
 
 	@Override
@@ -102,16 +90,7 @@ public class CogaenSplashView extends View implements EventListener {
 	}
 	
 	private void fadeOut() {
-		if (this.busy) {
-			return;
-		}
-		VisualFadeTask fadeOut = new VisualFadeTask(getCore(), this.fade, FADE_TIME, 1.0);
-		fadeOut.setFinishedEventId(FADE_OUT_FINISHED);
-		if (this.fadeIn != null) {
-			TaskService.getInstance(getCore()).destroyTask(this.fadeIn);
-		}
-		TaskService.getInstance(getCore()).attachTask(fadeOut);
-		this.busy = true;
+		this.fader.fadeOut();
+		this.fader.setFadeFinishedId(FADE_OUT_FINISHED);
 	}
-
 }

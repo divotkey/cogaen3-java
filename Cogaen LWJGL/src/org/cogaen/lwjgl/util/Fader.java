@@ -5,6 +5,7 @@ import org.cogaen.core.Core;
 import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
 import org.cogaen.event.EventService;
+import org.cogaen.event.SimpleEvent;
 import org.cogaen.lwjgl.scene.Color;
 import org.cogaen.lwjgl.scene.RectangleVisual;
 import org.cogaen.lwjgl.scene.SceneNode;
@@ -23,6 +24,7 @@ public class Fader extends CogaenBase implements EventListener {
 	private VisualFadeTask fadeIn;
 	private VisualFadeTask fadeOut;
 	private double fadeTime;
+	private CogaenId fadeFinishedId;
 
 	public Fader(Core core, double fadeTime) {
 		super(core);
@@ -41,19 +43,20 @@ public class Fader extends CogaenBase implements EventListener {
 		evtSrv.addListener(this, FADE_OUT_FINISHED);
 		
 		SceneService scnSrv = SceneService.getInstance(getCore());
-		SceneNode baseNode = scnSrv.createNode();
+		this.baseNode = scnSrv.createNode();
 		
 		this.cover = new RectangleVisual(1.0, 1.0 / scnSrv.getAspectRatio());
 		this.cover.setColor(Color.BLACK);
 		this.cover.setFilled(true);
-		baseNode.addVisual(this.cover);
-		baseNode.setPose(0.5, 0.5 / scnSrv.getAspectRatio(), 0);
+		this.baseNode.addVisual(this.cover);
+		this.baseNode.setPose(0.5, 0.5 / scnSrv.getAspectRatio(), 0);
 		
 		scnSrv.getOverlayRoot().addNode(this.baseNode);
 	}
 
 	@Override
 	public void disengage() {
+		EventService.getInstance(getCore()).removeListener(this);
 		SceneService.getInstance(getCore()).destroyNode(this.baseNode);
 		super.disengage();
 	}
@@ -95,9 +98,23 @@ public class Fader extends CogaenBase implements EventListener {
 	public void handleEvent(Event event) {
 		if (event.isOfType(FADE_IN_FINISHED)) {
 			this.fadeIn = null;
+			if (this.fadeFinishedId != null) {
+				EventService.getInstance(getCore()).dispatchEvent(new SimpleEvent(this.fadeFinishedId));
+			}
 		} else if (event.isOfType(FADE_OUT_FINISHED)) {
 			this.fadeOut = null;
+			if (this.fadeFinishedId != null) {
+				EventService.getInstance(getCore()).dispatchEvent(new SimpleEvent(this.fadeFinishedId));
+			}
 		}
+	}
+
+	public CogaenId getFadeFinishedId() {
+		return fadeFinishedId;
+	}
+
+	public void setFadeFinishedId(CogaenId fadeFinishedId) {
+		this.fadeFinishedId = fadeFinishedId;
 	}
 	
 }
