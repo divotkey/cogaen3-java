@@ -103,4 +103,11 @@ public class MouseService extends UpdateableService {
 		}
 	}
 
+	public void setShowMouseCursor(boolean b) {
+		Mouse.setGrabbed(!b);		
+	}
+	
+	public boolean isShowMouseCursor() {
+		return Mouse.isGrabbed();
+	}
 }

@@ -52,10 +52,6 @@ public class SpriteVisual extends Visual {
 		// intentionally left empty
 	}
 	
-	public void setAlpha(double alpha) {
-		getColor().setAlpha(alpha);
-	}
-	
 	public void setSize(double width, double height) {
 		this.halfWidth = width / 2;
 		this.halfHeight = height / 2;

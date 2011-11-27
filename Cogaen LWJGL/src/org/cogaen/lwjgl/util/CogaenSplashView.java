@@ -41,7 +41,7 @@ public class CogaenSplashView extends View implements EventListener {
 	public void registerResources(CogaenId groupId) {
 		super.registerResources(groupId);
 		ResourceService resSrv = ResourceService.getInstance(getCore());
-		resSrv.declareResource("CogaenSplashTex", groupId, new TextureHandle("PNG", "cogaen_mit_800x600.jpg"));
+		resSrv.declareResource("CogaenSplashTex", groupId, new TextureHandle("JPG", "cogaen_mit_800x600.jpg"));
 		resSrv.declareResource("CogaenSplashSpr", groupId, new SpriteHandle("CogaenSplashTex"));
 	}
 
@@ -95,7 +95,6 @@ public class CogaenSplashView extends View implements EventListener {
 		} else if (event.isOfType(FADE_IN_FINISHED)) {
 			EventService.getInstance(getCore()).dispatchEvent(new SimpleEvent(END_OF_SPLASH), DISPLAY_TIME);
 		} else if (event.isOfType(FADE_OUT_FINISHED)) {
-			System.out.println("fade out finished");
 			EventService.getInstance(getCore()).dispatchEvent(new SimpleEvent(CogaenSplashState.END_OF_COGAEN_SPLASH));
 		} else if (event.isOfType(END_OF_SPLASH)) {
 			fadeOut();
