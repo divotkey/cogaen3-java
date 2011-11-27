@@ -70,6 +70,7 @@ public class CogaenSplashView extends View implements EventListener {
 	@Override
 	public void disengage() {
 		EventService.getInstance(getCore()).removeListener(this);
+		this.fader.disengage();
 		SceneService.getInstance(getCore()).destroyAll();
 		super.disengage();
 	}
