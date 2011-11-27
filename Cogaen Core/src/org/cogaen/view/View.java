@@ -5,20 +5,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.cogaen.core.CogaenBase;
 import org.cogaen.core.Core;
-import org.cogaen.core.Engageable;
 import org.cogaen.name.CogaenId;
 
-public class View implements Engageable {
-
-	private Core core;
-	private boolean engaged;
+public class View extends CogaenBase {
 
 	private Map<CogaenId, EntityRepresentation> representationsMap = new HashMap<CogaenId, EntityRepresentation>();
 	private List<EntityRepresentation> representations = new ArrayList<EntityRepresentation>();
 	
 	public View(Core core) {
-		this.core = core;
+		super(core);
 	}
 	
 	public void registerResources(CogaenId groupId) {
@@ -70,23 +67,8 @@ public class View implements Engageable {
 	}
 	
 	@Override
-	public void engage() {
-		this.engaged = true;
-	}
-
-	@Override
 	public void disengage() {
 		removeAllRepresentations();
-		this.engaged = false;
+		super.disengage();
 	}
-
-	@Override
-	public final boolean isEngaged() {
-		return this.engaged;
-	}
-	
-	public final Core getCore() {
-		return this.core;
-	}
-
 }
