@@ -71,6 +71,7 @@ public class Fader extends CogaenBase implements EventListener {
 			this.fadeOut = null;
 			this.fadeIn = new VisualFadeTask(getCore(), this.cover, this.fadeTime, 0.0);
 		} else {
+			this.cover.setMask(0xFFFF);
 			this.fadeIn = new VisualFadeTask(getCore(), this.cover, this.fadeTime, 1.0, 0.0);
 		}
 		this.fadeIn.setFinishedEventId(FADE_IN_FINISHED);
@@ -88,6 +89,7 @@ public class Fader extends CogaenBase implements EventListener {
 			this.fadeIn = null;
 			this.fadeOut = new VisualFadeTask(getCore(), this.cover, this.fadeTime, 1.0);
 		} else {
+			this.cover.setMask(0xFFFF);
 			this.fadeOut = new VisualFadeTask(getCore(), this.cover, this.fadeTime, 0.0, 1.0);
 		}
 		this.fadeOut.setFinishedEventId(FADE_OUT_FINISHED);
@@ -101,11 +103,13 @@ public class Fader extends CogaenBase implements EventListener {
 			if (this.fadeFinishedId != null) {
 				EventService.getInstance(getCore()).dispatchEvent(new SimpleEvent(this.fadeFinishedId));
 			}
+			this.cover.setMask(0x0000);
 		} else if (event.isOfType(FADE_OUT_FINISHED)) {
 			this.fadeOut = null;
 			if (this.fadeFinishedId != null) {
 				EventService.getInstance(getCore()).dispatchEvent(new SimpleEvent(this.fadeFinishedId));
 			}
+			this.cover.setMask(0x0000);
 		}
 	}
 
