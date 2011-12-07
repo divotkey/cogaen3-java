@@ -15,7 +15,7 @@ import org.cogaen.resource.ResourceService;
 public abstract class AbstractImageButton extends Gui implements EventListener {
 
 	public static final CogaenId DEFAULT_PRESSED_EVENT_ID = new CogaenId("ButtonPressed");
-	private static final double MOUSE_OVER_RESCALE = 1.4;
+	private static final double MOUSE_OVER_RESCALE = 1.3;
 	private static final double PRESSED_EVENT_DELAY = 0.05;
 	private String normalRes;
 	private String selectedRes;
