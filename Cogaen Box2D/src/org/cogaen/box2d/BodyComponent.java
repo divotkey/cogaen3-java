@@ -9,20 +9,24 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
 
-public class BodyComponent extends UpdateableComponent implements Pose2D {
+public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dBody, PhysicsBody {
 
 	public enum Type {DYNAMIC, STATIC, KINEMATIC};
+	
 	private Body body;
 	private BodyType type;
 	private EventService evtSrv;
 	private double xPos;
 	private double yPos;
+	private double angle;
+	private double angularDamping;
+	private double linearDamping;
 	
-	public BodyComponent(double x, double y) {
-		this(x, y, Type.DYNAMIC);
+	public BodyComponent(double x, double y, double angle) {
+		this(x, y, angle, Type.DYNAMIC);
 	}
 	
-	public BodyComponent(double x, double y, Type type) {
+	public BodyComponent(double x, double y, double angle, Type type) {
 		switch (type) {	
 		case DYNAMIC:
 			this.type = BodyType.DYNAMIC;
@@ -38,12 +42,15 @@ public class BodyComponent extends UpdateableComponent implements Pose2D {
 		}
 		this.xPos = x;
 		this.yPos = y;
+		this.angle = angle;
 	}
 	
 	@Override
 	public void initialize(ComponentEntity parent) {
 		super.initialize(parent);
 		getParent().addAttribute(Pose2D.ATTR_ID, this);
+		getParent().addAttribute(Box2dBody.BOX2D_BODY_ATTRIB, this);
+		getParent().addAttribute(PHYSICS_BODY_ATTRIB, this);
 		this.evtSrv = EventService.getInstance(getCore());
 	}
 
@@ -58,8 +65,12 @@ public class BodyComponent extends UpdateableComponent implements Pose2D {
 		bodyDef.type = this.type;
 		bodyDef.position.x = (float) this.xPos;
 		bodyDef.position.y = (float) this.yPos;
-		bodyDef.angularVelocity = 1.0f;
+		bodyDef.angle = (float) this.angle;
+		bodyDef.angularDamping = (float) this.angularDamping;
+		bodyDef.linearDamping = (float) this.linearDamping;
 		this.body = world.createBody(bodyDef);
+		
+		getParent().handleEvent(new BodyEngagedEvent(this.body));
 	}
 
 	@Override
@@ -111,8 +122,32 @@ public class BodyComponent extends UpdateableComponent implements Pose2D {
 	public final void update() {
 		this.evtSrv.dispatchEvent(new PoseUpdateEvent(getParent().getId(), this));
 	}
-	
-	protected final Body getBody() {
+
+	@Override
+	public Body getBody() {
 		return this.body;
+	}
+
+	@Override
+	public void applyForce(double fx, double fy, double px, double py) {
+		this.body.applyForce(new Vec2((float) fx, (float) fy), this.body.getWorldPoint(new Vec2((float) px, (float) py)));
+	}
+
+	@Override
+	public void applyRelativeForce(double fx, double fy, double px, double py) {
+		this.body.applyForce(this.body.getWorldVector(new Vec2((float) fx, (float) fy)), this.body.getWorldPoint(new Vec2((float) px, (float) py)));
+	}
+
+	@Override
+	public void applyTorque(double torque) {
+		this.body.applyTorque((float) torque);
+	}
+	
+	public void setAngularDamping(double angularDamping) {
+		this.angularDamping = angularDamping;
+	}
+	
+	public void setLinearDamping(double linearDamping) {
+		this.linearDamping = linearDamping;
 	}
 }
