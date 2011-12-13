@@ -36,9 +36,11 @@ public class CircleVisual extends Visual {
 
 	private static final double DEG2RAD = Math.PI/180;
 	private double radius;
+	private int glMode;
 	
 	public CircleVisual(double radius) {
 		this.radius = radius;
+		this.glMode = GL11.GL_POLYGON;
 	}
 		
 	@Override
@@ -46,7 +48,7 @@ public class CircleVisual extends Visual {
 		//TODO use display list
 		getColor().apply();
 		
-		GL11.glBegin(GL11.GL_LINE_LOOP);
+		GL11.glBegin(this.glMode);
 		double r = this.radius * getScale();
 		for (int i = 0; i < 360; i += 10) {
 			double degInRad = i * DEG2RAD;
@@ -74,4 +76,12 @@ public class CircleVisual extends Visual {
 		return instance;
 	}
 
+	public boolean isFilled() {
+		return this.glMode == GL11.GL_POLYGON;
+	}
+	
+	public void setFilled(boolean filled) {
+		this.glMode = filled ? GL11.GL_POLYGON : GL11.GL_LINE_LOOP;
+	}
+	
 }
