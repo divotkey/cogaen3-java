@@ -3,11 +3,17 @@ package org.cogaen.box2d;
 import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
 import org.cogaen.core.UpdateableService;
+import org.cogaen.entity.Entity;
+import org.cogaen.entity.EntityService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.time.TimeService;
 import org.cogaen.time.Timer;
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 
 public class PhysicsService extends UpdateableService {
 
@@ -27,6 +33,7 @@ public class PhysicsService extends UpdateableService {
 	
 	public PhysicsService() {
 		addDependency(TimeService.ID);
+		addDependency(EntityService.ID);
 	}
 	
 	@Override
@@ -34,10 +41,12 @@ public class PhysicsService extends UpdateableService {
 		super.doStart();
 		this.world = new World(DEFAULT_GRAVITY, DO_SLEEP);
 		this.timer = TimeService.getInstance(getCore()).getTimer();
+		this.world.setContactListener(new DirectCollisionReporter(getCore()));
 	}
 
 	@Override
 	protected void doStop() {
+		this.world.setContactListener(null);
 		this.world = null;
 		this.timer = null;
 		super.doStop();
@@ -72,6 +81,44 @@ public class PhysicsService extends UpdateableService {
 	
 	public void setGravity(double vx, double vy) {
 		this.world.setGravity(new Vec2((float) vx, (float) vy));
+	}
+	
+	private static class DirectCollisionReporter implements ContactListener {
+
+		private EntityService entSrv;
+		
+		public DirectCollisionReporter(Core core) {
+			this.entSrv = EntityService.getInstance(core);
+		}
+		
+		@Override
+		public void beginContact(Contact contact) {
+			CogaenId entityIdA = (CogaenId) contact.getFixtureA().getBody().getUserData();
+			CogaenId entityIdB = (CogaenId) contact.getFixtureB().getBody().getUserData();
+			
+			CollisionEvent collision = new CollisionEvent(entityIdA, entityIdB);
+			Entity entity = this.entSrv.getEntity(entityIdA);
+			entity.handleEvent(collision);
+			
+			entity = this.entSrv.getEntity(entityIdB);
+			entity.handleEvent(collision);
+		}
+
+		@Override
+		public void endContact(Contact arg0) {
+			// intentionally left empty
+		}
+
+		@Override
+		public void postSolve(Contact arg0, ContactImpulse arg1) {
+			// intentionally left empty
+		}
+
+		@Override
+		public void preSolve(Contact arg0, Manifold arg1) {
+			// intentionally left empty
+		}
+		
 	}
 
 }
