@@ -3,6 +3,7 @@ package org.cogaen.box2d;
 import org.cogaen.entity.ComponentEntity;
 import org.cogaen.entity.UpdateableComponent;
 import org.cogaen.event.EventService;
+import org.cogaen.math.Vector2;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.BodyDef;
@@ -149,5 +150,22 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 	
 	public void setLinearDamping(double linearDamping) {
 		this.linearDamping = linearDamping;
+	}
+
+	@Override
+	public void getVelocity(double px, double py, Vector2 result) {
+		Vec2 v = this.body.getLinearVelocityFromLocalPoint(new Vec2((float) px, (float) py)); 
+		result.x = v.x;
+		result.y = v.y;
+	}
+
+	@Override
+	public double getVelocityX(double px, double py) {
+		return this.body.getLinearVelocityFromLocalPoint(new Vec2((float) px, (float) py)).x;
+	}
+
+	@Override
+	public double getVelocityY(double px, double py) {
+		return this.body.getLinearVelocityFromLocalPoint(new Vec2((float) px, (float) py)).y;
 	}
 }
