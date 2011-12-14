@@ -22,6 +22,19 @@ public class View extends CogaenBase {
 		// intentionally left empty
 	}
 	
+	public final void addRepresentation(EntityRepresentation er) {
+		CogaenId entityId = er.getEntityId();
+		EntityRepresentation old = this.representationsMap.put(entityId, er);
+		if (old != null) {
+			this.representationsMap.put(entityId, old);
+			throw new RuntimeException("ambiguous entity id " + entityId);
+		}
+		assert(!this.representations.contains(er));
+		this.representations.add(er);
+		er.engage();
+	}
+
+	@Deprecated
 	public final void addRepresentation(CogaenId entityId, EntityRepresentation er) {
 		EntityRepresentation old = this.representationsMap.put(entityId, er);
 		if (old != null) {
