@@ -252,7 +252,7 @@ public class SceneService extends AbstractService {
 			this.evtSrv.dispatchEvent(new SimpleEvent(WINDOW_CLOSE_REQUEST));
 		}
 	}
-
+	
 	public void setTitle(String windowTitle) {
 		Display.setTitle(windowTitle);
 	}
