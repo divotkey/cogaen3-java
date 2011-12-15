@@ -13,4 +13,5 @@ public interface PhysicsBody {
 	public void getVelocity(double px, double py, Vector2 result);
 	public double getVelocityX(double px, double py);
 	public double getVelocityY(double px, double py);
+	public void setVelocity(double vx, double vy);
 }

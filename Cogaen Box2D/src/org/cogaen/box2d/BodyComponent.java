@@ -168,4 +168,9 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 	public double getVelocityY(double px, double py) {
 		return this.body.getLinearVelocityFromLocalPoint(new Vec2((float) px, (float) py)).y;
 	}
+
+	@Override
+	public void setVelocity(double vx, double vy) {
+		this.body.setLinearVelocity(new Vec2((float) vx, (float) vy)); 
+	}
 }
