@@ -45,7 +45,11 @@ public abstract class FixtureComponent extends Component {
 	}
 
 	private void handleBodyEngaged(BodyEngagedEvent event) {
-		event.getBody().createFixture(this.fixtureDef);
+		if (!getParent().getId().equals(event.getEntityId())) {
+			return;
+		}
+		Box2dBody boxBody = (Box2dBody) getParent().getAttribute(Box2dBody.BOX2D_BODY_ATTRIB);
+		boxBody.getBody().createFixture(this.fixtureDef);
 	}
 	
 }

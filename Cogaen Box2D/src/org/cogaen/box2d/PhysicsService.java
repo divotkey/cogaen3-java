@@ -21,8 +21,8 @@ public class PhysicsService extends UpdateableService {
 	private static final String NAME = "Cogaen Box2D Physics Service";
 	private static final boolean DO_SLEEP = true;
 	private static final Vec2 DEFAULT_GRAVITY = new Vec2(0, 0);
-	private static final int VELOCITY_ITERATIONS = 8;
-	private static final int POSITION_ITERATIONS = 3;
+	private static final int VELOCITY_ITERATIONS = 80;
+	private static final int POSITION_ITERATIONS = 30;
 	
 	private World world;
 	private Timer timer;
@@ -85,23 +85,18 @@ public class PhysicsService extends UpdateableService {
 	
 	private static class DirectCollisionReporter implements ContactListener {
 
-		private EntityService entSrv;
-		
 		public DirectCollisionReporter(Core core) {
-			this.entSrv = EntityService.getInstance(core);
+			EntityService.getInstance(core);
 		}
 		
 		@Override
 		public void beginContact(Contact contact) {
-			CogaenId entityIdA = (CogaenId) contact.getFixtureA().getBody().getUserData();
-			CogaenId entityIdB = (CogaenId) contact.getFixtureB().getBody().getUserData();
+			Entity entityA = (Entity) contact.getFixtureA().getBody().getUserData();
+			Entity entityB = (Entity) contact.getFixtureB().getBody().getUserData();
 			
-			CollisionEvent collision = new CollisionEvent(entityIdA, entityIdB);
-			Entity entity = this.entSrv.getEntity(entityIdA);
-			entity.handleEvent(collision);
-			
-			entity = this.entSrv.getEntity(entityIdB);
-			entity.handleEvent(collision);
+			CollisionEvent collision = new CollisionEvent(entityA.getId(), entityB.getId());
+			entityA.handleEvent(collision);
+			entityB.handleEvent(collision);
 		}
 
 		@Override

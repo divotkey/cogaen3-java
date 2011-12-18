@@ -22,6 +22,8 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 	private double angle;
 	private double angularDamping;
 	private double linearDamping;
+	private Vec2 auxVec1 = new Vec2();
+	private Vec2 auxVec2 = new Vec2();
 	
 	public BodyComponent(double x, double y, double angle) {
 		this(x, y, angle, Type.DYNAMIC);
@@ -62,7 +64,7 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 		PhysicsService phySrv = PhysicsService.getInstance(getCore());
 		World world = phySrv.getWorld();
 		BodyDef bodyDef = new BodyDef();
-		bodyDef.userData = getParent().getId();
+		bodyDef.userData = getParent();
 		bodyDef.type = this.type;
 		bodyDef.position.x = (float) this.xPos;
 		bodyDef.position.y = (float) this.yPos;
@@ -71,7 +73,9 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 		bodyDef.linearDamping = (float) this.linearDamping;
 		this.body = world.createBody(bodyDef);
 		
-		getParent().handleEvent(new BodyEngagedEvent(this.body));
+		BodyEngagedEvent event = new BodyEngagedEvent(getParent().getId());
+		getParent().handleEvent(event);
+		EventService.getInstance(getCore()).dispatchEvent(event);
 	}
 
 	@Override
@@ -111,7 +115,8 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 
 	@Override
 	public final void setPosition(double x, double y) {
-		this.body.setTransform(new Vec2((float) x, (float) y), this.body.getAngle());
+		this.auxVec1.set((float) x, (float) y);
+		this.body.setTransform(auxVec1, this.body.getAngle());
 	}
 
 	@Override
@@ -131,12 +136,16 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 
 	@Override
 	public void applyForce(double fx, double fy, double px, double py) {
-		this.body.applyForce(new Vec2((float) fx, (float) fy), this.body.getWorldPoint(new Vec2((float) px, (float) py)));
+		this.auxVec1.set((float) fx, (float) fy);
+		this.auxVec2.set((float) px, (float) py);
+		this.body.applyForce(this.auxVec1, this.body.getWorldPoint(this.auxVec2));
 	}
 
 	@Override
 	public void applyRelativeForce(double fx, double fy, double px, double py) {
-		this.body.applyForce(this.body.getWorldVector(new Vec2((float) fx, (float) fy)), this.body.getWorldPoint(new Vec2((float) px, (float) py)));
+		this.auxVec1.set((float) fx, (float) fy);
+		this.auxVec2.set((float) px, (float) py);
+		this.body.applyForce(this.body.getWorldVector(this.auxVec1), this.body.getWorldPoint(this.auxVec2));
 	}
 
 	@Override
@@ -145,32 +154,55 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 	}
 	
 	public void setAngularDamping(double angularDamping) {
+		if (this.body != null) {
+			this.body.setAngularDamping((float) angularDamping);
+		}
 		this.angularDamping = angularDamping;
 	}
 	
 	public void setLinearDamping(double linearDamping) {
+		if (this.body != null) {
+			this.body.setLinearDamping((float) linearDamping);
+		}
 		this.linearDamping = linearDamping;
 	}
 
 	@Override
 	public void getVelocity(double px, double py, Vector2 result) {
-		Vec2 v = this.body.getLinearVelocityFromLocalPoint(new Vec2((float) px, (float) py)); 
-		result.x = v.x;
-		result.y = v.y;
+		this.auxVec1.set((float) px, (float) py);
+		Vec2 v = this.body.getLinearVelocityFromLocalPoint(this.auxVec1); 
+		result.set(v.x, v.y);
 	}
 
 	@Override
 	public double getVelocityX(double px, double py) {
-		return this.body.getLinearVelocityFromLocalPoint(new Vec2((float) px, (float) py)).x;
+		this.auxVec1.set((float) px, (float) py);
+		return this.body.getLinearVelocityFromLocalPoint(this.auxVec1).x;
 	}
 
 	@Override
 	public double getVelocityY(double px, double py) {
-		return this.body.getLinearVelocityFromLocalPoint(new Vec2((float) px, (float) py)).y;
+		this.auxVec1.set((float) px, (float) py);
+		return this.body.getLinearVelocityFromLocalPoint(this.auxVec1).y;
 	}
 
 	@Override
 	public void setVelocity(double vx, double vy) {
+		this.auxVec1.set((float) vx, (float) vx);
 		this.body.setLinearVelocity(new Vec2((float) vx, (float) vy)); 
+	}
+
+	@Override
+	public void getWorldPoint(double px, double py, Vector2 result) {
+		this.auxVec1.set((float) px, (float) py);
+		Vec2 boxResult = this.body.getWorldPoint(this.auxVec1);
+		result.set(boxResult.x, boxResult.y);
+	}
+
+	@Override
+	public void getWorldVector(double vx, double vy, Vector2 result) {
+		this.auxVec1.set((float) vx, (float) vy);
+		Vec2 boxResult = this.body.getWorldVector(this.auxVec1);
+		result.set(boxResult.x, boxResult.y);
 	}
 }

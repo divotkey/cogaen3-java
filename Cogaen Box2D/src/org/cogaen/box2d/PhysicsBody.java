@@ -14,4 +14,7 @@ public interface PhysicsBody {
 	public double getVelocityX(double px, double py);
 	public double getVelocityY(double px, double py);
 	public void setVelocity(double vx, double vy);
+	
+	public void getWorldPoint(double px, double py, Vector2 result);
+	public void getWorldVector(double vx, double vy, Vector2 result);
 }
