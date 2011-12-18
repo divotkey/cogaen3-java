@@ -321,6 +321,10 @@ public class SceneService extends AbstractService {
 	    }
 	}	
 
+	public void setBackgroundColor(ReadableColor color) {
+		GL11.glClearColor((float) color.getRed(), (float) color.getGreen(), (float) color.getBlue(), (float) color.getAlpha());
+	}
+	
 	public int createLayer() {
 		this.layers.add(createNode());
 		return this.layers.size() - 1;

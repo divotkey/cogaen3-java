@@ -17,6 +17,7 @@ public class ForceVisualizerService extends AbstractService implements RenderSub
 	private List<Force> forces = new ArrayList<Force>();
 	private double forceScale = 1;
 	private Color forceColor = new Color(Color.RED);
+	private float lineWidth = 1;
 	
 	public static ForceVisualizerService getInstance(Core core) {
 		return (ForceVisualizerService) core.getService(ID);
@@ -52,6 +53,8 @@ public class ForceVisualizerService extends AbstractService implements RenderSub
 	public void render(int mask) {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
     	GL11.glDisable(GL11.GL_BLEND);
+    	GL11.glEnable(GL11.GL_LINE_STIPPLE);
+    	GL11.glLineWidth((float) this.lineWidth);
     	this.forceColor.apply();
     	
 		GL11.glBegin(GL11.GL_LINES);
@@ -60,6 +63,7 @@ public class ForceVisualizerService extends AbstractService implements RenderSub
 			GL11.glVertex2d(force.px + force.vx * this.forceScale, force.py + force.vy * this.forceScale);
 		}
 		GL11.glEnd();
+    	GL11.glDisable(GL11.GL_LINE_STIPPLE);
 		
 		this.forces.clear();
 	}
@@ -74,6 +78,14 @@ public class ForceVisualizerService extends AbstractService implements RenderSub
 
 	public void setForceScale(double forceScale) {
 		this.forceScale = forceScale;
+	}
+
+	public double getLineWidth() {
+		return lineWidth;
+	}
+
+	public void setLineWidth(double lineWidth) {
+		this.lineWidth = (float) lineWidth;
 	}
 
 	private static class Force {
