@@ -2,10 +2,8 @@ package org.cogaen.box2d;
 
 import org.cogaen.entity.Component;
 import org.cogaen.entity.ComponentEntity;
-import org.cogaen.entity.EntityService;
 import org.cogaen.event.Event;
 import org.cogaen.event.EventService;
-import org.cogaen.name.CogaenId;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
@@ -15,6 +13,10 @@ public class RevoluteJointComponent extends Component {
 	private double anchorX;
 	private double anchorY;
 	private ComponentEntity entityB;
+	private double lowerAngle;
+	private double upperAngle;
+	private boolean limit = false;
+	private boolean collide = false;
 	
 	public RevoluteJointComponent(double anchorX, double anchorY, ComponentEntity entityB) {
 		this.anchorX = anchorX;
@@ -52,9 +54,10 @@ public class RevoluteJointComponent extends Component {
 		Body bodyB = getBody(this.entityB);
 		Vec2 a = bodyA.getWorldPoint(new Vec2((float) anchorX, (float) anchorY));
 		rjd.initialize(bodyA, bodyB, a);
-//		rjd.lowerAngle = (float) (-0.25 * Math.PI);
-//		rjd.upperAngle = (float) (0.25 * Math.PI);
-//		rjd.enableLimit = true;
+		rjd.lowerAngle = (float) this.lowerAngle;
+		rjd.upperAngle = (float) this.upperAngle;
+		rjd.enableLimit = this.limit;
+		rjd.collideConnected = this.collide;
 		PhysicsService.getInstance(getCore()).getWorld().createJoint(rjd);
 	}
 		
@@ -62,6 +65,14 @@ public class RevoluteJointComponent extends Component {
 		Box2dBody boxBody = (Box2dBody) entity.getAttribute(Box2dBody.BOX2D_BODY_ATTRIB);
 		return boxBody.getBody();
 	}
+
+	public void setLimit(double lowerAngle, double upperAngle) {
+		this.lowerAngle = lowerAngle;
+		this.upperAngle = upperAngle;
+		this.limit  = true;
+	}
 	
-	
+	public void setCollideConnected(boolean value) {
+		this.collide = value;
+	}
 }

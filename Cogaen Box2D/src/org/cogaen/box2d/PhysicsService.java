@@ -21,8 +21,8 @@ public class PhysicsService extends UpdateableService {
 	private static final String NAME = "Cogaen Box2D Physics Service";
 	private static final boolean DO_SLEEP = true;
 	private static final Vec2 DEFAULT_GRAVITY = new Vec2(0, 0);
-	private static final int VELOCITY_ITERATIONS = 80;
-	private static final int POSITION_ITERATIONS = 30;
+	private static final int VELOCITY_ITERATIONS = 8;
+	private static final int POSITION_ITERATIONS = 3;
 	
 	private World world;
 	private Timer timer;
