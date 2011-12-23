@@ -101,6 +101,11 @@ public class MouseService extends UpdateableService {
 				this.evtSrv.dispatchEvent(new MouseButtonReleasedEvent(Mouse.getX(), Mouse.getY(), i));
 			}
 		}
+		
+		int dWheel = Mouse.getDWheel();
+		if (dWheel != 0) {
+			this.evtSrv.dispatchEvent(new MouseWheelEvent(dWheel));			
+		}
 	}
 
 	public void setShowMouseCursor(boolean b) {
