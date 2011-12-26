@@ -30,6 +30,8 @@
 
 package org.cogaen.resource;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
@@ -105,6 +107,14 @@ public class ResourceService extends AbstractService {
 		
 		if (is == null) {
 			is = getClass().getResourceAsStream("/" + name);
+		}
+		
+		if (is == null) {
+			try {
+				is = new FileInputStream(name);
+			} catch (FileNotFoundException e) {
+				return null;
+			}
 		}
 		
 		return is;
