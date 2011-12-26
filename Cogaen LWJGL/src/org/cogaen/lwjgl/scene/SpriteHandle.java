@@ -63,9 +63,9 @@ public class SpriteHandle extends ResourceHandle {
 		Texture texture = (Texture) ResourceService.getInstance(core).getResource(this.textureName);
 		
 		if (this.width == 0 || this.height == 0) {
-			this.sprite = new SpriteVisual(texture, texture.getImageWidth(), texture.getImageHeight());
+			this.sprite = new SpriteVisual(core, this.textureName, texture.getImageWidth(), texture.getImageHeight());
 		} else {
-			this.sprite = new SpriteVisual(texture, this.width, this.height);
+			this.sprite = new SpriteVisual(core, this.textureName, this.width, this.height);
 		}
 	}
 

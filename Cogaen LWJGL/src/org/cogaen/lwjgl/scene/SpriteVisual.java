@@ -30,6 +30,8 @@ THE SOFTWARE.
 
 package org.cogaen.lwjgl.scene;
 
+import org.cogaen.core.Core;
+import org.cogaen.resource.ResourceService;
 import org.lwjgl.opengl.GL11;
 import org.newdawn.slick.opengl.Texture;
 
@@ -40,12 +42,12 @@ public class SpriteVisual extends Visual {
 	private double halfHeight;
 	private boolean flipVertical;
 	private int blendMode = GL11.GL_ONE_MINUS_SRC_ALPHA;
-	
-	SpriteVisual(Texture texture, double width, double height) {
+		
+	public SpriteVisual(Core core, String textureResource, double width, double height) {
 		super(Color.WHITE);
-		this.texture = texture;
+		this.texture = (Texture) ResourceService.getInstance(core).getResource(textureResource);
 		this.halfWidth = width / 2;
-		this.halfHeight = height / 2;
+		this.halfHeight = height / 2;		
 	}
 	
 	private SpriteVisual() {
