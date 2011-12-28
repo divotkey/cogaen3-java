@@ -41,5 +41,6 @@ public class HierarchicalComponentEntity extends ComponentEntity {
 	
 	public void addEntity(ComponentEntity entity) {
 		this.subEntities.add(entity);
+		entity.setParent(this);
 	}
 }
