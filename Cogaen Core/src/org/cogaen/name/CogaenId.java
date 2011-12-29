@@ -84,6 +84,10 @@ public class CogaenId {
 		return true;
 	}
 
+	public boolean isGenerated() {
+		return this.generated;
+	}
+	
 	private boolean equalId(CogaenId other) {
 		if (this.id == null) {
 			if (other.id != null) {
