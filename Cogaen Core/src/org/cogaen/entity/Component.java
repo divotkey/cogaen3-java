@@ -29,6 +29,17 @@ public class Component implements Engageable, EventListener {
 		return this.engaged;
 	}
 		
+	public final ComponentEntity getEntity() {
+		return this.parent;
+	}
+
+	
+	/**
+	 * Returns the parent entity of this component.
+	 * 
+	 * @return ComponentEntity that contains this component.
+	 * @deprecated this method has been replaced by {@link #getEntity()}
+	 */
 	public final ComponentEntity getParent() {
 		return this.parent;
 	}
