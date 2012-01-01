@@ -72,7 +72,7 @@ public class ControllerComponent extends Component implements ControllerState, E
 		}
 		
 		UpdateEvent update = (UpdateEvent) event;
-		if (update.getEntityId().equals(getParent().getId())) {
+		if (update.getEntityId().equals(getEntity().getId())) {
 			update.updateController(this);
 		}
 	}

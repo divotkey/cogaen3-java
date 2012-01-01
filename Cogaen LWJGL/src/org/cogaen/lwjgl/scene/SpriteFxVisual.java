@@ -43,6 +43,7 @@ public class SpriteFxVisual extends Visual {
 	private boolean flipVertical;
 	private int blendMode = GL11.GL_ONE_MINUS_SRC_ALPHA;
 	private boolean mirror = false;
+	private boolean shadow = false;
 		
 	public SpriteFxVisual(Core core, String textureResource, double width, double height) {
 		super(Color.WHITE);
@@ -70,12 +71,31 @@ public class SpriteFxVisual extends Visual {
 	
 	@Override
 	public void render() {
-		getColor().apply();
-		
 		if (this.flipVertical) {
 			GL11.glScaled(1, -1, 1);
 		}
-    	
+		
+		if (this.shadow) {
+			double dx = this.halfWidth * getScale() * 0.02;
+			double dy = this.halfWidth * getScale() * 0.02;
+			GL11.glColor4d(getColor().getRed() * 0.1, getColor().getGreen() * 0.1, getColor().getBlue() * 0.1, 0.7);
+			
+		    GL11.glBegin(GL11.GL_QUADS);
+		    GL11.glTexCoord2f(0.0f, this.texture.getHeight());
+		    GL11.glVertex2d(-this.halfWidth * getScale() + dx, -this.halfHeight * getScale() - dy);
+		    
+		    GL11.glTexCoord2f(this.texture.getWidth(), this.texture.getHeight());
+	        GL11.glVertex2d(this.halfWidth * getScale() + dx, -this.halfHeight * getScale() - dy);
+	        
+		    GL11.glTexCoord2f(this.texture.getWidth(), 0);
+	        GL11.glVertex2d(this.halfWidth * getScale() + dx, this.halfHeight * getScale() - dy);
+	        
+		    GL11.glTexCoord2f(0.0f, 0.0f);
+			GL11.glVertex2d(-this.halfWidth * getScale() + dx, this.halfHeight * getScale() - dy);			
+		}
+		
+		getColor().apply();
+		
 	    GL11.glBegin(GL11.GL_QUADS);
 	    GL11.glTexCoord2f(0.0f, this.texture.getHeight());
 	    GL11.glVertex2d(-this.halfWidth * getScale(), -this.halfHeight * getScale());
@@ -89,8 +109,9 @@ public class SpriteFxVisual extends Visual {
 	    GL11.glTexCoord2f(0.0f, 0.0f);
 		GL11.glVertex2d(-this.halfWidth * getScale(), this.halfHeight * getScale());
 		
-
 		if (this.mirror) {
+			GL11.glColor4d(getColor().getRed() * 0.7, getColor().getGreen() * 0.7, getColor().getBlue() * 0.7, 0.7);
+			
 		    GL11.glTexCoord2f(0.0f, this.texture.getHeight());
 		    GL11.glVertex2d(-this.halfWidth * getScale(), -this.halfHeight * getScale());
 		    
@@ -155,5 +176,13 @@ public class SpriteFxVisual extends Visual {
 
 	public void setMirror(boolean mirror) {
 		this.mirror = mirror;
+	}
+
+	public boolean isShadow() {
+		return shadow;
+	}
+
+	public void setShadow(boolean shadow) {
+		this.shadow = shadow;
 	}
 }
