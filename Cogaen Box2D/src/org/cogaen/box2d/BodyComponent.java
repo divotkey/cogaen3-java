@@ -51,9 +51,9 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 	@Override
 	public void initialize(ComponentEntity parent) {
 		super.initialize(parent);
-		getParent().addAttribute(Pose2D.ATTR_ID, this);
-		getParent().addAttribute(Box2dBody.BOX2D_BODY_ATTRIB, this);
-		getParent().addAttribute(PHYSICS_BODY_ATTRIB, this);
+		getEntity().addAttribute(Pose2D.ATTR_ID, this);
+		getEntity().addAttribute(Box2dBody.BOX2D_BODY_ATTRIB, this);
+		getEntity().addAttribute(PHYSICS_BODY_ATTRIB, this);
 		this.evtSrv = EventService.getInstance(getCore());
 	}
 
@@ -64,7 +64,7 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 		PhysicsService phySrv = PhysicsService.getInstance(getCore());
 		World world = phySrv.getWorld();
 		BodyDef bodyDef = new BodyDef();
-		bodyDef.userData = getParent();
+		bodyDef.userData = getEntity();
 		bodyDef.type = this.type;
 		bodyDef.position.x = (float) this.xPos;
 		bodyDef.position.y = (float) this.yPos;
@@ -73,8 +73,8 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 		bodyDef.linearDamping = (float) this.linearDamping;
 		this.body = world.createBody(bodyDef);
 		
-		BodyEngagedEvent event = new BodyEngagedEvent(getParent().getId());
-		getParent().handleEvent(event);
+		BodyEngagedEvent event = new BodyEngagedEvent(getEntity().getId());
+		getEntity().handleEvent(event);
 		EventService.getInstance(getCore()).dispatchEvent(event);
 	}
 
@@ -126,7 +126,7 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 
 	@Override
 	public final void update() {
-		this.evtSrv.dispatchEvent(new PoseUpdateEvent(getParent().getId(), this));
+		this.evtSrv.dispatchEvent(new PoseUpdateEvent(getEntity().getId(), this));
 	}
 
 	@Override

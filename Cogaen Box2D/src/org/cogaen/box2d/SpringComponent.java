@@ -62,9 +62,9 @@ public class SpringComponent extends UpdateableComponent {
 			return;
 		}
 		
-		this.bodyA = getBody(getParent());
+		this.bodyA = getBody(getEntity());
 		this.bodyB = getBody(this.entityB);
-		this.poseA = getPose(getParent());
+		this.poseA = getPose(getEntity());
 		this.poseB = getPose(this.entityB);
 		
 		Vector2 d = new Vector2(this.poseA.getPosX() - this.poseB.getPosX(), this.poseA.getPosY() - this.poseB.getPosY());

@@ -17,6 +17,7 @@ public class RevoluteJointComponent extends Component {
 	private double upperAngle;
 	private boolean limit = false;
 	private boolean collide = false;
+	private boolean created = false;
 	
 	public RevoluteJointComponent(double anchorX, double anchorY, ComponentEntity entityB) {
 		this.anchorX = anchorX;
@@ -28,6 +29,10 @@ public class RevoluteJointComponent extends Component {
 	public void engage() {
 		super.engage();		
 		EventService.getInstance(getCore()).addListener(this, BodyEngagedEvent.TYPE_ID);
+		
+		if (isBodyReady()) {
+			createJoint();
+		}
 	}
 
 	@Override
@@ -48,9 +53,19 @@ public class RevoluteJointComponent extends Component {
 		if (!event.getEntityId().equals(this.entityB.getId())) {
 			return;
 		}
-
+		
+		if (isEngaged()) {
+			createJoint();
+		}
+	}
+	
+	private void createJoint() {
+		if (this.created) {
+			return;
+		}
+		
 		RevoluteJointDef rjd = new RevoluteJointDef();
-		Body bodyA = getBody(getParent());
+		Body bodyA = getBody(getEntity());
 		Body bodyB = getBody(this.entityB);
 		Vec2 a = bodyA.getWorldPoint(new Vec2((float) anchorX, (float) anchorY));
 		rjd.initialize(bodyA, bodyB, a);
@@ -58,9 +73,14 @@ public class RevoluteJointComponent extends Component {
 		rjd.upperAngle = (float) this.upperAngle;
 		rjd.enableLimit = this.limit;
 		rjd.collideConnected = this.collide;
-		PhysicsService.getInstance(getCore()).getWorld().createJoint(rjd);
+		PhysicsService.getInstance(getCore()).getWorld().createJoint(rjd);		
+		this.created = true;
 	}
 		
+	private boolean isBodyReady() {
+		return entityB.isEngaged();
+	}
+	
 	private Body getBody(ComponentEntity entity) {
 		Box2dBody boxBody = (Box2dBody) entity.getAttribute(Box2dBody.BOX2D_BODY_ATTRIB);
 		return boxBody.getBody();

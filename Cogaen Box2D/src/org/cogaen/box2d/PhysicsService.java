@@ -21,11 +21,13 @@ public class PhysicsService extends UpdateableService {
 	private static final String NAME = "Cogaen Box2D Physics Service";
 	private static final boolean DO_SLEEP = true;
 	private static final Vec2 DEFAULT_GRAVITY = new Vec2(0, 0);
-	private static final int VELOCITY_ITERATIONS = 8;
-	private static final int POSITION_ITERATIONS = 3;
+	private static final int DEFAULT_VELOCITY_ITERATIONS = 8;
+	private static final int DEFAULT_POSITION_ITERATIONS = 3;
 	
 	private World world;
 	private Timer timer;
+	private int velocityIterations = DEFAULT_VELOCITY_ITERATIONS;
+	private int positionIterations = DEFAULT_POSITION_ITERATIONS;
 
 	public static PhysicsService getInstance(Core core) {
 		return (PhysicsService) core.getService(ID);
@@ -54,7 +56,7 @@ public class PhysicsService extends UpdateableService {
 
 	@Override
 	public void update() {
-		this.world.step((float) this.timer.getDeltaTime(), VELOCITY_ITERATIONS, POSITION_ITERATIONS);
+		this.world.step((float) this.timer.getDeltaTime(), velocityIterations, positionIterations);
 	}
 
 	@Override
@@ -81,6 +83,11 @@ public class PhysicsService extends UpdateableService {
 	
 	public void setGravity(double vx, double vy) {
 		this.world.setGravity(new Vec2((float) vx, (float) vy));
+	}
+	
+	public void setInterations(int velocityIterations, int positionIterations) {
+		this.velocityIterations = velocityIterations;
+		this.positionIterations = positionIterations;
 	}
 	
 	private static class DirectCollisionReporter implements ContactListener {

@@ -16,6 +16,7 @@ public class DistanceJointComponent extends Component {
 	private double anchorBy;
 	private ComponentEntity entityB;
 	private boolean collide = false;
+	private boolean created = false;
 	
 	public DistanceJointComponent(double anchorAx, double anchorAy,	double anchorBx, double anchorBy, ComponentEntity entityB) {
 		this.anchorAx = anchorAx;
@@ -29,6 +30,10 @@ public class DistanceJointComponent extends Component {
 	public void engage() {
 		super.engage();		
 		EventService.getInstance(getCore()).addListener(this, BodyEngagedEvent.TYPE_ID);
+		
+		if (isBodyReady()) {
+			createJoint();
+		}
 	}
 
 	@Override
@@ -49,17 +54,29 @@ public class DistanceJointComponent extends Component {
 		if (!event.getEntityId().equals(this.entityB.getId())) {
 			return;
 		}
-
+		
+		if (isEngaged()) {
+			createJoint();
+		}
+	}
+	
+	private boolean isBodyReady() {
+		return entityB.isEngaged();
+	}
+	
+	private void createJoint() {
+		if (this.created) {
+			return;
+		}
 		DistanceJointDef djd = new DistanceJointDef();
-		Body bodyA = getBody(getParent());
+		Body bodyA = getBody(getEntity());
 		Body bodyB = getBody(this.entityB);
 		Vec2 a1 = bodyA.getWorldPoint(new Vec2((float) anchorAx, (float) anchorAy));
 		Vec2 a2 = bodyB.getWorldPoint(new Vec2((float) anchorBx, (float) anchorBy));
 		djd.collideConnected = this.collide;
 		djd.initialize(bodyA, bodyB, a1, a2);
-//		djd.dampingRatio = 1.0f;
-//		djd.frequencyHz = 30;
-		PhysicsService.getInstance(getCore()).getWorld().createJoint(djd);
+		PhysicsService.getInstance(getCore()).getWorld().createJoint(djd);		
+		this.created = true;
 	}
 		
 	private Body getBody(ComponentEntity entity) {
