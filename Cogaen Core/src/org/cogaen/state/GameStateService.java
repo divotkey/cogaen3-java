@@ -41,12 +41,20 @@ import org.cogaen.logging.LoggingService;
 import org.cogaen.logging.LoggingService.Priority;
 import org.cogaen.name.CogaenId;
 
+/**
+ * This service can be used to manage all major game sates. It works like a
+ * finite state machine and has a predefined start and end state.
+ */
 public class GameStateService extends AbstractService implements CoreListener {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.event.GameStateService");
 	public static final String NAME = "Cogaen Game State Service";
 	public static final String LOGGING_SOURCE = "GMST";
+	
+	/** Identifier of the predefined start state of this state machine. */
 	public static final CogaenId START_STATE_ID = new CogaenId("StartState");
+	
+	/** Identifier of the predefined end state of this state machine. */
 	public static final CogaenId END_STATE_ID = new CogaenId("EndState");
 	
 	private LoggingService logger;
@@ -61,6 +69,12 @@ public class GameStateService extends AbstractService implements CoreListener {
 		addDependency(EventService.ID);
 	}
 		
+	/**
+	 * Adds an instance of a state.
+	 * 
+	 * @param state {@code State} game state to be added.
+	 * @param stateId {@code CogaenId} unique identifier of the state instance to be added. 
+	 */
 	public void addState(State state, CogaenId stateId) {
 		verifyStatus();
 
@@ -68,16 +82,37 @@ public class GameStateService extends AbstractService implements CoreListener {
 		this.logger.logInfo(LOGGING_SOURCE, "added game state " + stateId);
 	}
 	
+	/**
+	 * Switches to the specified state instance.
+	 * <p>If the specified state is already the current state of this state
+	 * machine, the state is re-entered. This means {@code onExit()} and
+	 * {@code onEnter()} of the specified stated is called.</p>
+	 * 
+	 * @param stateId {@code CogaenId} unique identifier of the state instance to be switched to.
+	 */
 	public void setCurrentState(CogaenId stateId) {
 		verifyStatus();
 		this.stateMachine.setCurrentState(stateId);
 	}
 	
+	/**
+	 * Returns the identifier of the currently active state.
+	 * 
+	 * @return identifier of the current state.
+	 */
 	public CogaenId getCurrentState() {
 		verifyStatus();
 		return this.stateMachine.getCurrentState();
 	}
 	
+	/**
+	 * Determines if the end state of this state machine has been reached.
+	 * 
+	 * @return {@code true} if the currently active state is the predefined
+	 * end state of this state machine.
+	 * 
+	 * @see #END_STATE_ID
+	 */
 	public boolean isEndState() {
 		verifyStatus();
 		return getCurrentState().equals(END_STATE_ID);
@@ -134,7 +169,9 @@ public class GameStateService extends AbstractService implements CoreListener {
 
 	@Override
 	public void shutdownInitiated() {
-		setCurrentState(END_STATE_ID);
+		if (!getCurrentState().equals(END_STATE_ID)) {
+			setCurrentState(END_STATE_ID);
+		}
 	}
 	
 }

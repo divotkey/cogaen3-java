@@ -39,7 +39,8 @@ import org.cogaen.name.CogaenId;
 import org.cogaen.util.Bag;
 
 /**
- * The core is the central service locator in Cogaen used to retrieve all kind of registered services.
+ * The core is the central service locator in Cogaen used to retrieve all kind
+ * of registered services.
  */
 public class Core {
 

@@ -156,6 +156,16 @@ public class DeterministicStateMachine implements StateMachine, EventListener {
 		}
 	}
 	
+	/**
+	 * Switches to the specified state instance.
+	 * 
+	 * <p>If the specified state is already the current state of this state
+	 * machine, the state is re-entered. This means {@code onExit()} and
+	 * {@code onEnter()} of the specified stated is called.</p>
+	 * 
+	 * @param stateId {@code CogaenId} unique identifier of the state instance
+	 * to be switched to.
+	 */
 	public void setCurrentState(CogaenId stateId) {
 		if (!isEngaged()) {
 			throw new IllegalStateException("not engaged");

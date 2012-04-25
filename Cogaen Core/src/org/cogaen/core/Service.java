@@ -37,6 +37,12 @@ public interface Service {
 	public enum Status {STOPPED, STARTED, PAUSED};
 
 	public CogaenId getId();
+	
+	/**
+	 * Returns the name of this service.
+	 * 
+	 * @return human readable name of this service.
+	 */
 	public String getName();
 	public Status getStatus();
 	
