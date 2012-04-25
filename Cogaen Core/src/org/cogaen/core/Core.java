@@ -62,7 +62,7 @@ public class Core {
 	}
 
 	/**
-	 * Queries if the specified service has exists.
+	 * Queries if the specified service exists.
 	 * 
 	 * @param serviceId {@link CogaenId} of the service that should be queried.
 	 * @return {@code true} if the specified service exists, {@code false} otherwise.
@@ -72,11 +72,12 @@ public class Core {
 	}
 	
 	/**
-	 * Retrieves a Service with the specified id.
+	 * Retrieves the service with the specified identifier.
 	 * 
-	 * @param serviceId {@link CogaenId} of the service that should be retrieved.
-	 * @return Service specified by the given id.
-	 * @throws RuntimeException if no service with the specified id can be found.
+	 * @param serviceId identifier of the service that should be retrieved
+	 * @return service specified by the given identifier
+	 * @throws RuntimeException if no service with the specified identifier 
+	 * is available
 	 */
 	public Service getService(CogaenId serviceId) {
 		Service srv = this.servicesMap.get(serviceId);

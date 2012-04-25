@@ -36,6 +36,11 @@ public interface Service {
 
 	public enum Status {STOPPED, STARTED, PAUSED};
 
+	/**
+	 * Returns the identifier of this service.
+	 * 
+	 * @return identifier of this service.
+	 */
 	public CogaenId getId();
 	
 	/**

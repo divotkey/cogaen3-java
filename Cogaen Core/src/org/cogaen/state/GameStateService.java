@@ -42,14 +42,17 @@ import org.cogaen.logging.LoggingService.Priority;
 import org.cogaen.name.CogaenId;
 
 /**
- * This service can be used to manage all major game sates. It works like a
- * finite state machine and has a predefined start and end state.
+ * This service can be used to manage all major sates of a game.
+ * It works comparable to a finite state machine and has predefined start and
+ * end states.
  */
 public class GameStateService extends AbstractService implements CoreListener {
 
+	/** Identifier of this service. */
 	public static final CogaenId ID = new CogaenId("org.cogaen.event.GameStateService");
+	
+	/** Human readable name of this service. */
 	public static final String NAME = "Cogaen Game State Service";
-	public static final String LOGGING_SOURCE = "GMST";
 	
 	/** Identifier of the predefined start state of this state machine. */
 	public static final CogaenId START_STATE_ID = new CogaenId("StartState");
@@ -57,13 +60,26 @@ public class GameStateService extends AbstractService implements CoreListener {
 	/** Identifier of the predefined end state of this state machine. */
 	public static final CogaenId END_STATE_ID = new CogaenId("EndState");
 	
+	private static final String LOGGING_SOURCE = "GMST";
+	
 	private LoggingService logger;
 	private DeterministicStateMachine stateMachine;
 	
+	/**
+	 * Convenience method to retrieve an instance of this service using
+	 * the specified service locator.
+	 * 
+	 * @param core the service locator from which to retrieve the instance of 
+	 * this service
+	 * @return instance of this service
+	 */
 	public static GameStateService getInstance(Core core) {
 		return (GameStateService) core.getService(ID);
 	}
 	
+	/**
+	 * Creates a new instance of this service.
+	 */
 	public GameStateService() {
 		addDependency(LoggingService.ID);
 		addDependency(EventService.ID);
