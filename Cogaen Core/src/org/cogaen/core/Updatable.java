@@ -30,9 +30,14 @@
 
 package org.cogaen.core;
 
-
-public interface Updateable {
+/**
+ * The interface for objects that can be updated.
+ */
+public interface Updatable {
 	
+	/** 
+	 * Updates this updatable object.
+	 */
 	public void update();
 	
 }

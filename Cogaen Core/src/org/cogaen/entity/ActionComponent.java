@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cogaen.action.Action;
-import org.cogaen.core.Updateable;
+import org.cogaen.core.Updatable;
 import org.cogaen.time.TimeService;
 import org.cogaen.time.Timer;
 
-public class ActionComponent extends Component implements Updateable {
+public class ActionComponent extends Component implements Updatable {
 
 	private List<Action> engageActions = new ArrayList<Action>();
 	private List<Action> disengageActions = new ArrayList<Action>();

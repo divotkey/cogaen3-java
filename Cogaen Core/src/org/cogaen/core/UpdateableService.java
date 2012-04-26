@@ -30,7 +30,7 @@
 
 package org.cogaen.core;
 
-public abstract class UpdateableService extends AbstractService implements Updateable {
+public abstract class UpdateableService extends AbstractService implements Updatable {
 
 	@Override
 	protected void doPause() {
@@ -40,14 +40,14 @@ public abstract class UpdateableService extends AbstractService implements Updat
 
 	@Override
 	protected void doResume() {
-		getCore().addUpdateable(this);
+		getCore().addUpdatable(this);
 		super.doResume();
 	}
 
 	@Override
 	protected void doStart() throws ServiceException {
 		super.doStart();
-		getCore().addUpdateable(this);
+		getCore().addUpdatable(this);
 	}
 
 	@Override

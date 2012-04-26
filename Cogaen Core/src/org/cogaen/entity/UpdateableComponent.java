@@ -1,8 +1,8 @@
 package org.cogaen.entity;
 
-import org.cogaen.core.Updateable;
+import org.cogaen.core.Updatable;
 
-public abstract class UpdateableComponent extends Component implements Updateable {
+public abstract class UpdateableComponent extends Component implements Updatable {
 
 	@Override
 	public void engage() {

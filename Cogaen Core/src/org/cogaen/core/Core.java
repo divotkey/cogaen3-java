@@ -39,8 +39,20 @@ import org.cogaen.name.CogaenId;
 import org.cogaen.util.Bag;
 
 /**
- * The core is the central service locator in Cogaen used to retrieve all kind
- * of registered services.
+ * The core class is the central service locator used to retrieve services.
+ * 
+ * The main purpose of this class is to provide a centralized access to
+ * services. Beside this it keeps track about the absolute game time and
+ * updates registered updatable objects.
+ * 
+ * <p>An instance of a core can be in two differnt states:
+ * <strong>stopped</strong> and <strong>running</strong>.
+ * A newly created core will be initially in <strong>stopped state</strong>. Before
+ * any of the added services can be used the core (and thus its services) must
+ * be started by a call to {@code startup}.</p> 
+ * 
+ * @see Service
+ * @see Updatable
  */
 public class Core {
 
@@ -49,7 +61,7 @@ public class Core {
 	private Map<CogaenId, Service> servicesMap = new HashMap<CogaenId, Service>();
 	private List<Service> services = new ArrayList<Service>();
 	private List<CoreListener> listeners = new ArrayList<CoreListener>();
-	private Bag<Updateable> updateables = new Bag<Updateable>();
+	private Bag<Updatable> updatables = new Bag<Updatable>();
 	private boolean running = false;
 	private double deltaTime;
 	private double time;
@@ -64,15 +76,16 @@ public class Core {
 	/**
 	 * Queries if the specified service exists.
 	 * 
-	 * @param serviceId {@link CogaenId} of the service that should be queried.
-	 * @return {@code true} if the specified service exists, {@code false} otherwise.
+	 * @param serviceId identifier of the service that should be queried
+	 * @return {@code true} if the specified service exists, {@code false}
+	 * otherwise
 	 */
 	public boolean hasService(CogaenId serviceId) {
 		return this.servicesMap.containsKey(serviceId);
 	}
 	
 	/**
-	 * Retrieves the service with the specified identifier.
+	 * Retrieves a service.
 	 * 
 	 * @param serviceId identifier of the service that should be retrieved
 	 * @return service specified by the given identifier
@@ -88,6 +101,11 @@ public class Core {
 		return srv;
 	}
 	
+	/**
+	 * Adds the specified core listener.
+	 * 
+	 * @param listener the core listener to be added.
+	 */
 	public void addListener(CoreListener listener) {
 		if (this.listeners.contains(listener)) {
 			throw new RuntimeException("listener already in list: " + listener.getClass().getName());
@@ -95,6 +113,11 @@ public class Core {
 		this.listeners.add(listener);
 	}
 	
+	/**
+	 * Removes the specified core listener.
+	 * 
+	 * @param listener the core listener to be removed
+	 */
 	public void removeListener(CoreListener listener) {
 		if ( !this.listeners.remove(listener) ) {
 			throw new RuntimeException("listener not registered: " + listener.getClass().getName());
@@ -102,11 +125,13 @@ public class Core {
 	}
 	
 	/**
-	 * Adds a service. 
+	 * Adds a service.  New services can only be added if this
+	 * core is not in <strong>running state</strong>.
 	 * 
-	 * @param service Service that should be added.
-	 * throws IllegalStateException if this core has been started.
-	 * throws RuntimeException if the id of the given service is ambiguous.
+	 * @param service the service to be added
+	 * @throws IllegalStateException if this core is in running state
+	 * @throws RuntimeException if the identifier of the specified service is
+	 * ambiguous
 	 */
 	public void addService(Service service) {
 		if (this.running) {
@@ -122,11 +147,11 @@ public class Core {
 	}
 	
 	/**
-	 * Removes the specified service. Services can only be removed before a call to {@link startup} or
-	 * after a call of {@link shutdown}.
+	 * Removes a service. Services can only be removed before if this core is
+	 * not in <strong>running state</strong>.
 	 * 
-	 * @param serviceId {@link CogaenId} of the service to be removed.
-	 * throws IllegalStateException if this core is running state.
+	 * @param serviceId identifier of the service to be removed.
+	 * @throws IllegalStateException if this core is running state.
 	 */
 	public void removeService(CogaenId serviceId) {
 		if (this.running) {
@@ -138,8 +163,12 @@ public class Core {
 	}
 	
 	/**
-	 * Starts all services.
-	 * After a successful call of this method this core is in 'running' state.
+	 * Starts all services. 
+	 * After a successful call of this method this core is in
+	 * <strong>running state</strong>.
+	 * 
+	 * @throws ServiceException in case at least one service could not be
+	 * started
 	 */
 	public void startup() throws ServiceException {
 		for (Service service : this.servicesMap.values()) {
@@ -186,8 +215,8 @@ public class Core {
 	}
 
 	/**
-	 * Stops all services.
-	 * After a successful call to this method this core is in 'stopped' state.
+	 * Stops all services.  After a successful call to this method this core is
+	 * in <strong>stopped state</strong>.
 	 */
 	public void shutdown() {
 		for (CoreListener listener : this.listeners) {
@@ -204,10 +233,11 @@ public class Core {
 	
 	/**
 	 * Updates this core. 
-	 * The game time and all registered {@code Updateable} objects will be updated.
+	 * The game time and all updatable objects will be updated.
 	 * 
-	 * @param dt elapsed time in seconds.
-	 * @see addUpdateable
+	 * @param dt elapsed time in seconds
+	 * @see #addUpdatable
+	 * @see Updatable
 	 */
 	public void update(double dt) {
 		this.deltaTime = dt;
@@ -217,34 +247,38 @@ public class Core {
 			throw new IllegalStateException();
 		}
 
-		for (this.updateables.reset(); this.updateables.hasNext();) {
-			this.updateables.next().update();
+		for (this.updatables.reset(); this.updatables.hasNext();) {
+			this.updatables.next().update();
 		}
 	}
 	
 	/**
-	 * Adds an Updateable to the list of objects to be updated when {@link update} is called.
-	 * In most cases a Service will implement the interface {@code Updateable} and 
-	 * register itself as as updatable, if the services needs to be updated each game loop cycle.
+	 * Adds the specified updatable object. All updatable objects will be 
+	 * updated whenever the method {@code update} of this core is called.
 	 * 
-	 * @param updateable {@code Updateable} to be added
-	 * @see Updateable
+	 * <p>In most cases services that need to be updated within the game loop
+	 * cycle implement the interface
+	 * {@code Updatable}. When such a service is started it adds itself as 
+	 * updatable object and removes itself when it is stopped.</p>
+	 * 
+	 * @param updatable the updatable object to be added
+	 * @see Updatable
 	 */
-	public void addUpdateable(Updateable updateable) {
-		this.updateables.add(updateable);
+	public void addUpdatable(Updatable updatable) {
+		this.updatables.add(updatable);
 	}
 	
 	/**
-	 * Removes the given updateable from the list of objects to be updated.
-	 * @param updateable {@code Updateable} to be removed
+	 * Removes the specified updatable object.
+	 * @param updatable the updatable object to be removed
 	 */
-	public void removeUpdateable(Updateable updateable) {
-		this.updateables.remove(updateable);
+	public void removeUpdateable(Updatable updatable) {
+		this.updatables.remove(updatable);
 	}
 
 	/**
-	 * Returns the last elapsed time in secondes.
-	 * @return elapsed time in seconds.
+	 * Returns the last elapsed time in seconds.
+	 * @return elapsed time in seconds
 	 */
 	public double getDeltaTime() {
 		return this.deltaTime;
@@ -253,23 +287,23 @@ public class Core {
 	/**
 	 * Retrieves the current absolute game time.
 	 * 
-	 * @return game time in seconds.
+	 * @return absolute game time in seconds
 	 */
 	public double getTime() {
 		return this.time;
 	}
 
 	/**
-	 * Retrieves the {@link Version} number of this core.
+	 * Retrieves the version of this core.
 	 * 
-	 * @return version number of this core.
+	 * @return version of this core
 	 */
 	public Version getVersion() {
 		return VERSION;
 	}
 	
 	/**
-	 * Returns the number of added services. 
+	 * Returns the number of services. 
 	 * 
 	 * @return number of services.
 	 */
@@ -280,10 +314,19 @@ public class Core {
 	/**
 	 * Retrieves the specified service.
 	 * 
-	 * @param idx index of service to Retrieve.
-	 * @return service with specified index.
+	 * @param idx index of service to Retrieve
+	 * @return service with specified index
 	 */
 	public Service getService(int idx) {
 		return this.services.get(idx);
+	}
+
+	/**
+	 * Queries this core if it is in running state.
+	 * @return {@code true} if this core is in <strong>running state</strong>,
+	 * {@code false} otherwise
+	 */
+	public boolean isRunning() {
+		return this.running;
 	}
 }

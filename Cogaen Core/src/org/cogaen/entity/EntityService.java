@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.cogaen.core.Core;
-import org.cogaen.core.Updateable;
+import org.cogaen.core.Updatable;
 import org.cogaen.core.UpdateableService;
 import org.cogaen.name.CogaenId;
 import org.cogaen.util.Bag;
@@ -19,7 +19,7 @@ public class EntityService extends UpdateableService {
 	private Map<CogaenId, Entity> entitiesMap = new HashMap<CogaenId, Entity>();
 	private List<Entity> entities = new ArrayList<Entity>();
 	private List<Entity> entitiesToRemove = new ArrayList<Entity>();
-	private Bag<Updateable> updateables = new Bag<Updateable>();
+	private Bag<Updatable> updateables = new Bag<Updatable>();
 	public static EntityService getInstance(Core core) {
 		return (EntityService) core.getService(ID);
 	}
@@ -93,11 +93,11 @@ public class EntityService extends UpdateableService {
 		return this.entities.get(idx);
 	}
 
-	public void addUpdateable(Updateable updateable) {
+	public void addUpdateable(Updatable updateable) {
 		this.updateables.add(updateable);
 	}
 	
-	public void removeUpdateable(Updateable updateable) {
+	public void removeUpdateable(Updatable updateable) {
 		this.updateables.remove(updateable);
 	}	
 	
