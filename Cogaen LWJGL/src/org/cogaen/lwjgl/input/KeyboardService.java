@@ -33,14 +33,14 @@ package org.cogaen.lwjgl.input;
 import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
-import org.cogaen.core.Updateable;
+import org.cogaen.core.Updatable;
 import org.cogaen.event.EventService;
 import org.cogaen.lwjgl.scene.SceneService;
 import org.cogaen.name.CogaenId;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 
-public class KeyboardService extends AbstractService implements Updateable {
+public class KeyboardService extends AbstractService implements Updatable {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.lwjgl.input.InputService");
 	public static final String NAME = "Cogaen LWJGL Input Service";
@@ -76,7 +76,7 @@ public class KeyboardService extends AbstractService implements Updateable {
 			throw new ServiceException(e);
 		}
 		
-		getCore().addUpdateable(this);
+		getCore().addUpdatable(this);
 	}
 
 	@Override
@@ -98,7 +98,7 @@ public class KeyboardService extends AbstractService implements Updateable {
 
 	@Override
 	protected void doResume() {
-		getCore().addUpdateable(this);
+		getCore().addUpdatable(this);
 		super.doResume();
 	}
 
