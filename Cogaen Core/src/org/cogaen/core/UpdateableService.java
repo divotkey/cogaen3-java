@@ -6,7 +6,7 @@
  look at our project home page for further details: http://www.cogaen.org
     
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- Copyright (c) 2010-2011 Roman Divotkey
+ Copyright (c) 2010-2012 Roman Divotkey
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -30,6 +30,22 @@
 
 package org.cogaen.core;
 
+/**
+ * This class provides a default implementation for a service that needs
+ * to be updated within the game loop.
+ * 
+ * <p>Developer need only subclass this abstract class and optionally 
+ * override the following methods:
+ * <ul>
+ * <li>{@code doStart}</li>
+ * <li>{@code doPause}</li>
+ * <li>{@code doResume}</li>
+ * <li>{@code doStop}</li>
+ * </ul>
+ * </p> 
+ * 
+ * @see AbstractService
+ */
 public abstract class UpdateableService extends AbstractService implements Updatable {
 
 	@Override
@@ -57,6 +73,4 @@ public abstract class UpdateableService extends AbstractService implements Updat
 		}
 		super.doStop();
 	}
-
-
 }

@@ -6,7 +6,7 @@
  look at our project home page for further details: http://www.cogaen.org
     
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- Copyright (c) 2010-2011 Roman Divotkey
+ Copyright (c) 2010-2012 Roman Divotkey
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -30,21 +30,44 @@
 
 package org.cogaen.core;
 
+
+/**
+ * A {@code ServiceException} is thrown to indicate that the attempt 
+ * to start a service has failed.
+ */
 public class ServiceException extends Exception {
 
 	private static final long serialVersionUID = 6195244931574767661L;
 
+	/**
+	 * Creates a new {@code ServiceException} with no detail message.
+	 */
 	public ServiceException() {
+		// intentionally left empty
 	}
 
+	/**
+	 * Creates a new {@code ServiceException} with specified detail message.
+	 * @param message the detail message
+	 */
 	public ServiceException(String message) {
 		super(message);
 	}
 
+	/**
+	 * Creates a new {@code ServiceException} with specified cause.
+	 * @param cause the cause
+	 */
 	public ServiceException(Throwable cause) {
 		super(cause);
 	}
 
+	/**
+	 * Creates a new {@code ServiceException} with specified detail message
+	 * and cause.
+	 * @param message the detail message
+	 * @param cause the cause
+	 */
 	public ServiceException(String message, Throwable cause) {
 		super(message, cause);
 	}

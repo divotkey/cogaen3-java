@@ -6,7 +6,7 @@
  look at our project home page for further details: http://www.cogaen.org
     
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- Copyright (c) 2010-2011 Roman Divotkey
+ Copyright (c) 2010-2012 Roman Divotkey
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -30,10 +30,29 @@
 
 package org.cogaen.core;
 
+/**
+ * The interface for engageable objects.
+ */
 public interface Engageable {
 
+	/**
+	 * Engages this object. This method should only be called if this object
+	 * is not already enganged.
+	 */
 	public void engage();
+	
+	/**
+	 * Disengages this object. This method should only be called if this
+	 * object is has been engaged.
+	 */
 	public void disengage();
+	
+	/**
+	 * Queries the state of this object.
+	 * 
+	 * @return {@code true} if this object has been enganged, {@code false}
+	 * otherwise.
+	 */
 	public boolean isEngaged();
 	
 }

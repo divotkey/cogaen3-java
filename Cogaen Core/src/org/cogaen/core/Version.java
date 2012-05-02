@@ -6,7 +6,7 @@
  look at our project home page for further details: http://www.cogaen.org
     
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- Copyright (c) 2010-2011 Roman Divotkey
+ Copyright (c) 2010-2012 Roman Divotkey
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -44,21 +44,43 @@ public class Version {
 	private int minor;
 	private int revision;
 
+	/**
+	 * Creates a new instance with the specified version information.
+	 * 
+	 * @param major the major version number
+	 * @param minor the minor version number
+	 * @param revision the revision number
+	 */
 	public Version(int major, int minor, int revision) {
 		this.major = major;
 		this.minor = minor;
 		this.revision = revision;
 	}
 	
+	/**
+	 * Returns the major version number.
+	 * 
+	 * @return major version number
+	 */
 	public int getMajor() {
 		return this.major;
 	}
-	
+
+	/** 
+	 * Returns the minor version number.
+	 * 
+	 * @return the minor version number.
+	 */
 	public int getMinor() {
 		return this.minor;
 	}
-	
-	public int getMaintenance() {
+
+	/**
+	 * Returns the revision number.
+	 * 
+	 * @return the revision number
+	 */
+	public int getRevision() {
 		return this.revision;
 	}
 

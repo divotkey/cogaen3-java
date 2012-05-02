@@ -6,7 +6,7 @@
  look at our project home page for further details: http://www.cogaen.org
     
  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
- Copyright (c) 2010-2011 Roman Divotkey
+ Copyright (c) 2010-2012 Roman Divotkey
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -45,7 +45,7 @@ import org.cogaen.util.Bag;
  * services. Beside this it keeps track about the absolute game time and
  * updates registered updatable objects.
  * 
- * <p>An instance of a core can be in two differnt states:
+ * <p>An instance of a core can be in two different states:
  * <strong>stopped</strong> and <strong>running</strong>.
  * A newly created core will be initially in <strong>stopped state</strong>. Before
  * any of the added services can be used the core (and thus its services) must
@@ -56,7 +56,7 @@ import org.cogaen.util.Bag;
  */
 public class Core {
 
-	private static final Version VERSION = new Version(3, 1, 1);
+	private static final Version VERSION = new Version(3, 1, 2);
 	
 	private Map<CogaenId, Service> servicesMap = new HashMap<CogaenId, Service>();
 	private List<Service> services = new ArrayList<Service>();
@@ -135,7 +135,7 @@ public class Core {
 	 */
 	public void addService(Service service) {
 		if (this.running) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("core is running, unable to add service " + service.getName());
 		}
 		
 		Service oldService = this.servicesMap.put(service.getId(), service);
@@ -155,7 +155,7 @@ public class Core {
 	 */
 	public void removeService(CogaenId serviceId) {
 		if (this.running) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("core is running, unable to remove service " + serviceId);
 		}		
 		
 		Service service = this.servicesMap.remove(serviceId);
@@ -244,7 +244,7 @@ public class Core {
 		this.time += dt;
 		
 		if (!this.running) {
-			throw new IllegalStateException();
+			throw new IllegalStateException("core is not running, call startup before update");
 		}
 
 		for (this.updatables.reset(); this.updatables.hasNext();) {
