@@ -133,8 +133,7 @@ public class TextBlockVisual extends Visual {
 
 	@Override
 	public void epilog() {
-		// TODO Auto-generated method stub
-		
+		// intentionally left empty
 	}
 
 	@Override

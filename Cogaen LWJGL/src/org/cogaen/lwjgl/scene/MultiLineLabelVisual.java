@@ -110,8 +110,7 @@ public class MultiLineLabelVisual extends Visual implements Label {
 
 	@Override
 	public void epilog() {
-		// TODO Auto-generated method stub
-		
+		// intentionally left empty
 	}
 
 	@Override

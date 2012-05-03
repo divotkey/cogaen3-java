@@ -35,6 +35,7 @@ import org.cogaen.core.Engageable;
 import org.cogaen.lwjgl.scene.SceneNode;
 import org.cogaen.lwjgl.scene.SceneService;
 
+// TODO use CogaenBase instead of implementing Engageable directly
 public abstract class Gui implements Engageable {
 
 	public static final int DEFAULT_REFERENCE_RESOLUTION = 1650;
