@@ -65,7 +65,7 @@ public class SceneService extends AbstractService {
 	private static final String FS_PROP = "lwjgl.fullscreen";
 	private static final boolean DEFAULT_VSYNC = true;
 	private static final String VSYNC_PROP = "lwjgl.vsync";
-	
+		
 	private EventService evtSrv;
 	private int width;
 	private int height;
@@ -85,6 +85,9 @@ public class SceneService extends AbstractService {
 	private String fps = new String("FPS:");
 	private Canvas parent;
 	
+	/** Determines if only screen resolutions available in full screen mode can be used. */
+	private boolean useOnlyFullscreenModes = true;
+	
 	public static SceneService getInstance(Core core) {
 		return (SceneService) core.getService(ID);
 	}
@@ -100,7 +103,7 @@ public class SceneService extends AbstractService {
 	public SceneService(Canvas parent, int width, int height) {
 		this(parent, width, height, false, false);
 	}
-
+	
 	public SceneService(int width, int height, boolean fs, boolean useProperties) {
 		this(null, width, height, fs, useProperties);
 	}
@@ -139,13 +142,10 @@ public class SceneService extends AbstractService {
 		return NAME;
 	}
 	
-	@Override
-	protected void doStart() throws ServiceException {
-		super.doStart();
-		this.logger = LoggingService.getInstance(getCore());
-		PropertyService prpSrv = PropertyService.getInstance(getCore());
-		
+	
+	private void restoreProperties() {
 		if (this.useProperties) {
+			PropertyService prpSrv = PropertyService.getInstance(getCore());
 			this.fullscreen = prpSrv.getBoolProperty(FS_PROP,  this.fullscreen);
 			this.width = prpSrv.getIntProperty(WIDTH_PROP, this.width);
 			this.height = prpSrv.getIntProperty(HEIGHT_PROP, this.height);
@@ -157,14 +157,20 @@ public class SceneService extends AbstractService {
 		if (this.height <= 0) {
 			this.height = Display.getDesktopDisplayMode().getHeight();
 		}
-		setDisplayMode(this.width, this.height, true);
+	}
+	
+	@Override
+	protected void doStart() throws ServiceException {
+		this.logger = LoggingService.getInstance(getCore());
+
+		restoreProperties();
+		setDisplayMode(this.width, this.height, this.fullscreen);
 		
 		try {
 			if (this.parent != null) {
 				Display.setParent(this.parent);
 			}
 			Display.create();
-			setFullscreen(this.fullscreen);
 			this.evtSrv = EventService.getInstance(getCore());
 		} catch (LWJGLException e) {
 			throw new ServiceException(e);
@@ -178,6 +184,8 @@ public class SceneService extends AbstractService {
 		
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_LIGHTING);		
+		
+		super.doStart();
 	}
 	
 	@Override
@@ -266,6 +274,29 @@ public class SceneService extends AbstractService {
 		} catch (LWJGLException e) {
 			throw new ServiceException("unable to switch to fullscreen mode", e);
 		}
+		
+		this.fullscreen = fullscreen;
+	}
+	
+	
+	public void getDisplayModes() throws ServiceException {
+//		DisplayMode desktopMode = Display.getDesktopDisplayMode();
+//		
+//		try {
+//			DisplayMode[] modes = Display.getAvailableDisplayModes();
+//			for (DisplayMode mode : modes) {
+//				if (mode.getFrequency() != desktopMode.getFrequency()) {
+//					continue;
+//				}
+//				if (mode.getBitsPerPixel() != desktopMode.getBitsPerPixel()) {
+//					continue;
+//				}
+//				System.out.println("Mode: " + mode);
+//			}
+//		} catch (LWJGLException e) {
+//			throw new ServiceException("unable to query display modes", e);
+//		}
+//		
 	}
 	
 	public void setDisplayMode(int width, int height, boolean fullscreen) throws ServiceException {
@@ -278,36 +309,37 @@ public class SceneService extends AbstractService {
 	    }
 
 	    try {
-	        DisplayMode targetDisplayMode = null;
+	    	DisplayMode targetDisplayMode = null;
 			
-		if (fullscreen) {
-		    DisplayMode[] modes = Display.getAvailableDisplayModes();
-		    int freq = 0;
-					
-		    for (int i=0;i<modes.length;i++) {
-		        DisplayMode current = modes[i];
-						
-			if ((current.getWidth() == width) && (current.getHeight() == height)) {
-			    if ((targetDisplayMode == null) || (current.getFrequency() >= freq)) {
-			        if ((targetDisplayMode == null) || (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
-				    targetDisplayMode = current;
-				    freq = targetDisplayMode.getFrequency();
-	                        }
-	                    }
+	    	if (this.useOnlyFullscreenModes || fullscreen) {
+	    		DisplayMode[] modes = Display.getAvailableDisplayModes();
+	    		int freq = 0;
 
-			    // if we've found a match for bpp and frequence against the 
-			    // original display mode then it's probably best to go for this one
-			    // since it's most likely compatible with the monitor
-			    if ((current.getBitsPerPixel() == Display.getDesktopDisplayMode().getBitsPerPixel()) &&
-	                        (current.getFrequency() == Display.getDesktopDisplayMode().getFrequency())) {
-	                            targetDisplayMode = current;
-	                            break;
-	                    }
-	                }
-	            }
-	        } else {
-	            targetDisplayMode = new DisplayMode(width,height);
-	        }
+	    		for (int i=0;i<modes.length;i++) {
+	    			DisplayMode current = modes[i];
+
+	    			if ((current.getWidth() == width) && (current.getHeight() == height)) {
+	    				if ((targetDisplayMode == null) || (current.getFrequency() >= freq)) {
+	    					if ((targetDisplayMode == null) || (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
+	    						targetDisplayMode = current;
+	    						freq = targetDisplayMode.getFrequency();
+	    					}
+	    				}
+
+	    				// if we've found a match for bpp and frequence against the 
+	    				// original display mode then it's probably best to go for this one
+	    				// since it's most likely compatible with the monitor
+	    				if ((current.getBitsPerPixel() == Display.getDesktopDisplayMode().getBitsPerPixel()) &&
+	    						(current.getFrequency() == Display.getDesktopDisplayMode().getFrequency())) {
+	    					targetDisplayMode = current;
+	    					break;
+	    				}
+	    			}
+	    		}
+	    	}
+	    	else {
+	    		targetDisplayMode = new DisplayMode(width,height);
+	    	}
 
 	        if (targetDisplayMode == null) {
 	        	this.logger.logWarning("LOGGING_SOURCE", "Failed to find value mode: " + width + "x" + height + " fs=" + fullscreen);
@@ -315,7 +347,13 @@ public class SceneService extends AbstractService {
 	        }
 
 	        Display.setDisplayMode(targetDisplayMode);
-//	        Display.setFullscreen(fullscreen);				
+	        this.width = targetDisplayMode.getWidth();
+	        this.height = targetDisplayMode.getHeight();
+	        Display.setFullscreen(fullscreen);
+	        this.fullscreen = fullscreen;
+	        this.logger.logNotice(LOGGING_SOURCE, "switched to " 
+	        		+ targetDisplayMode + " (" 
+	        		+ (fullscreen ? "fullscreen" : "windowed") + ")");
 	    } catch (LWJGLException e) {
 			throw new ServiceException("unable to setup display mode", e);
 	    }
@@ -421,7 +459,7 @@ public class SceneService extends AbstractService {
 	}
 
 	public boolean isFullscreen() {
-		return Display.isFullscreen();
+		return this.fullscreen;
 	}
 	
 	public void setVSync(boolean vsync) {
