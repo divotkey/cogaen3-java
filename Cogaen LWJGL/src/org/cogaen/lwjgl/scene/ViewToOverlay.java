@@ -30,9 +30,10 @@ THE SOFTWARE.
 
 package org.cogaen.lwjgl.scene;
 
+import org.cogaen.core.CogaenBase;
 import org.cogaen.core.Core;
 
-public class ViewToOverlay {
+public class ViewToOverlay extends CogaenBase {
 
 	private double width;
 	private double height;
@@ -41,7 +42,12 @@ public class ViewToOverlay {
 	private double yt;
 	
 	public ViewToOverlay(Core core) {
-		SceneService scnSrv = SceneService.getInstance(core);
+		super(core);
+		resetValues();
+	}
+
+	private void resetValues() {
+		SceneService scnSrv = SceneService.getInstance(getCore());
 		this.width = scnSrv.getScreenWidth();
 		this.height = scnSrv.getScreenHeight();
 		this.ar = scnSrv.getAspectRatio();
@@ -58,5 +64,16 @@ public class ViewToOverlay {
 	
 	public double getOverlayY() {
 		return this.yt;
+	}
+
+	@Override
+	public void engage() {
+		super.engage();
+		resetValues();
+	}
+
+	@Override
+	public void disengage() {
+		super.disengage();
 	}
 }

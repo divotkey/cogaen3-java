@@ -44,6 +44,18 @@ public class OverlayButton extends AbstractButton {
 		this.viewToOverlay = new ViewToOverlay(getCore());
 	}
 
+	@Override
+	public void engage() {
+		super.engage();
+		this.viewToOverlay.engage();
+	}
+
+	@Override
+	public void disengage() {
+		this.viewToOverlay.disengage();
+		super.disengage();
+	}
+
 	protected boolean isHit(double x, double y) {
 		this.viewToOverlay.transform(x, y);
 		this.localToGlobal.transform(getBaseNode());
