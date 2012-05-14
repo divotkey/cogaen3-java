@@ -31,6 +31,7 @@
 package org.cogaen.lwjgl.scene;
 
 import java.awt.Canvas;
+import java.security.KeyStore.Builder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -60,19 +61,22 @@ public class SceneService extends AbstractService {
 	public static final String NAME = "Cogaen LWJGL Scene Service";
 	public static final String LOGGING_SOURCE = "LWSC";
 	public static final CogaenId WINDOW_CLOSE_REQUEST = new CogaenId("WindowCloseRequest");
-	private static final String WIDTH_PROP = "lwjgl.screenwidth";
-	private static final String HEIGHT_PROP = "lwjgl.screenheight";
-	private static final String FS_PROP = "lwjgl.fullscreen";
-	private static final boolean DEFAULT_VSYNC = true;
-	private static final String VSYNC_PROP = "lwjgl.vsync";
-		
+	
+	private static final ScreenConfig DEFAULT_CONFIG = new ScreenConfig.Builder().build();
+	private static final String FS_PREFIX = "lwjgl.";
+	private static final String CLONE_PROP = FS_PREFIX + "cloneDesktop";
+	private static final String FULLSCREEN_PROP = FS_PREFIX + "fullscreen";
+	private static final String VSYNC_PROP = FS_PREFIX + "vsync";
+	private static final String WIDTH_PROP = FS_PREFIX + "screenwidth";
+	private static final String HEIGHT_PROP = FS_PREFIX + "screenheight";
+	private static final String TITLE_PROP = FS_PREFIX + "title";
+
+	/** Determines if only screen resolutions available in full screen mode can be used. */
+	private boolean useOnlyFullscreenModes = true;
+	
 	private EventService evtSrv;
-	private int width;
-	private int height;
-	private boolean fullscreen;
 	private boolean useProperties;
 	private SceneNode overlayRoot;
-	private boolean vsync;
 	private List<Camera> cameras = new ArrayList<Camera>();
 	private List<RenderSubsystem> subSystems = new ArrayList<RenderSubsystem>();
 	private List<SceneNode> layers = new ArrayList<SceneNode>();
@@ -84,43 +88,85 @@ public class SceneService extends AbstractService {
 	private int fpsCnt = 0;
 	private String fps = new String("FPS:");
 	private Canvas parent;
-	
-	/** Determines if only screen resolutions available in full screen mode can be used. */
-	private boolean useOnlyFullscreenModes = true;
+	private ScreenConfig config;
 	
 	public static SceneService getInstance(Core core) {
 		return (SceneService) core.getService(ID);
 	}
 
+	/** 
+	 * Creates new instance with default screen configuration using property
+	 * service.
+	 * This instance will use property service to load and store screen
+	 * configurations. If a screen configuration is found in the properties,
+	 * this configuration will be used instead of default configuration.
+	 * 
+	 * @see PropertyService
+	 */
 	public SceneService() {
-		this(null, 0, 0, true, true);
-	}
-	
-	public SceneService(boolean useProperties) {
-		this(null, 0, 0, true, useProperties);
+		this(true);
 	}
 
-	public SceneService(Canvas parent, int width, int height) {
-		this(parent, width, height, false, false);
+	/**
+	 * Creates new instance using default screen configuration.
+	 * If {@code useProperties} is set to {@code true} this instance will
+	 * use property service to load and store screen configurations, otherwise
+	 * this service has no dependency to property service.
+	 * 
+	 * @param useProperties defines if property service should be used to load
+	 * and store screen configuration
+	 * 
+	 * @see PropertyService
+	 */
+	public SceneService(boolean useProperties) {
+		this(DEFAULT_CONFIG, useProperties);
 	}
 	
-	public SceneService(int width, int height, boolean fs, boolean useProperties) {
-		this(null, width, height, fs, useProperties);
+	/**
+	 * Created new instance using specified default screen configuration using
+	 * property service.
+	 * @param defaultConfig screen configuration to be used if properties are
+	 * not used or no stored configuration can be found
+	 */
+	public SceneService(ScreenConfig defaultConfig) {
+		this(defaultConfig, true);
 	}
 	
-	public SceneService(Canvas parent, int width, int height, boolean fs, boolean useProperties) {
+	/**
+	 * Creates new instance using specified default screen configuration.
+	 * 
+	 * @param defaultConfig screen configuration to be used if properties are
+	 * not used or no stored configuration can be found
+	 * @param useProperties defines if property service should be used to load
+	 * and store screen configuration
+	 */
+	public SceneService(ScreenConfig defaultConfig, boolean useProperties) {
+		this(null, defaultConfig, useProperties);
+	}
+
+	/**
+	 * Creates new instance using specified default screen configuration and
+	 * specified parent. If parent is {@code null}, the Display will appear as
+	 * a top level window. If parent is not {@code null}, the Display is made
+	 * a child of the parent. 
+	 * 
+	 * @param parent the parent canvas or {@code null} if used as top lebel window
+	 * @param defaultConfig screen configuration to be used if properties are
+	 * not used or no stored configuration can be found
+	 * @param useProperties defines if property service should be used to load
+	 * and store screen configuration
+	 */
+	public SceneService(Canvas parent, ScreenConfig defaultConfig, boolean useProperties) {
 		if (useProperties) {
 			addDependency(PropertyService.ID);
 		}
 		addDependency(EventService.ID);
 		addDependency(LoggingService.ID);
 		addDependency(ResourceService.ID);
-
+		
 		this.useProperties = useProperties;
-		this.width = width;
-		this.height = height;
-		this.fullscreen = fs;
 		this.parent = parent;
+		this.config = defaultConfig;
 		
 		this.layers.add(createNode());
 		this.overlayRoot = new SceneNode();
@@ -129,8 +175,9 @@ public class SceneService extends AbstractService {
 		System.setProperty("org.newdawn.slick.pngloader", "true");
 		
 		// turn off verbose logging of slick library
-		Log.setVerbose(false);
+		Log.setVerbose(false);		
 	}
+
 	
 	@Override
 	public CogaenId getId() {
@@ -142,29 +189,42 @@ public class SceneService extends AbstractService {
 		return NAME;
 	}
 	
+	private ScreenConfig loadProperties(ScreenConfig defaultConfig) {
+		PropertyService propSrv = PropertyService.getInstance(getCore());
+		
+		String title = propSrv.getProperty(TITLE_PROP, defaultConfig.getTitle());
+		boolean fs = propSrv.getBoolProperty(FULLSCREEN_PROP, defaultConfig.isFullscreen());
+		boolean vs = propSrv.getBoolProperty(VSYNC_PROP, defaultConfig.isVsync());
+		boolean clone = propSrv.getBoolProperty(CLONE_PROP, defaultConfig.isCloneDesktop());
+		int width = propSrv.getIntProperty(WIDTH_PROP, defaultConfig.getWidth());
+		int height = propSrv.getIntProperty(HEIGHT_PROP, defaultConfig.getHeight());
+		
+		
+		return new ScreenConfig.Builder().title(title).fullscreen(fs).
+				vsync(vs).cloneDesktop(clone).resolution(width, height).build();
+	}
 	
-	private void restoreProperties() {
-		if (this.useProperties) {
-			PropertyService prpSrv = PropertyService.getInstance(getCore());
-			this.fullscreen = prpSrv.getBoolProperty(FS_PROP,  this.fullscreen);
-			this.width = prpSrv.getIntProperty(WIDTH_PROP, this.width);
-			this.height = prpSrv.getIntProperty(HEIGHT_PROP, this.height);
-			this.vsync = prpSrv.getBoolProperty(VSYNC_PROP, DEFAULT_VSYNC);
-		}
-		if (this.width <= 0) {
-			this.width = Display.getDesktopDisplayMode().getWidth();
-		}
-		if (this.height <= 0) {
-			this.height = Display.getDesktopDisplayMode().getHeight();
-		}
+	private void storeProperties(ScreenConfig config) {
+		PropertyService propSrv = PropertyService.getInstance(getCore());
+
+		propSrv.setProperty(TITLE_PROP, config.getTitle());
+		propSrv.setBoolProperty(CLONE_PROP, config.isCloneDesktop());
+		propSrv.setBoolProperty(VSYNC_PROP, config.isVsync());
+		propSrv.setBoolProperty(FULLSCREEN_PROP, config.isFullscreen());
+		propSrv.setIntProperty(WIDTH_PROP, config.getWidth());
+		propSrv.setIntProperty(HEIGHT_PROP, config.getHeight());
 	}
 	
 	@Override
 	protected void doStart() throws ServiceException {
 		this.logger = LoggingService.getInstance(getCore());
 
-		restoreProperties();
-		setDisplayMode(this.width, this.height, this.fullscreen);
+		ScreenConfig oldConfig = this.config;
+		if (this.useProperties) {
+			this.config = loadProperties(this.config);
+		}
+		
+		setScreenMode(this.config);
 		
 		try {
 			if (this.parent != null) {
@@ -173,10 +233,11 @@ public class SceneService extends AbstractService {
 			Display.create();
 			this.evtSrv = EventService.getInstance(getCore());
 		} catch (LWJGLException e) {
-			throw new ServiceException(e);
+			this.config = oldConfig;
+			this.logger.logError(LOGGING_SOURCE, "unable to start scene service, requested screen mode not supported: " + this.config);
+			throw new ServiceException("unable to initialize display", e);
 		}		
 		
-		Display.setVSyncEnabled(this.vsync);
 		
 		// font test
 		java.awt.Font awtFont = new java.awt.Font("Arial", java.awt.Font.PLAIN, 16);
@@ -190,6 +251,10 @@ public class SceneService extends AbstractService {
 	
 	@Override
 	protected void doStop() {
+		if (this.useProperties) {
+			storeProperties(this.config);
+		}
+		
 		this.evtSrv = null;
 		Display.destroy();
 		super.doStop();
@@ -238,21 +303,21 @@ public class SceneService extends AbstractService {
 		GL11.glLoadIdentity();
 		GL11.glOrtho(0, 1.0, 0, 1.0 / getAspectRatio(), 1, -1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
-		GL11.glViewport(0, 0, this.width, this.height);
+		GL11.glViewport(0, 0, this.config.getWidth(), this.config.getHeight());
 		
 		this.overlayRoot.render(0xFFFFFFFF);
 		
 		// render frame counter
 		GL11.glMatrixMode(GL11.GL_PROJECTION);
 		GL11.glLoadIdentity();
-		GL11.glOrtho(0, this.width, this.height, 0, 1, -1);
+		GL11.glOrtho(0, this.config.getWidth(), this.config.getHeight(), 0, 1, -1);
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);	
 		
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
     	GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		GL11.glColor4d(1, 0, 1, 1);		
-		font.drawString(5, this.height - 20, this.fps);		
+		font.drawString(5, this.config.getHeight() - 20, this.fps);		
 		
 	    Display.update();		
 	
@@ -261,44 +326,217 @@ public class SceneService extends AbstractService {
 		}
 	}
 	
-	public void setTitle(String windowTitle) {
-		Display.setTitle(windowTitle);
+	public void setTitle(String title) {
+		assert(Display.getTitle().equals(this.config.getTitle()));
+		
+		Display.setTitle(title);
+		this.config.setTitle(title);
+		
+		assert(Display.getTitle().equals(this.config.getTitle()));
+		this.logger.logInfo(LOGGING_SOURCE, "changed window title to '" + title + "'");
+	}
+	
+	public String getTitle() {
+		assert(Display.getTitle().equals(this.config.getTitle()));	
+		return this.config.getTitle();
 	}
 
 	public void setFullscreen(boolean fullscreen) throws ServiceException {
-		if (Display.isFullscreen() == fullscreen) {
-			return;
-		}
+		assert(Display.isFullscreen() == this.config.isFullscreen());
+		
 		try {
 			Display.setFullscreen(fullscreen);
+			this.config.setFullscreen(fullscreen);
 		} catch (LWJGLException e) {
 			throw new ServiceException("unable to switch to fullscreen mode", e);
 		}
+		assert(Display.isFullscreen() == this.config.isFullscreen());
 		
-		this.fullscreen = fullscreen;
+		this.logger.logInfo(LOGGING_SOURCE, "screen mode switch to " + 
+				(this.config.isFullscreen() ? "fullscreen" : "windowed"));
 	}
 	
+	public boolean isFullscreen() {
+		assert(Display.isFullscreen() == this.config.isFullscreen());
+		return this.config.isFullscreen();
+	}
+
+	/**
+	 * Enables of disables vertical synchronization (vsync).
+	 * @param vsync {@code true} to enable vsync, otherwise {@code false}
+	 */
+	public void setVSync(boolean vsync) {
+		Display.setVSyncEnabled(vsync);
+		this.config.setVsync(vsync);
+		
+		this.logger.logInfo(LOGGING_SOURCE, "vertical synchronization (vsync) "
+				+ (this.config.isVsync() ? "enabled" : "disabled"));
+	}	
 	
+	/**
+	 * Returns if vertical synchronization (vsync) is enabled.
+	 * @return {@code true} if vsync is enabled, otherwise {@code false}
+	 */
+	public boolean isVSync() {
+		return this.config.isVsync();
+	}
+	
+	@Deprecated
 	public void getDisplayModes() throws ServiceException {
-//		DisplayMode desktopMode = Display.getDesktopDisplayMode();
-//		
-//		try {
-//			DisplayMode[] modes = Display.getAvailableDisplayModes();
-//			for (DisplayMode mode : modes) {
-//				if (mode.getFrequency() != desktopMode.getFrequency()) {
-//					continue;
-//				}
-//				if (mode.getBitsPerPixel() != desktopMode.getBitsPerPixel()) {
-//					continue;
-//				}
-//				System.out.println("Mode: " + mode);
-//			}
-//		} catch (LWJGLException e) {
-//			throw new ServiceException("unable to query display modes", e);
-//		}
-//		
+		DisplayMode desktopMode = Display.getDesktopDisplayMode();
+		
+		try {
+			DisplayMode[] modes = Display.getAvailableDisplayModes();
+			for (DisplayMode mode : modes) {
+				if (mode.getFrequency() != desktopMode.getFrequency()) {
+					continue;
+				}
+				if (mode.getBitsPerPixel() != desktopMode.getBitsPerPixel()) {
+					continue;
+				}
+				System.out.println("Mode: " + mode);
+			}
+		} catch (LWJGLException e) {
+			throw new ServiceException("unable to query display modes", e);
+		}
+		
 	}
 	
+	public ScreenConfig getScreenMode() {
+		return new ScreenConfig(this.config);
+	}
+	
+	public ScreenConfig[] getScreenModes() throws ServiceException {
+
+		try {
+			DisplayMode desktopMode = Display.getDesktopDisplayMode();
+			DisplayMode[] modes = Display.getAvailableDisplayModes();
+			ArrayList<ScreenConfig> result = new ArrayList<ScreenConfig>();
+			ScreenConfig.Builder builder = new ScreenConfig.Builder();
+			builder.cloneDesktop(false);
+			builder.fullscreen(this.config.isFullscreen());
+			builder.vsync(this.config.isVsync());
+			builder.title(this.config.getTitle());
+			
+			for (DisplayMode mode : modes) {
+				if (mode.getFrequency() != desktopMode.getFrequency()) {
+					continue;
+				}
+				if (mode.getBitsPerPixel() != desktopMode.getBitsPerPixel()) {
+					continue;
+				}
+
+				insertConfig(result, builder.resolution(mode.getWidth(), mode.getHeight()).build());
+			}			
+			return result.toArray(new ScreenConfig[0]);
+			
+		} catch (LWJGLException e) {
+			throw new ServiceException("unable to query display modes", e);
+		}
+	}
+	
+	private void insertConfig(List<ScreenConfig> configList, ScreenConfig config) {
+		int resolution = config.getWidth() * config.getHeight();
+		for (int i = 0; i < configList.size(); ++i) {
+			ScreenConfig current = configList.get(i);
+			if (current.getWidth() * current.getHeight() > resolution) {
+				configList.add(i, config);
+				return;
+			}
+		}
+		configList.add(config);
+	}
+	
+	public void setScreenMode(ScreenConfig mode) throws ServiceException {
+		if (mode.isCloneDesktop()) {
+			DisplayMode desktop = Display.getDesktopDisplayMode();
+			setScreenMode(desktop.getWidth(), desktop.getHeight(), mode.isFullscreen());
+		} else {
+			setScreenMode(mode.getWidth(), mode.getHeight(), mode.isFullscreen());			
+		}
+		setTitle(mode.getTitle());
+		setVSync(mode.isVsync());
+	}
+	
+	public void setScreenMode(int width, int height, boolean fullscreen) throws ServiceException {
+
+        this.logger.logDebug(LOGGING_SOURCE, "trying to switched to " 
+        		+ width + " x " + height + " ( " +  windowMode(fullscreen) + ")");
+		
+	    // return if requested DisplayMode is already set
+	    if ((Display.getDisplayMode().getWidth() == width) && 
+	    		(Display.getDisplayMode().getHeight() == height) && 
+	    		(Display.isFullscreen() == fullscreen)) {
+	    	
+		    return;
+	    }
+		
+	    try {
+			DisplayMode targetDisplayMode = findDisplayMode(width, height);
+			if (targetDisplayMode == null) {
+				logger.logWarning(LOGGING_SOURCE, "unable to find compatible mode for " + 
+						width + " x " + height + " (" + windowMode(fullscreen) + ")");
+				
+				throw new ServiceException("unable to find compatible display mode for " 
+						+ width + " x " + height + " (" + windowMode(fullscreen) + ")");
+			}
+			
+	        Display.setDisplayMode(targetDisplayMode);
+	        Display.setFullscreen(fullscreen);
+	        
+	        this.config.setWidth(targetDisplayMode.getWidth());
+	        this.config.setHeight(targetDisplayMode.getHeight());
+	        this.config.setFullscreen(fullscreen);
+	        assert(Display.getWidth() == this.config.getWidth());
+	        assert(Display.getHeight() == this.config.getHeight());
+	        assert(Display.isFullscreen() == this.config.isFullscreen());
+	        
+	        this.logger.logInfo(LOGGING_SOURCE, "switched to " 
+	        		+ targetDisplayMode + " (" 
+	        		+ (fullscreen ? "fullscreen" : "windowed") + ")");
+	        
+		} catch (LWJGLException e) {
+			throw new ServiceException("unable to switch to requested display mode " 
+						+ width + " x " + height + "( " + windowMode(fullscreen) + ")", e);
+		}
+	}
+
+	private String windowMode(boolean fullscreen) {
+		return fullscreen ? "fullscreen" : "windowed";
+	}
+	
+	private DisplayMode findDisplayMode(int width, int height) throws LWJGLException {
+    	DisplayMode targetDisplayMode = null;
+
+		DisplayMode[] modes = Display.getAvailableDisplayModes();
+		int freq = 0;
+
+		for (int i=0;i<modes.length;i++) {
+			DisplayMode current = modes[i];
+
+			if ((current.getWidth() == width) && (current.getHeight() == height)) {
+				if ((targetDisplayMode == null) || (current.getFrequency() >= freq)) {
+					if ((targetDisplayMode == null) || (current.getBitsPerPixel() > targetDisplayMode.getBitsPerPixel())) {
+						targetDisplayMode = current;
+						freq = targetDisplayMode.getFrequency();
+					}
+				}
+
+				// if we've found a match for bpp and frequence against the 
+				// original display mode then it's probably best to go for this one
+				// since it's most likely compatible with the monitor
+				if ((current.getBitsPerPixel() == Display.getDesktopDisplayMode().getBitsPerPixel()) &&
+						(current.getFrequency() == Display.getDesktopDisplayMode().getFrequency())) {
+					targetDisplayMode = current;
+					break;
+				}
+			}
+		}
+		
+		return targetDisplayMode;
+	}
+	
+	@Deprecated
 	public void setDisplayMode(int width, int height, boolean fullscreen) throws ServiceException {
 
 	    // return if requested DisplayMode is already set
@@ -347,10 +585,10 @@ public class SceneService extends AbstractService {
 	        }
 
 	        Display.setDisplayMode(targetDisplayMode);
-	        this.width = targetDisplayMode.getWidth();
-	        this.height = targetDisplayMode.getHeight();
+	        this.config.setWidth(targetDisplayMode.getWidth());
+	        this.config.setHeight(targetDisplayMode.getHeight());
 	        Display.setFullscreen(fullscreen);
-	        this.fullscreen = fullscreen;
+	        this.config.setFullscreen(fullscreen);
 	        this.logger.logNotice(LOGGING_SOURCE, "switched to " 
 	        		+ targetDisplayMode + " (" 
 	        		+ (fullscreen ? "fullscreen" : "windowed") + ")");
@@ -439,15 +677,19 @@ public class SceneService extends AbstractService {
 	}
 	
 	public int getScreenWidth() {
-		return this.width;
+		assert(Display.getWidth() == this.config.getWidth());
+		return this.config.getWidth();
 	}
 
 	public int getScreenHeight() {
-		return this.height;
+		assert(Display.getHeight() == this.config.getHeight());
+		return this.config.getHeight();
 	}
 
 	public double getAspectRatio() {
-		return (double) this.width / (double) this.height;
+		assert(Display.getWidth() == this.config.getWidth());
+		assert(Display.getHeight() == this.config.getHeight());
+		return (double) this.config.getWidth() / (double) this.config.getHeight();
 	}
 	
 	public void destroyAll() {
@@ -457,20 +699,7 @@ public class SceneService extends AbstractService {
 			node.removeAllVisuals();
 		}
 	}
-
-	public boolean isFullscreen() {
-		return this.fullscreen;
-	}
-	
-	public void setVSync(boolean vsync) {
-		Display.setVSyncEnabled(vsync);
-		this.vsync = vsync;
-	}	
-	
-	public boolean isVSync() {
-		return this.vsync;
-	}
-	
+		
 	public boolean isValid() {
 		return Display.isCreated() && (this.parent == null || GLContext.getCapabilities() != null);
 	}
