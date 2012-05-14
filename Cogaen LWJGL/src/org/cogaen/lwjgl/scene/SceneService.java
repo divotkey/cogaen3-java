@@ -31,7 +31,6 @@
 package org.cogaen.lwjgl.scene;
 
 import java.awt.Canvas;
-import java.security.KeyStore.Builder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -381,27 +380,6 @@ public class SceneService extends AbstractService {
 		return this.config.isVsync();
 	}
 	
-	@Deprecated
-	public void getDisplayModes() throws ServiceException {
-		DisplayMode desktopMode = Display.getDesktopDisplayMode();
-		
-		try {
-			DisplayMode[] modes = Display.getAvailableDisplayModes();
-			for (DisplayMode mode : modes) {
-				if (mode.getFrequency() != desktopMode.getFrequency()) {
-					continue;
-				}
-				if (mode.getBitsPerPixel() != desktopMode.getBitsPerPixel()) {
-					continue;
-				}
-				System.out.println("Mode: " + mode);
-			}
-		} catch (LWJGLException e) {
-			throw new ServiceException("unable to query display modes", e);
-		}
-		
-	}
-	
 	public ScreenConfig getScreenMode() {
 		return new ScreenConfig(this.config);
 	}
@@ -461,7 +439,7 @@ public class SceneService extends AbstractService {
 	public void setScreenMode(int width, int height, boolean fullscreen) throws ServiceException {
 
         this.logger.logDebug(LOGGING_SOURCE, "trying to switched to " 
-        		+ width + " x " + height + " ( " +  windowMode(fullscreen) + ")");
+        		+ width + " x " + height + " (" +  windowMode(fullscreen) + ")");
 		
 	    // return if requested DisplayMode is already set
 	    if ((Display.getDisplayMode().getWidth() == width) && 
