@@ -34,7 +34,6 @@ import java.awt.Canvas;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
 import org.cogaen.core.UpdateableService;
@@ -189,32 +188,6 @@ public class SceneService extends UpdateableService {
 		return NAME;
 	}
 	
-	private ScreenConfig loadProperties(ScreenConfig defaultConfig) {
-		PropertyService propSrv = PropertyService.getInstance(getCore());
-		
-		String title = propSrv.getProperty(TITLE_PROP, defaultConfig.getTitle());
-		boolean fs = propSrv.getBoolProperty(FULLSCREEN_PROP, defaultConfig.isFullscreen());
-		boolean vs = propSrv.getBoolProperty(VSYNC_PROP, defaultConfig.isVsync());
-		boolean clone = propSrv.getBoolProperty(CLONE_PROP, defaultConfig.isCloneDesktop());
-		int width = propSrv.getIntProperty(WIDTH_PROP, defaultConfig.getWidth());
-		int height = propSrv.getIntProperty(HEIGHT_PROP, defaultConfig.getHeight());
-		
-		
-		return new ScreenConfig.Builder().title(title).fullscreen(fs).
-				vsync(vs).cloneDesktop(clone).resolution(width, height).build();
-	}
-	
-	private void storeProperties(ScreenConfig config) {
-		PropertyService propSrv = PropertyService.getInstance(getCore());
-
-		propSrv.setProperty(TITLE_PROP, config.getTitle());
-		propSrv.setBoolProperty(CLONE_PROP, config.isCloneDesktop());
-		propSrv.setBoolProperty(VSYNC_PROP, config.isVsync());
-		propSrv.setBoolProperty(FULLSCREEN_PROP, config.isFullscreen());
-		propSrv.setIntProperty(WIDTH_PROP, config.getWidth());
-		propSrv.setIntProperty(HEIGHT_PROP, config.getHeight());
-	}
-	
 	@Override
 	public void update() {
 		renderScene();
@@ -223,6 +196,7 @@ public class SceneService extends UpdateableService {
 	@Override
 	protected void doStart() throws ServiceException {
 		this.logger = LoggingService.getInstance(getCore());
+		this.logger.logInfo(LOGGING_SOURCE, "Adapter: " + Display.getAdapter() + " - Driver Version: " + Display.getVersion());
 
 		ScreenConfig oldConfig = this.config;
 		if (this.useProperties) {
@@ -263,6 +237,32 @@ public class SceneService extends UpdateableService {
 		this.evtSrv = null;
 		Display.destroy();
 		super.doStop();
+	}
+	
+	private ScreenConfig loadProperties(ScreenConfig defaultConfig) {
+		PropertyService propSrv = PropertyService.getInstance(getCore());
+		
+		String title = propSrv.getProperty(TITLE_PROP, defaultConfig.getTitle());
+		boolean fs = propSrv.getBoolProperty(FULLSCREEN_PROP, defaultConfig.isFullscreen());
+		boolean vs = propSrv.getBoolProperty(VSYNC_PROP, defaultConfig.isVsync());
+		boolean clone = propSrv.getBoolProperty(CLONE_PROP, defaultConfig.isCloneDesktop());
+		int width = propSrv.getIntProperty(WIDTH_PROP, defaultConfig.getWidth());
+		int height = propSrv.getIntProperty(HEIGHT_PROP, defaultConfig.getHeight());
+		
+		
+		return new ScreenConfig.Builder().title(title).fullscreen(fs).
+				vsync(vs).cloneDesktop(clone).resolution(width, height).build();
+	}
+	
+	private void storeProperties(ScreenConfig config) {
+		PropertyService propSrv = PropertyService.getInstance(getCore());
+
+		propSrv.setProperty(TITLE_PROP, config.getTitle());
+		propSrv.setBoolProperty(CLONE_PROP, config.isCloneDesktop());
+		propSrv.setBoolProperty(VSYNC_PROP, config.isVsync());
+		propSrv.setBoolProperty(FULLSCREEN_PROP, config.isFullscreen());
+		propSrv.setIntProperty(WIDTH_PROP, config.getWidth());
+		propSrv.setIntProperty(HEIGHT_PROP, config.getHeight());
 	}
 	
 	public void addSubsystem(RenderSubsystem rs) {
