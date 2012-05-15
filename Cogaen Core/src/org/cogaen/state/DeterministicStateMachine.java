@@ -85,7 +85,7 @@ public class DeterministicStateMachine implements StateMachine, EventListener {
 		}
 		
 		if (!hasState(toStateId)) {
-			throw new RuntimeException("unknown target state " + fromStateId);
+			throw new RuntimeException("unknown target state " + toStateId);
 		}
 		
 		if (eventId == null) {
