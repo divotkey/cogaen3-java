@@ -140,11 +140,27 @@ public class EventService extends UpdateableService {
 			}
 		}
 	}
-
+	
+	public void dispatchEvent(String typeId) {
+		dispatchEvent(new CogaenId(typeId));
+	}
+	
+	public void dispatchEvent(CogaenId typeId) {
+		dispatchEvent(new SimpleEvent(typeId));
+	}
+	
 	public void dispatchEvent(Event event) {
 		this.currentEvents.add(event);
 	}
 	
+	public void dispatchEvent(String typeId, double delay) {
+		dispatchEvent(new CogaenId(typeId), delay);
+	}
+	
+	public void dispatchEvent(CogaenId typeId, double delay) {
+		dispatchEvent(new SimpleEvent(typeId), delay);
+	}
+		
 	public void dispatchEvent(Event event, double delay) {
 		if (delay <= 0) {
 			throw new IllegalArgumentException("delay must be greater than zero");
@@ -164,6 +180,10 @@ public class EventService extends UpdateableService {
 		this.timedEvents.add(timedEvent);
 	}
 
+	public void addListener(EventListener listener, String typeId) {
+		addListener(listener, new CogaenId(typeId));
+	}
+	
 	public void addListener(EventListener listener, CogaenId typeId) {
 		Bag<EventListener> listeners = this.listenerMap.get(typeId);
 		
@@ -178,6 +198,10 @@ public class EventService extends UpdateableService {
 					"attempt to add listener for event type " 
 					+ typeId + " twice (" + listener.getClass().getName() + ")");
 		}
+	}
+
+	public void removeListener(EventListener listener, String typeId) {		
+		removeListener(listener, new CogaenId(typeId));
 	}
 	
 	public void removeListener(EventListener listener, CogaenId typeId) {

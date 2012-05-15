@@ -84,18 +84,46 @@ public class GameStateService extends AbstractService implements CoreListener {
 		addDependency(LoggingService.ID);
 		addDependency(EventService.ID);
 	}
-		
+
+	/**
+	 * Adds an instance of a state.
+	 * 
+	 * <p>The specified string representation of the state id will
+	 * be converted to an instance of a {@code CogaenId}</p>
+	 * 
+	 * @param state {@code State} game state to be added.
+	 * @param stateId string representation of state identifier
+	 */
+	public void addState(State state, String stateId) {
+		addState(state, new CogaenId(stateId));
+	}
+	
 	/**
 	 * Adds an instance of a state.
 	 * 
 	 * @param state {@code State} game state to be added.
-	 * @param stateId {@code CogaenId} unique identifier of the state instance to be added. 
+	 * @param stateId {@code CogaenId} unique identifier of the state instance
+	 * to be added. 
 	 */
 	public void addState(State state, CogaenId stateId) {
 		verifyStatus();
 
 		this.stateMachine.addState(new TwinState(createLoggingState(stateId), state), stateId);
 		this.logger.logInfo(LOGGING_SOURCE, "added game state " + stateId);
+	}
+
+	/**
+	 * Switches to the specified state instance.
+	 * If the specified state is already the current state of this state
+	 * machine, the state is re-entered. This means {@code onExit()} and
+	 * {@code onEnter()} of the specified stated is called.
+	 * 
+	 * <p>The specified string representation of the state id will
+	 * be converted to an instance of a {@code CogaenId}</p>
+	 * @param stateId unique identifier of target state as string representation 
+	 */
+	public void setCurrentState(String stateId) {
+		setCurrentState(new CogaenId(stateId));
 	}
 	
 	/**
@@ -104,7 +132,8 @@ public class GameStateService extends AbstractService implements CoreListener {
 	 * machine, the state is re-entered. This means {@code onExit()} and
 	 * {@code onEnter()} of the specified stated is called.</p>
 	 * 
-	 * @param stateId {@code CogaenId} unique identifier of the state instance to be switched to.
+	 * @param stateId {@code CogaenId} unique identifier of the state instance
+	 * to be switched to.
 	 */
 	public void setCurrentState(CogaenId stateId) {
 		verifyStatus();
@@ -132,6 +161,34 @@ public class GameStateService extends AbstractService implements CoreListener {
 	public boolean isEndState() {
 		verifyStatus();
 		return getCurrentState().equals(END_STATE_ID);
+	}
+	
+	public void addTransition(String fromState, CogaenId toState, CogaenId eventId) {
+		addTransition(new CogaenId(fromState), toState, eventId);
+	}
+
+	public void addTransition(String fromState, String toState, CogaenId eventId) {
+		addTransition(new CogaenId(fromState), new CogaenId(toState), eventId);
+	}
+
+	public void addTransition(String fromState, CogaenId toState, String eventId) {
+		addTransition(new CogaenId(fromState), toState, new CogaenId(eventId));
+	}
+	
+	public void addTransition(String fromState, String toState, String eventId) {
+		addTransition(new CogaenId(fromState), new CogaenId(toState), new CogaenId(eventId));
+	}
+	
+	public void addTransition(CogaenId fromState, String toState, CogaenId eventId) {
+		addTransition(fromState, new CogaenId(toState), eventId);
+	}
+
+	public void addTransition(CogaenId fromState, String toState, String eventId) {
+		addTransition(fromState, new CogaenId(toState), new CogaenId(eventId));
+	}
+	
+	public void addTransition(CogaenId fromState, CogaenId toState, String eventId) {
+		addTransition(fromState, toState, new CogaenId(eventId));
 	}
 	
 	public void addTransition(CogaenId fromState, CogaenId toState, CogaenId eventId) {
@@ -171,12 +228,13 @@ public class GameStateService extends AbstractService implements CoreListener {
 	@Override
 	protected void doStop() {
 		this.stateMachine.disengage();
+		this.stateMachine = null;
 		getCore().removeListener(this);
 		super.doStop();
 	}
 
 	private State createLoggingState(CogaenId stateId) {
-		ActionState loggingState = new ActionState();
+		ActionState loggingState = new ActionState(getCore());
 		loggingState.addEnterAction(new LoggingAction(getCore(), Priority.NOTICE, LOGGING_SOURCE, "entering game state " + stateId));
 		loggingState.addExitAction(new LoggingAction(getCore(), Priority.NOTICE, LOGGING_SOURCE, "exiting game state " + stateId));		
 		

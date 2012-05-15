@@ -7,12 +7,14 @@ import java.util.Map;
 
 import org.cogaen.core.CogaenBase;
 import org.cogaen.core.Core;
+import org.cogaen.core.Engageable;
 import org.cogaen.name.CogaenId;
 
 public class View extends CogaenBase {
 
 	private Map<CogaenId, EntityRepresentation> representationsMap = new HashMap<CogaenId, EntityRepresentation>();
 	private List<EntityRepresentation> representations = new ArrayList<EntityRepresentation>();
+	private List<Engageable> engageables = new ArrayList<Engageable>();
 	
 	public View(Core core) {
 		super(core);
@@ -79,9 +81,29 @@ public class View extends CogaenBase {
 		return this.representations.get(idx);
 	}
 	
+	public void addEngageable(Engageable engageable) {
+		this.engageables.add(engageable);
+	}
+	
+	public void removeEngageable(Engageable engageable) {
+		this.engageables.remove(engageable);
+	}
+	
+	@Override
+	public void engage() {
+		super.engage();
+		for (Engageable engageable : this.engageables) {
+			engageable.engage();
+		}
+	}
+
 	@Override
 	public void disengage() {
 		removeAllRepresentations();
+		for (Engageable engageable : this.engageables) {
+			engageable.disengage();
+		}
+		
 		super.disengage();
 	}
 }
