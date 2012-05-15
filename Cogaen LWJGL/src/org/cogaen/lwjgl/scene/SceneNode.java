@@ -47,6 +47,10 @@ public class SceneNode {
 	private double posY;
 	private double angle;
 	
+	SceneNode() {
+		
+	}
+	
 	public void setPose(double x, double y, double angle) {
 		this.posX = x;
 		this.posY = y;
@@ -64,6 +68,7 @@ public class SceneNode {
 	public double getAngle() {
 		return this.angle * DEG2RAD;
 	}
+	
 	public SceneNode getParent() {
 		return this.parent;
 	}
@@ -95,9 +100,28 @@ public class SceneNode {
 		
 		return false;
 	}
-	
-	public void render(int mask) {
+
+	void renderWithAspectRatio(int mask, double ar) {
+		GL11.glPushMatrix();
+		GL11.glTranslated(this.posX, this.posY / ar, 0.0);
+		GL11.glRotatef((float) this.angle, 0, 0, 1);
 		
+		for (Visual visual : this.visuals) {
+			if ((visual.getMask() & mask) != 0) {
+				visual.prolog();
+				visual.render();
+				visual.epilog();
+			}
+		}
+		
+		for (SceneNode node : this.nodes) {
+			node.renderWithAspectRatio(mask, ar);
+		}
+		
+		GL11.glPopMatrix();
+	}
+	
+	void render(int mask) {
 		GL11.glPushMatrix();
 		GL11.glTranslated(this.posX, this.posY, 0.0);
 		GL11.glRotatef((float) this.angle, 0, 0, 1);

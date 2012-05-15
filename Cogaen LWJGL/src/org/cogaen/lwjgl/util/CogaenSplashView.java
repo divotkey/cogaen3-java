@@ -51,7 +51,8 @@ public class CogaenSplashView extends View implements EventListener {
 		
 		SceneService scnSrv = SceneService.getInstance(getCore());		
 		SceneNode node = scnSrv.createNode();
-		node.setPose(0.5, 0.5 / scnSrv.getAspectRatio(), 0);
+//		node.setPose(0.5, 0.5 / scnSrv.getAspectRatio(), 0);
+		node.setPose(0.5, 0.5, 0);
 		this.splash = (SpriteVisual) ResourceService.getInstance(getCore()).getResource("CogaenSplashSpr");
 		if (scnSrv.getAspectRatio() >= 1.0) {
 			double height = 1.0 / scnSrv.getAspectRatio();

@@ -304,7 +304,8 @@ public class SceneService extends AbstractService {
 		GL11.glMatrixMode(GL11.GL_MODELVIEW);		
 		GL11.glViewport(0, 0, this.config.getWidth(), this.config.getHeight());
 		
-		this.overlayRoot.render(0xFFFFFFFF);
+		this.overlayRoot.renderWithAspectRatio(0xFFFFFFFF, getAspectRatio());
+//		this.overlayRoot.render(0xFFFFFFFF);
 		
 		// render frame counter
 		GL11.glMatrixMode(GL11.GL_PROJECTION);

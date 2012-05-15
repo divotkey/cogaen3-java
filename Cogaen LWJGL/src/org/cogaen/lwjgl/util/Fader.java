@@ -49,7 +49,8 @@ public class Fader extends CogaenBase implements EventListener {
 		this.cover.setColor(Color.BLACK);
 		this.cover.setFilled(true);
 		this.baseNode.addVisual(this.cover);
-		this.baseNode.setPose(0.5, 0.5 / scnSrv.getAspectRatio(), 0);
+//		this.baseNode.setPose(0.5, 0.5 / scnSrv.getAspectRatio(), 0);
+		this.baseNode.setPose(0.5, 0.5, 0);
 		
 		scnSrv.getOverlayRoot().addNode(this.baseNode);
 	}
