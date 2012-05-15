@@ -34,11 +34,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.cogaen.action.Action;
+import org.cogaen.core.Core;
 
-public class ActionState implements State {
+public class ActionState extends BasicState {
 
 	private List<Action> enterActions = new ArrayList<Action>();
 	private List<Action> exitActions = new ArrayList<Action>();
+
+	public ActionState(Core core) {
+		super(core);
+	}
 	
 	public void addEnterAction(Action action) {
 		this.enterActions.add(action);
@@ -66,6 +71,7 @@ public class ActionState implements State {
 	
 	@Override
 	public void onEnter() {
+		super.onEnter();
 		for (Action action : this.enterActions) {
 			action.execute();
 		}
@@ -76,6 +82,7 @@ public class ActionState implements State {
 		for (Action action : this.exitActions) {
 			action.execute();
 		}
+		super.onExit();
 	}
 
 }
