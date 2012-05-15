@@ -37,6 +37,7 @@ import java.util.List;
 import org.cogaen.core.AbstractService;
 import org.cogaen.core.Core;
 import org.cogaen.core.ServiceException;
+import org.cogaen.core.UpdateableService;
 import org.cogaen.event.EventService;
 import org.cogaen.event.SimpleEvent;
 import org.cogaen.logging.LoggingService;
@@ -54,7 +55,7 @@ import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.util.Log;
 
 @SuppressWarnings("deprecation")
-public class SceneService extends AbstractService {
+public class SceneService extends UpdateableService {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.lwjgl.scene.SceneService");
 	public static final String NAME = "Cogaen LWJGL Scene Service";
@@ -212,6 +213,11 @@ public class SceneService extends AbstractService {
 		propSrv.setBoolProperty(FULLSCREEN_PROP, config.isFullscreen());
 		propSrv.setIntProperty(WIDTH_PROP, config.getWidth());
 		propSrv.setIntProperty(HEIGHT_PROP, config.getHeight());
+	}
+	
+	@Override
+	public void update() {
+		renderScene();
 	}
 	
 	@Override

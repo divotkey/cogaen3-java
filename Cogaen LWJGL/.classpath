@@ -5,7 +5,11 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/Cogaen Core"/>
 	<classpathentry kind="lib" path="lib282/jinput.jar"/>
 	<classpathentry kind="lib" path="lib282/lwjgl_util.jar"/>
-	<classpathentry kind="lib" path="lib282/lwjgl.jar"/>
+	<classpathentry kind="lib" path="lib282/lwjgl.jar">
+		<attributes>
+			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="Cogaen LWJGL/lib"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="lib" path="lib282/slick-util.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
