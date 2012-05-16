@@ -30,28 +30,44 @@
 
 package org.cogaen.state;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.cogaen.core.Core;
+import org.cogaen.core.Engageable;
 
 public class BasicState implements State {
 
 	private Core core;
+	private List<Engageable> engageables = new ArrayList<Engageable>();
 	
 	public BasicState(Core core) {
 		this.core = core;
 	}
-	
+
 	public final Core getCore() {
 		return this.core;
 	}
 	
+	public final void addEngagable(Engageable engageable) {
+		this.engageables.add(engageable);
+	}
+	
+	public final void removeEngageable(Engageable engageable) {
+		this.engageables.remove(engageable);
+	}
+
 	@Override
 	public void onEnter() {
-		// intentionally left empty
+		for (Engageable engageable : this.engageables) {
+			engageable.engage();
+		}
 	}
 
 	@Override
 	public void onExit() {
-		// intentionally left empty
+		for (Engageable engageable : this.engageables) {
+			engageable.disengage();
+		}
 	}
-
 }
