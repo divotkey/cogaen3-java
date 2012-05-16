@@ -43,11 +43,13 @@ public class KeyEventDispatcher extends CogaenBase implements EventListener {
 	public void engage() {
 		super.engage();
 		EventService.getInstance(getCore()).addListener(this, KeyPressedEvent.TYPE_ID);
+		EventService.getInstance(getCore()).addListener(this, KeyReleasedEvent.TYPE_ID);
 	}
 
 	@Override
 	public void disengage() {
 		EventService.getInstance(getCore()).removeListener(this, KeyPressedEvent.TYPE_ID);
+		EventService.getInstance(getCore()).removeListener(this, KeyReleasedEvent.TYPE_ID);
 		super.disengage();
 	}
 
