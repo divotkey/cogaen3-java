@@ -111,20 +111,6 @@ public class GameStateService extends AbstractService implements CoreListener {
 		this.stateMachine.addState(new TwinState(createLoggingState(stateId), state), stateId);
 		this.logger.logInfo(LOGGING_SOURCE, "added game state " + stateId);
 	}
-
-	/**
-	 * Switches to the specified state instance.
-	 * If the specified state is already the current state of this state
-	 * machine, the state is re-entered. This means {@code onExit()} and
-	 * {@code onEnter()} of the specified stated is called.
-	 * 
-	 * <p>The specified string representation of the state id will
-	 * be converted to an instance of a {@code CogaenId}</p>
-	 * @param stateId unique identifier of target state as string representation 
-	 */
-	public void setCurrentState(String stateId) {
-		setCurrentState(new CogaenId(stateId));
-	}
 	
 	/**
 	 * Switches to the specified state instance.
@@ -161,34 +147,6 @@ public class GameStateService extends AbstractService implements CoreListener {
 	public boolean isEndState() {
 		verifyStatus();
 		return getCurrentState().equals(END_STATE_ID);
-	}
-	
-	public void addTransition(String fromState, CogaenId toState, CogaenId eventId) {
-		addTransition(new CogaenId(fromState), toState, eventId);
-	}
-
-	public void addTransition(String fromState, String toState, CogaenId eventId) {
-		addTransition(new CogaenId(fromState), new CogaenId(toState), eventId);
-	}
-
-	public void addTransition(String fromState, CogaenId toState, String eventId) {
-		addTransition(new CogaenId(fromState), toState, new CogaenId(eventId));
-	}
-	
-	public void addTransition(String fromState, String toState, String eventId) {
-		addTransition(new CogaenId(fromState), new CogaenId(toState), new CogaenId(eventId));
-	}
-	
-	public void addTransition(CogaenId fromState, String toState, CogaenId eventId) {
-		addTransition(fromState, new CogaenId(toState), eventId);
-	}
-
-	public void addTransition(CogaenId fromState, String toState, String eventId) {
-		addTransition(fromState, new CogaenId(toState), new CogaenId(eventId));
-	}
-	
-	public void addTransition(CogaenId fromState, CogaenId toState, String eventId) {
-		addTransition(fromState, toState, new CogaenId(eventId));
 	}
 	
 	public void addTransition(CogaenId fromState, CogaenId toState, CogaenId eventId) {

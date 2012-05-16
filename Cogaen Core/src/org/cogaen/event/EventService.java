@@ -141,24 +141,8 @@ public class EventService extends UpdateableService {
 		}
 	}
 	
-	public void dispatchEvent(String typeId) {
-		dispatchEvent(new CogaenId(typeId));
-	}
-	
-	public void dispatchEvent(CogaenId typeId) {
-		dispatchEvent(new SimpleEvent(typeId));
-	}
-	
 	public void dispatchEvent(Event event) {
 		this.currentEvents.add(event);
-	}
-	
-	public void dispatchEvent(String typeId, double delay) {
-		dispatchEvent(new CogaenId(typeId), delay);
-	}
-	
-	public void dispatchEvent(CogaenId typeId, double delay) {
-		dispatchEvent(new SimpleEvent(typeId), delay);
 	}
 		
 	public void dispatchEvent(Event event, double delay) {
@@ -178,10 +162,6 @@ public class EventService extends UpdateableService {
 			}
 		}		
 		this.timedEvents.add(timedEvent);
-	}
-
-	public void addListener(EventListener listener, String typeId) {
-		addListener(listener, new CogaenId(typeId));
 	}
 	
 	public void addListener(EventListener listener, CogaenId typeId) {

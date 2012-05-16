@@ -8,6 +8,9 @@ import java.util.Map;
 import org.cogaen.core.CogaenBase;
 import org.cogaen.core.Core;
 import org.cogaen.core.Engageable;
+import org.cogaen.event.Event;
+import org.cogaen.event.EventService;
+import org.cogaen.event.SimpleEvent;
 import org.cogaen.name.CogaenId;
 
 public class View extends CogaenBase {
@@ -15,6 +18,7 @@ public class View extends CogaenBase {
 	private Map<CogaenId, EntityRepresentation> representationsMap = new HashMap<CogaenId, EntityRepresentation>();
 	private List<EntityRepresentation> representations = new ArrayList<EntityRepresentation>();
 	private List<Engageable> engageables = new ArrayList<Engageable>();
+	private EventService evtSrv;
 	
 	public View(Core core) {
 		super(core);
@@ -81,17 +85,38 @@ public class View extends CogaenBase {
 		return this.representations.get(idx);
 	}
 	
-	public void addEngageable(Engageable engageable) {
+	public final void addEngageable(Engageable engageable) {
 		this.engageables.add(engageable);
 	}
 	
-	public void removeEngageable(Engageable engageable) {
+	public final void removeEngageable(Engageable engageable) {
 		this.engageables.remove(engageable);
+	}
+	
+	public final void dispatchEvent(CogaenId eventType) {
+		dispatchEvent(eventType, 0);
+	}
+	
+	public final void dispatchEvent(CogaenId eventType, double delay) {
+		dispatchEvent(new SimpleEvent(eventType), delay);
+	}
+	
+	public final void dispatchEvent(Event event) {
+		dispatchEvent(event, 0);
+	}
+	
+	public final void dispatchEvent(Event event, double delay) {
+		if (delay == 0) {
+			this.evtSrv.dispatchEvent(event);
+		} else {
+			this.evtSrv.dispatchEvent(event, delay);
+		}
 	}
 	
 	@Override
 	public void engage() {
 		super.engage();
+		this.evtSrv = EventService.getInstance(getCore());
 		for (Engageable engageable : this.engageables) {
 			engageable.engage();
 		}
@@ -103,7 +128,7 @@ public class View extends CogaenBase {
 		for (Engageable engageable : this.engageables) {
 			engageable.disengage();
 		}
-		
+		this.evtSrv = null;
 		super.disengage();
 	}
 }
