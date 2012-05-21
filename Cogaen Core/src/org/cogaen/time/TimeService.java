@@ -65,7 +65,7 @@ public class TimeService extends UpdateableService {
 			throw new RuntimeException("timer with id " + timerId + " already exist");
 		}
 
-		LoggingService.getInstance(getCore()).logInfo(LOGGING_SOURCE, "new timer created " + timerId);
+		LoggingService.getInstance(getCore()).logDebug(LOGGING_SOURCE, "new timer created " + timerId);
 
 		return newTimer;
 	}
