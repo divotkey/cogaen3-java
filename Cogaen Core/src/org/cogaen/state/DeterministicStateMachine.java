@@ -68,6 +68,11 @@ public class DeterministicStateMachine implements StateMachine, EventListener {
 	}
 	
 	@Override
+	public CogaenId getStartState() {
+		return this.startStateId;
+	}
+	
+	@Override
 	public void addState(State state, CogaenId stateId) {
 		State  oldState = this.states.put(stateId, state);
 		

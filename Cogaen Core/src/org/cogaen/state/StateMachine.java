@@ -39,5 +39,6 @@ public interface StateMachine extends Engageable {
 	public void addState(State state, CogaenId stateId);
 	public void addTransition(CogaenId fromState, CogaenId toState, CogaenId eventId);
 	public void setStartState(CogaenId stateId);
+	public CogaenId getStartState();
 	
 }
