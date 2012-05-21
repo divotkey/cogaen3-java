@@ -75,9 +75,9 @@ public class MouseEventDispatcher extends CogaenBase implements EventListener {
 	@Override
 	public void handleEvent(Event event) {
 		if (event.isOfType(MouseButtonPressedEvent.TYPE_ID)) {
-			handleMouseButton((MouseButtonPressedEvent) event, this.pressedActionMap, this.pressedList);
+			handleMouseButtonPressed((MouseButtonPressedEvent) event);
 		} else if (event.isOfType(MouseButtonReleasedEvent.TYPE_ID)) {
-			handleMouseButton((MouseButtonPressedEvent) event, this.releasedActionMap, this.releasedList);
+			handleMouseButtonReleased((MouseButtonReleasedEvent) event);
 		}  else if (event.isOfType(MouseUpdateEvent.TYPE_ID)) {
 			handleMouseUpdate((MouseUpdateEvent) event);
 		}
@@ -93,19 +93,15 @@ public class MouseEventDispatcher extends CogaenBase implements EventListener {
 		}
 	}
 
-
-	private void handleMouseButton(MouseButtonPressedEvent event, Map<Integer, List<Action>> map, List<Action> list) {
-		this.x = event.getPosX();
-		this.y = event.getPosY();
-		this.button = event.getButton();
-		
+	
+	private void handleButton(int button, Map<Integer, List<Action>> map, List<Action> list) {
 		// execute actions registered for pressed AND released events
 		for (Action action : list) {
 			action.execute();
 		}
 
 		// execute actions handled for pressed OR released events
-		List<Action> actions = map.get(event.getButton());
+		List<Action> actions = map.get(button);
 		if (actions == null) {
 			return;
 		}
@@ -113,6 +109,23 @@ public class MouseEventDispatcher extends CogaenBase implements EventListener {
 		for (Action action : actions) {
 			action.execute();
 		}
+	}
+	
+	private void handleMouseButtonReleased(MouseButtonReleasedEvent event) {
+		this.x = event.getPosX();
+		this.y = event.getPosY();
+		this.button = event.getButton();
+		
+		handleButton(event.getButton(), this.releasedActionMap, this.releasedList);
+	}
+
+	
+	private void handleMouseButtonPressed(MouseButtonPressedEvent event) {
+		this.x = event.getPosX();
+		this.y = event.getPosY();
+		this.button = event.getButton();
+		
+		handleButton(event.getButton(), this.pressedActionMap, this.pressedList);
 	}
 
 	public double getX() {
