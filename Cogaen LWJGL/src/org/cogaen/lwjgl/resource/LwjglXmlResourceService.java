@@ -45,6 +45,7 @@ public class LwjglXmlResourceService extends AbstractService {
 		addResourceParser(FontResourceParser.RESOURCE_TYPE, new FontResourceParser(getCore()));
 		addResourceParser(TextureResourceParser.RESOURCE_TYPE, new TextureResourceParser(getCore()));
 		addResourceParser(ColorResourceParser.RESOURCE_TYPE, new ColorResourceParser(getCore()));
+		addResourceParser(SpriteResourceParser.RESOURCE_TYPE, new SpriteResourceParser(getCore()));
 	}
 
 	@Override
