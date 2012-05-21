@@ -28,17 +28,16 @@ public class GameStateHelper {
 	}
 
 	public void addTransition(CogaenId fromState, CogaenId toState, String eventId) {
-		this.stateSrv.addTransition(fromState, toState, new CogaenId(eventId));
+		addTransition(fromState, toState, new CogaenId(eventId));
 	}
 	
 	public void addTransition(CogaenId fromState, String toState, String eventId) {
-		this.stateSrv.addTransition(fromState, new CogaenId(toState), new CogaenId(eventId));
+		addTransition(fromState, new CogaenId(toState), new CogaenId(eventId));
 	}
 	
 	public void addTransition(CogaenId fromState, String toState, CogaenId eventId) {
-		this.stateSrv.addTransition(fromState, new CogaenId(toState), eventId);
+		addTransition(fromState, new CogaenId(toState), eventId);
 	}
-	
 	
 	public void addTransition(String fromState, String toState, String eventId) {
 		addTransition(new CogaenId(fromState), new CogaenId(toState), new CogaenId(eventId));

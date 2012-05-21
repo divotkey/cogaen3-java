@@ -205,5 +205,10 @@ public class GameStateService extends AbstractService implements CoreListener {
 			setCurrentState(END_STATE_ID);
 		}
 	}
+
+	@Override
+	public void startupFinished() {
+		// intentionally left empty
+	}
 	
 }

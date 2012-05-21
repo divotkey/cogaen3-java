@@ -130,6 +130,7 @@ public class ResourceService extends AbstractService {
 		}
 		
 		this.groups.put(groupId, new ArrayList<ResourceHandle>());
+		this.logger.logDebug(LOGGING_SOURCE, "new resource group created " + groupId);
 	}
 	
 	public void declareResource(String name, CogaenId groupId, ResourceHandle handle) {
@@ -148,6 +149,7 @@ public class ResourceService extends AbstractService {
 		}
 		
 		group.add(handle);
+		this.logger.logDebug(LOGGING_SOURCE, "new resource defined " + name);
 	}
 	
 	public boolean isDeclared(String resourceId) {
@@ -160,7 +162,7 @@ public class ResourceService extends AbstractService {
 			throw new RuntimeException("unonkown resource group " + groupId);
 		}
 		
-		this.logger.logNotice(LOGGING_SOURCE, "preloading resource group " + groupId);
+		this.logger.logInfo(LOGGING_SOURCE, "preloading resource group " + groupId);
 		this.deferredIterator = group.iterator();
 		this.deferredCounter = 0;
 		this.deferredSize = group.size();
@@ -177,7 +179,7 @@ public class ResourceService extends AbstractService {
 		if (!handle.isLoaded()) {
 			try {
 				handle.load(getCore());
-				this.logger.logInfo(LOGGING_SOURCE, "loaded resource " + this.invResourceMap.get(handle));
+				this.logger.logDebug(LOGGING_SOURCE, "loaded resource " + this.invResourceMap.get(handle));
 			} catch (ResourceException e) {
 				this.logger.logWarning(LOGGING_SOURCE, "unable to load resource: " + e.getMessage());
 			}
@@ -192,13 +194,13 @@ public class ResourceService extends AbstractService {
 			throw new RuntimeException("unonkown resource group " + groupId);
 		}
 		
-		this.logger.logNotice(LOGGING_SOURCE, "preloading resource group " + groupId);
+		this.logger.logInfo(LOGGING_SOURCE, "preloading resource group " + groupId);
 		
 		for (ResourceHandle handle : group) {
 			if (!handle.isLoaded()) {
 				try {
 					handle.load(getCore());
-					this.logger.logInfo(LOGGING_SOURCE, "loaded resource " + this.invResourceMap.get(handle));
+					this.logger.logDebug(LOGGING_SOURCE, "loaded resource " + this.invResourceMap.get(handle));
 				} catch (ResourceException e) {
 					this.logger.logWarning(LOGGING_SOURCE, "unable to load resource: " + e.getMessage());
 				}
@@ -212,12 +214,12 @@ public class ResourceService extends AbstractService {
 			throw new RuntimeException("unonkown resource group " + groupId);
 		}
 		
-		this.logger.logNotice(LOGGING_SOURCE, "unloading resource group " + groupId);
+		this.logger.logInfo(LOGGING_SOURCE, "unloading resource group " + groupId);
 		for (ResourceHandle handle : group) {
 			if (handle.isLoaded()) {
 				try {
 					handle.unload(getCore());
-					this.logger.logInfo(LOGGING_SOURCE, "unloaded resource: " + this.invResourceMap.get(handle));					
+					this.logger.logDebug(LOGGING_SOURCE, "unloaded resource: " + this.invResourceMap.get(handle));					
 				} catch (ResourceException e) {
 					this.logger.logWarning(LOGGING_SOURCE, "unable to unload resource: " + e.getMessage());					
 				}
@@ -226,12 +228,12 @@ public class ResourceService extends AbstractService {
 	}
 		
 	public void unloadAll() {
-		this.logger.logNotice(LOGGING_SOURCE, "unloading resources");
+		this.logger.logInfo(LOGGING_SOURCE, "unloading resources");
 		for (ResourceHandle handle : this.resourceMap.values()) {
 			if (handle.isLoaded()) {
 				try {
 					handle.unload(getCore());
-					this.logger.logInfo(LOGGING_SOURCE, "unloaded resource: " + this.invResourceMap.get(handle));					
+					this.logger.logDebug(LOGGING_SOURCE, "unloaded resource: " + this.invResourceMap.get(handle));					
 				} catch (ResourceException e) {
 					this.logger.logWarning(LOGGING_SOURCE, "unable to unload resource: " + e.getMessage());					
 				}
