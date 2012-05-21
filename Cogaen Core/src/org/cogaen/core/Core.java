@@ -177,6 +177,9 @@ public class Core {
 			}
 		}
 		this.running = true;
+		for (CoreListener listener : this.listeners) {
+			listener.startupFinished();
+		}
 	}
 	
 	private void startService(Service service) throws ServiceException {

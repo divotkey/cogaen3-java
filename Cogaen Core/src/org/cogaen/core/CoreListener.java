@@ -39,4 +39,10 @@ public interface CoreListener {
 	 * This method is called if the core is about to shut down.
 	 */
 	public void shutdownInitiated();
+	
+	
+	/**
+	 * This method is called after all services have been started.
+	 */
+	public void startupFinished();
 }
