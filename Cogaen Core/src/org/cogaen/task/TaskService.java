@@ -11,7 +11,7 @@ public class TaskService extends UpdateableService {
 
 	public static final CogaenId ID = new CogaenId("org.cogaen.tast.TaskService");
 	public static final String NAME = "Cogaen Task Service";
-	private static final String LOGGING_SOURCE = "TSKS";
+	private static final String LOGGING_SOURCE = "TASK";
 	
 	private Bag<Task> tasks = new Bag<Task>();
 	private LoggingService logger;

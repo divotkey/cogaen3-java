@@ -200,10 +200,12 @@ public class ResourceService extends AbstractService {
 			if (!handle.isLoaded()) {
 				try {
 					handle.load(getCore());
-					this.logger.logDebug(LOGGING_SOURCE, "loaded resource " + this.invResourceMap.get(handle));
+					this.logger.logDebug(LOGGING_SOURCE, "resource loaded: " + this.invResourceMap.get(handle));
 				} catch (ResourceException e) {
 					this.logger.logWarning(LOGGING_SOURCE, "unable to load resource: " + e.getMessage());
 				}
+			} else {
+				this.logger.logDebug(LOGGING_SOURCE, "resource already loaded: " + this.invResourceMap.get(handle));
 			}
 		}
 	}
@@ -250,6 +252,7 @@ public class ResourceService extends AbstractService {
 		if (!handle.isLoaded()) {
 			try {
 				handle.load(getCore());
+				this.logger.logDebug(LOGGING_SOURCE, "loaded resource on demand " + this.invResourceMap.get(handle));
 			} catch (ResourceException e) {
 				this.logger.logWarning(LOGGING_SOURCE, "unable to load resource: " + e.getMessage());
 			}
