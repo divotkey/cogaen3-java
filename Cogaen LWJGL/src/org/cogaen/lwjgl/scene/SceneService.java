@@ -159,9 +159,10 @@ public class SceneService extends UpdateableService {
 		if (useProperties) {
 			addDependency(PropertyService.ID);
 		}
-		addDependency(EventService.ID);
+		
 		addDependency(LoggingService.ID);
 		addDependency(ResourceService.ID);
+		addDependency(EventService.ID);
 		
 		this.useProperties = useProperties;
 		this.parent = parent;
@@ -197,7 +198,7 @@ public class SceneService extends UpdateableService {
 	protected void doStart() throws ServiceException {
 		this.logger = LoggingService.getInstance(getCore());
 		this.logger.logInfo(LOGGING_SOURCE, "Adapter: " + Display.getAdapter() + " - Driver Version: " + Display.getVersion());
-
+		
 		ScreenConfig oldConfig = this.config;
 		if (this.useProperties) {
 			this.config = loadProperties(this.config);
@@ -339,7 +340,7 @@ public class SceneService extends UpdateableService {
 		this.config.setTitle(title);
 		
 		assert(Display.getTitle().equals(this.config.getTitle()));
-		this.logger.logInfo(LOGGING_SOURCE, "changed window title to '" + title + "'");
+		this.logger.logDebug(LOGGING_SOURCE, "changed window title to '" + title + "'");
 	}
 	
 	public String getTitle() {
@@ -485,7 +486,7 @@ public class SceneService extends UpdateableService {
 						+ width + " x " + height + "( " + windowMode(fullscreen) + ")", e);
 		}
 	}
-
+	
 	private String windowMode(boolean fullscreen) {
 		return fullscreen ? "fullscreen" : "windowed";
 	}
