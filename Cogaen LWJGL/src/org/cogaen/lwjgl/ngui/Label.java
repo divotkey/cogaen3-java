@@ -128,4 +128,12 @@ public class Label extends BaseGui {
 		super.pose(x, y, angle);
 		return this;
 	}
+	
+	public double getWidth() {
+		return this.textVisual.getWidth();
+	}
+	
+	public double getHeight() {
+		return this.textVisual.getHeight();
+	}
 }

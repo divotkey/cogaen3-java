@@ -37,7 +37,6 @@ public class ViewToOverlay extends CogaenBase {
 
 	private double width;
 	private double height;
-//	private double ar;
 	private double xt;
 	private double yt;
 	
@@ -50,12 +49,10 @@ public class ViewToOverlay extends CogaenBase {
 		SceneService scnSrv = SceneService.getInstance(getCore());
 		this.width = scnSrv.getScreenWidth();
 		this.height = scnSrv.getScreenHeight();
-//		this.ar = scnSrv.getAspectRatio();
 	}
 	
 	public void transform(double x, double y) {
 		this.xt = x / this.width;
-//		this.yt = y / this.height / this.ar;
 		this.yt = y / this.height;
 	}
 	

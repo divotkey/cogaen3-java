@@ -117,8 +117,11 @@ public class TextVisual extends Visual {
 		this.alignment = allignment;
 	}
 
-	public int getHeight() {
-		return this.ttf.getHeight();
+	public double getHeight() {
+		return this.ttf.getHeight() * getScale();
 	}
-
+	
+	public double getWidth() {
+		return this.ttf.getWidth(this.text) * getScale();
+	}
 }
