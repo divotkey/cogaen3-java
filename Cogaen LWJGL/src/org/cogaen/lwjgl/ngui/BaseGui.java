@@ -37,30 +37,35 @@ public class BaseGui extends CogaenBase implements NodeReceiver {
 		return this;
 	}
 	
-	public void setNodeReceiver(NodeReceiver receiver) {
+	public final void setNodeReceiver(NodeReceiver receiver) {
 		this.nodeReceiver = receiver;
 	}
 
-	public void setBaseNode(SceneNode node) {
+	public final void setBaseNode(SceneNode node) {
 		this.node = node;
 		if (this.nodeReceiver != null) {
 			this.nodeReceiver.setNode(this.node);
 		}
 	}
 	
-	public SceneNode getBaseNode() {
+	public final SceneNode getBaseNode() {
 		return this.node;
 	}
 	
-	public void setPose(Pose pose) {
+	public final void setPose(Pose pose) {
 		setPose(pose.x, pose.y, pose.angle);
 	}
 	
-	public void setPose(double x, double y, double angle) {
+	public final void setPose(double x, double y, double angle) {
 		this.pose.set(x, y, angle);
 		if (isEngaged()) {
 			getBaseNode().setPose(this.pose);
 		}
+	}
+	
+	public BaseGui pose(Pose pose) {
+		setPose(pose);
+		return this;
 	}
 	
 	public BaseGui pose(double x, double y, double angle) {
@@ -69,7 +74,7 @@ public class BaseGui extends CogaenBase implements NodeReceiver {
 	}
 
 	@Override
-	public void setNode(SceneNode node) {
+	public final void setNode(SceneNode node) {
 		SceneService.getInstance(getCore()).getOverlayRoot().addNode(node);
 	}
 	

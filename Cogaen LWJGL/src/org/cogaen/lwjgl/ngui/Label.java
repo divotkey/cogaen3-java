@@ -4,6 +4,7 @@ import org.cogaen.core.Core;
 import org.cogaen.lwjgl.scene.Alignment;
 import org.cogaen.lwjgl.scene.Color;
 import org.cogaen.lwjgl.scene.NodeReceiver;
+import org.cogaen.lwjgl.scene.Pose;
 import org.cogaen.lwjgl.scene.ReadableColor;
 import org.cogaen.lwjgl.scene.TextVisual;
 import org.cogaen.resource.ResourceService;
@@ -113,6 +114,12 @@ public class Label extends BaseGui {
 	@Override
 	public Label nodeReceiver(NodeReceiver receiver) {
 		super.nodeReceiver(receiver);
+		return this;
+	}
+	
+	@Override
+	public Label pose(Pose pose) {
+		super.pose(pose);
 		return this;
 	}
 
