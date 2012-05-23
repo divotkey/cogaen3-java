@@ -148,4 +148,8 @@ public class SceneNode {
 	public void removeAllVisuals() {
 		this.visuals.clear();
 	}
+
+	public void setPose(Pose pose) {
+		setPose(pose.x, pose.y, pose.angle);
+	}
 }
