@@ -12,8 +12,8 @@ import org.cogaen.resource.ResourceService;
 public class Label extends BaseGui {
 
 	private Color textColor = new Color(Color.CYAN);
-	private TextVisual textVisual;
-	private double scale = 1.0 / 512;
+	protected TextVisual textVisual;
+	private double scale = 1.0 / 1024;
 	private String fontRes;
 	private String text;
 	private Alignment alignment = Alignment.CENTER;
