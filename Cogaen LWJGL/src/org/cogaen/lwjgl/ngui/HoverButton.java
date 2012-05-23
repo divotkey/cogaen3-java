@@ -67,12 +67,12 @@ public class HoverButton extends Label implements EventListener {
 			return;
 		}
 		
-		if (this.viewToOverlay.getOverlayY() < this.localToGlobal.getGlobalY() - this.hWidth) {
+		if (this.viewToOverlay.getOverlayY() < this.localToGlobal.getGlobalY() - this.hHeight) {
 			setColor(Color.GREEN);
 			return;
 		}
 		
-		if (this.viewToOverlay.getOverlayY() > this.localToGlobal.getGlobalY() + this.hWidth) {
+		if (this.viewToOverlay.getOverlayY() > this.localToGlobal.getGlobalY() + this.hHeight) {
 			setColor(Color.GREEN);
 			return;
 		}
