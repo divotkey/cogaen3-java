@@ -5,7 +5,6 @@ import org.cogaen.event.Event;
 import org.cogaen.event.EventListener;
 import org.cogaen.event.EventService;
 import org.cogaen.lwjgl.input.MouseUpdateEvent;
-import org.cogaen.lwjgl.scene.Color;
 import org.cogaen.lwjgl.scene.LocalToGlobal;
 import org.cogaen.lwjgl.scene.ViewToOverlay;
 import org.cogaen.task.TaskService;
