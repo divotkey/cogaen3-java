@@ -261,9 +261,11 @@ public class SceneService extends UpdateableService {
 		propSrv.setProperty(TITLE_PROP, config.getTitle());
 		propSrv.setBoolProperty(CLONE_PROP, config.isCloneDesktop());
 		propSrv.setBoolProperty(VSYNC_PROP, config.isVsync());
-		propSrv.setBoolProperty(FULLSCREEN_PROP, config.isFullscreen());
-		propSrv.setIntProperty(WIDTH_PROP, config.getWidth());
-		propSrv.setIntProperty(HEIGHT_PROP, config.getHeight());
+		if (!config.isCloneDesktop()) {
+			propSrv.setBoolProperty(FULLSCREEN_PROP, config.isFullscreen());
+			propSrv.setIntProperty(WIDTH_PROP, config.getWidth());
+			propSrv.setIntProperty(HEIGHT_PROP, config.getHeight());
+		}
 	}
 	
 	public void addSubsystem(RenderSubsystem rs) {
@@ -436,7 +438,7 @@ public class SceneService extends UpdateableService {
 	public void setScreenMode(ScreenConfig mode) throws ServiceException {
 		if (mode.isCloneDesktop()) {
 			DisplayMode desktop = Display.getDesktopDisplayMode();
-			setScreenMode(desktop.getWidth(), desktop.getHeight(), mode.isFullscreen());
+			setScreenMode(desktop.getWidth(), desktop.getHeight(), true);
 		} else {
 			setScreenMode(mode.getWidth(), mode.getHeight(), mode.isFullscreen());			
 		}

@@ -48,7 +48,7 @@ public class SceneNode {
 	private double angle;
 	
 	SceneNode() {
-		
+		// intentionally left empty
 	}
 	
 	public void setPose(double x, double y, double angle) {
@@ -151,5 +151,17 @@ public class SceneNode {
 
 	public void setPose(Pose pose) {
 		setPose(pose.x, pose.y, pose.angle);
+	}
+
+	public boolean hasVisuals() {
+		return numOfVisuals() != 0;
+	}
+	
+	public int numOfVisuals() {
+		return this.visuals.size();
+	}
+	
+	public Visual getVisual(int idx) {
+		return this.visuals.get(idx);
 	}
 }
