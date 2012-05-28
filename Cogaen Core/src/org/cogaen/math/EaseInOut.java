@@ -42,7 +42,7 @@ package org.cogaen.math;
 public class EaseInOut {
 
 	private static final double DEFAULT_EASETIME = 1.0;
-	private static final double DEFAULT_EPSILON = 0.01;
+	private static final double DEFAULT_EPSILON = 0.001;
 	
 	private double easeTime;
 	private double velocity;
