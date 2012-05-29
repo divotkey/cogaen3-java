@@ -7,7 +7,7 @@ import org.cogaen.lwjgl.scene.Pose;
 import org.cogaen.lwjgl.scene.SceneNode;
 import org.cogaen.lwjgl.scene.SceneService;
 
-public class BaseGui extends CogaenBase implements NodeReceiver {
+public class BaseGui extends CogaenBase {
 
 	private NodeReceiver nodeReceiver;
 	private SceneNode node;
@@ -15,7 +15,7 @@ public class BaseGui extends CogaenBase implements NodeReceiver {
 
 	public BaseGui(Core core) {
 		super(core);
-		setNodeReceiver(this);
+		setNodeReceiver(new DefaultNodeReceiver(core));
 	}
 	
 	@Override
@@ -71,11 +71,6 @@ public class BaseGui extends CogaenBase implements NodeReceiver {
 	public BaseGui pose(double x, double y, double angle) {
 		setPose(x, y, angle);
 		return this;
-	}
-
-	@Override
-	public final void setNode(SceneNode node) {
-		SceneService.getInstance(getCore()).getOverlayRoot().addNode(node);
 	}
 	
 }
