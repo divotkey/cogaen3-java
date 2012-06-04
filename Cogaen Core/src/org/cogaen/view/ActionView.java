@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.cogaen.action.Action;
 import org.cogaen.core.Core;
-import org.cogaen.event.Event;
 import org.cogaen.event.EventDispatcher;
+import org.cogaen.event.EventListener;
 import org.cogaen.name.CogaenId;
 
 public class ActionView extends View {
@@ -29,12 +29,8 @@ public class ActionView extends View {
 		this.disengageActions.add(action);
 	}
 	
-	public void addAction(CogaenId eventType, Action action) {
-		this.dispatcher.addAction(eventType, action);
-	}
-
-	public Event getCurrentEvent() {
-		return this.dispatcher.getCurrentEvent();
+	public void addAction(CogaenId eventType, EventListener listener) {
+		this.dispatcher.addListener(eventType, listener);
 	}
 	
 	@Override

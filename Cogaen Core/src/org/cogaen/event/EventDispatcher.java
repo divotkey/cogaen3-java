@@ -4,36 +4,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.cogaen.action.Action;
 import org.cogaen.core.CogaenBase;
 import org.cogaen.core.Core;
 import org.cogaen.name.CogaenId;
 
 public class EventDispatcher extends CogaenBase implements EventListener{
 
-	private Map<CogaenId, ArrayList<Action>> actionMap = new HashMap<CogaenId, ArrayList<Action>>();
-	private Event currentEvent;
-	
+	private Map<CogaenId, ArrayList<EventListener>> listenerMap = new HashMap<CogaenId, ArrayList<EventListener>>();
 	public EventDispatcher(Core core) {
 		super(core);
 	}
 
-	public void addAction(String eventTypeId, Action action) {
-		addAction(new CogaenId(eventTypeId), action);
+	public void addListener(String eventTypeId, EventListener listener) {
+		addListener(new CogaenId(eventTypeId), listener);
 	}
 	
-	public void addAction(CogaenId eventTypeId, Action action) {
+	public void addListener(CogaenId eventTypeId, EventListener listener) {
 		if (isEngaged()) {
-			throw new IllegalStateException("can't add action if event handler is engaged");
+			throw new IllegalStateException("can't add listener if event dispatcher is engaged");
 		}
 		
-		ArrayList<Action> actions = this.actionMap.get(eventTypeId);
-		if (actions == null) {
-			actions = new ArrayList<Action>();
-			this.actionMap.put(eventTypeId, actions);
+		ArrayList<EventListener> listeners = this.listenerMap.get(eventTypeId);
+		if (listeners == null) {
+			listeners = new ArrayList<EventListener>();
+			this.listenerMap.put(eventTypeId, listeners);
 		}
 		
-		actions.add(action);
+		listeners.add(listener);
 	}
 
 	@Override
@@ -41,7 +38,7 @@ public class EventDispatcher extends CogaenBase implements EventListener{
 		super.engage();
 		
 		EventService evtSrv = EventService.getInstance(getCore());
-		for (CogaenId eventTypeId : this.actionMap.keySet()) {
+		for (CogaenId eventTypeId : this.listenerMap.keySet()) {
 			evtSrv.addListener(this, eventTypeId);
 		}
 	}
@@ -54,21 +51,15 @@ public class EventDispatcher extends CogaenBase implements EventListener{
 
 	@Override
 	public void handleEvent(Event event) {
-		ArrayList<Action> actions = this.actionMap.get(event.getTypeId());
-		if (actions == null || actions.isEmpty()) {
+		ArrayList<EventListener> listeners = this.listenerMap.get(event.getTypeId());
+		if (listeners == null || listeners.isEmpty()) {
 			return;
 		}
 
-		this.currentEvent = event;
-		int size = actions.size();
+		int size = listeners.size();
 		for (int i = 0; i < size; ++i) {
-			Action action = actions.get(i);
-			action.execute();
+			EventListener listener = listeners.get(i);
+			listener.handleEvent(event);
 		}
-		this.currentEvent = null;
-	}
-
-	public Event getCurrentEvent() {
-		return this.currentEvent;
 	}
 }
