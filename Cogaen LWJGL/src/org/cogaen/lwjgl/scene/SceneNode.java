@@ -149,8 +149,8 @@ public class SceneNode {
 		this.visuals.clear();
 	}
 
-	public void setPose(Pose pose) {
-		setPose(pose.x, pose.y, pose.angle);
+	public void setPose(ReadablePose pose) {
+		setPose(pose.getX(), pose.getY(), pose.getAngle());
 	}
 
 	public boolean hasVisuals() {
