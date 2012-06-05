@@ -7,12 +7,12 @@ public abstract class UpdateableComponent extends Component implements Updatable
 	@Override
 	public void engage() {
 		super.engage();
-		EntityService.getInstance(getCore()).addUpdateable(this);
+		EntityService.getInstance(getCore()).addUpdatable(this);
 	}
 
 	@Override
 	public void disengage() {
-		EntityService.getInstance(getCore()).removeUpdateable(this);
+		EntityService.getInstance(getCore()).removeUpdatable(this);
 		super.disengage();
 	}
 

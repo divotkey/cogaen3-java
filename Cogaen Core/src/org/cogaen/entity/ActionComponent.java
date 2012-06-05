@@ -46,7 +46,7 @@ public class ActionComponent extends Component implements Updatable {
 		}
 		
 		if (this.delayedActions.size() > 0) {
-			EntityService.getInstance(getCore()).addUpdateable(this);
+			EntityService.getInstance(getCore()).addUpdatable(this);
 			this.timer = TimeService.getInstance(getCore()).getTimer();
 			this.timestamp = this.timer.getTime() + this.delay;
 		}
@@ -59,7 +59,7 @@ public class ActionComponent extends Component implements Updatable {
 		}
 		
 		if (this.delayedActions.size() > 0) {
-			EntityService.getInstance(getCore()).removeUpdateable(this);
+			EntityService.getInstance(getCore()).removeUpdatable(this);
 		}
 		super.disengage();
 	}
@@ -74,7 +74,7 @@ public class ActionComponent extends Component implements Updatable {
 			if (this.repeat) {
 				this.timestamp = this.timer.getTime() + this.delay;
 			} else {
-				EntityService.getInstance(getCore()).removeUpdateable(this);
+				EntityService.getInstance(getCore()).removeUpdatable(this);
 			}
 		}
 	}

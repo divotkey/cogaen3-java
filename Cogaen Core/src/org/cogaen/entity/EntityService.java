@@ -93,11 +93,11 @@ public class EntityService extends UpdateableService {
 		return this.entities.get(idx);
 	}
 
-	public void addUpdateable(Updatable updateable) {
+	public void addUpdatable(Updatable updateable) {
 		this.updateables.add(updateable);
 	}
 	
-	public void removeUpdateable(Updatable updateable) {
+	public void removeUpdatable(Updatable updateable) {
 		this.updateables.remove(updateable);
 	}	
 	
