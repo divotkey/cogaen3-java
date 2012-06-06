@@ -30,7 +30,6 @@
 
 package org.cogaen.time;
 
-import java.security.InvalidParameterException;
 
 /**
  * Used to measure elapsed time using Java's high precision timer.
@@ -112,7 +111,7 @@ public class Clock {
 	 */
 	public void setMaxDeltaTime(long maxDeltaTime) {
 		if (maxDeltaTime <= 0) {
-			throw new InvalidParameterException("maxDeltaTime must be greater than zero");
+			throw new IllegalArgumentException("maxDeltaTime must be greater than zero");
 		}
 		this.maxDeltaTime = maxDeltaTime;
 	}
