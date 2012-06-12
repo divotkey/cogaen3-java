@@ -5,7 +5,7 @@ import org.jbox2d.dynamics.Body;
 
 public interface Box2dBody {
 
-	public static final CogaenId BOX2D_BODY_ATTRIB = new CogaenId("Box2dBody");
+	public static final CogaenId ATTR_ID = new CogaenId("Box2dBody");
 	
 	Body getBody();
 }

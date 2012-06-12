@@ -48,7 +48,7 @@ public abstract class FixtureComponent extends Component {
 		if (!getEntity().getId().equals(event.getEntityId())) {
 			return;
 		}
-		Box2dBody boxBody = (Box2dBody) getEntity().getAttribute(Box2dBody.BOX2D_BODY_ATTRIB);
+		Box2dBody boxBody = (Box2dBody) getEntity().getAttribute(Box2dBody.ATTR_ID);
 		boxBody.getBody().createFixture(this.fixtureDef);
 	}
 	

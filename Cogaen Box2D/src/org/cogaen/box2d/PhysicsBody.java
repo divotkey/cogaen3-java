@@ -5,7 +5,7 @@ import org.cogaen.name.CogaenId;
 
 public interface PhysicsBody {
 	
-	public static final CogaenId PHYSICS_BODY_ATTRIB = new CogaenId("PhysicsBody");
+	public static final CogaenId ATTR_ID = new CogaenId("PhysicsBody");
 	
 	public void applyForce(double fx, double fy, double px, double py);
 	public void applyRelativeForce(double fx, double fy, double px, double py);

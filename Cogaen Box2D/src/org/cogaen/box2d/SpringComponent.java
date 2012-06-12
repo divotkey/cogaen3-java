@@ -72,7 +72,7 @@ public class SpringComponent extends UpdateableComponent {
 	}
 
 	private PhysicsBody getBody(ComponentEntity entity) {
-		return (PhysicsBody) entity.getAttribute(PhysicsBody.PHYSICS_BODY_ATTRIB);
+		return (PhysicsBody) entity.getAttribute(PhysicsBody.ATTR_ID);
 	}
 
 	private Pose2D getPose(ComponentEntity entity) {

@@ -1,7 +1,7 @@
 package org.cogaen.box2d;
 
+import org.cogaen.entity.Component;
 import org.cogaen.entity.ComponentEntity;
-import org.cogaen.entity.UpdateableComponent;
 import org.cogaen.event.EventService;
 import org.cogaen.math.Vector2;
 import org.jbox2d.common.Vec2;
@@ -10,13 +10,12 @@ import org.jbox2d.dynamics.BodyDef;
 import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
 
-public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dBody, PhysicsBody {
+public class BodyComponent extends Component implements Pose2D, Box2dBody, PhysicsBody {
 
 	public enum Type {DYNAMIC, STATIC, KINEMATIC};
 	
 	private Body body;
 	private BodyType type;
-	private EventService evtSrv;
 	private double xPos;
 	private double yPos;
 	private double angle;
@@ -52,9 +51,9 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 	public void initialize(ComponentEntity parent) {
 		super.initialize(parent);
 		getEntity().addAttribute(Pose2D.ATTR_ID, this);
-		getEntity().addAttribute(Box2dBody.BOX2D_BODY_ATTRIB, this);
-		getEntity().addAttribute(PHYSICS_BODY_ATTRIB, this);
-		this.evtSrv = EventService.getInstance(getCore());
+		getEntity().addAttribute(Box2dBody.ATTR_ID, this);
+		getEntity().addAttribute(PhysicsBody.ATTR_ID, this);
+		EventService.getInstance(getCore());
 	}
 
 	@Override
@@ -122,11 +121,6 @@ public class BodyComponent extends UpdateableComponent implements Pose2D, Box2dB
 	@Override
 	public final void setAngle(double angle) {
 		this.body.setTransform(this.body.getPosition(), (float) angle);
-	}
-
-	@Override
-	public final void update() {
-		this.evtSrv.dispatchEvent(new PoseUpdateEvent(getEntity().getId(), this));
 	}
 
 	@Override

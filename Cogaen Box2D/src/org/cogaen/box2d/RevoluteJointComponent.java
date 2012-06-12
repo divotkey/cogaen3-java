@@ -82,7 +82,7 @@ public class RevoluteJointComponent extends Component {
 	}
 	
 	private Body getBody(ComponentEntity entity) {
-		Box2dBody boxBody = (Box2dBody) entity.getAttribute(Box2dBody.BOX2D_BODY_ATTRIB);
+		Box2dBody boxBody = (Box2dBody) entity.getAttribute(Box2dBody.ATTR_ID);
 		return boxBody.getBody();
 	}
 
