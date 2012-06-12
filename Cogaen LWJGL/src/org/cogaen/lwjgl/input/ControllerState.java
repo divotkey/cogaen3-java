@@ -34,7 +34,7 @@ import org.cogaen.name.CogaenId;
 
 public interface ControllerState {
 
-	public static final CogaenId ID = new CogaenId("CONTROLLER_STATE");
+	public static final CogaenId ATTR_ID = new CogaenId("CONTROLLER_STATE");
 	
 	public double getVerticalPosition();
 	

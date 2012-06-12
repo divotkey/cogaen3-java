@@ -50,7 +50,7 @@ public class ControllerComponent extends Component implements ControllerState, E
 	@Override
 	public void initialize(ComponentEntity parent) {
 		super.initialize(parent);
-		parent.addAttribute(ControllerState.ID, this);
+		parent.addAttribute(ControllerState.ATTR_ID, this);
 	}
 
 	@Override
